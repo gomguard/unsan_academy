@@ -17,8 +17,8 @@ function App() {
     setTodayCompletions(mockDashboardData.today_completions);
   }, [setProfile, setJobCards, setDailyTasks, setTodayCompletions]);
 
-  // Pages that don't need bottom nav
-  const noBottomNavPages = ['/', '/jobs', '/skill-tree'];
+  // Pages that don't need bottom nav (only landing and skill-tree)
+  const noBottomNavPages = ['/', '/skill-tree'];
   const showBottomNav = !noBottomNavPages.includes(location.pathname);
 
   return (

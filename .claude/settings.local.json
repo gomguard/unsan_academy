@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(winget install:*)",
+      "Bash(refreshenv:*)",
+      "Bash(\"C:/Users/WD/AppData/Local/Programs/Python/Python312/python.exe\" -m venv venv)",
+      "Bash(./venv/Scripts/pip.exe install:*)",
+      "Bash(./venv/Scripts/python.exe manage.py:*)",
+      "Bash(where:*)",
+      "Bash(\"C:/Program Files/nodejs/npm.cmd\" install)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/nodejs\")",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Initial MVP of Unsan Academy\n\n- Django REST Framework backend with MechanicProfile, JobCard, Task models\n- React + Vite + Tailwind frontend with clean UI\n- Penta-Stat radar chart \\(Tech, Hand, Speed, Art, Biz\\)\n- Hierarchical Skill Tree with 4 tracks + Hybrid legends\n- SOP mission system with stat rewards\n- Tier progression system \\(Unranked → Diamond\\)\n- Landing page for academy introduction\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git config:*)",
+      "Bash(gh auth:*)",
+      "Bash(\"C:/Program Files/GitHub CLI/gh.exe\" auth status)",
+      "Bash(powershell -Command \"[Environment]::SetEnvironmentVariable\\(''Path'', [Environment]::GetEnvironmentVariable\\(''Path'', ''User''\\) + '';C:\\\\Program Files\\\\GitHub CLI'', ''User''\\)\")",
+      "Bash(\"C:/Program Files/GitHub CLI/gh.exe\" repo create unsan_academy --public --source=. --remote=origin --push --description \"Gamified career management platform for auto mechanics\")",
+      "Bash(npm run build:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Major UI overhaul - Nomad Coders style dark theme\n\n- Add 88 job database with salary, hiring companies, career paths\n- Implement Job Library with search, filters, and live job postings\n- Apply dark theme with pop accent colors \\(yellow, cyan, pink\\)\n- Add live ticker, track cards, and challenge sections\n- Include fake live data \\(unlock toasts, active mechanics count\\)\n- Refactor Landing page with gamified design\n- Update all pages to dark mode\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: Replace custom Tailwind colors with standard colors\n\nCustom color classes \\(bg-dark-*, text-pop-*, etc.\\) were not being generated\nproperly despite correct tailwind.config.js configuration. Switched all\ncomponents to use standard Tailwind slate/yellow/green/etc. colors for\nreliable rendering.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(powershell -Command \"cd C:\\\\Users\\\\WD\\\\unsan_academy\\\\frontend; npm install recharts\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Add Logic-Based Salary Simulator with Bell Curve distribution\n\n- Add SalaryInfo type to types/index.ts\n- Create salaryCalculator.ts with logarithmic growth and Gaussian distribution\n- Create SalaryChart component using Recharts \\(Area + Bar composed chart\\)\n- Integrate salary simulator into JobDetailModal\n- Features: adjustable years slider, stat customization, percentile ranking\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Add prerequisiteJobs to all 88 jobs - Skill Tree graph structure\n\nComplete skill tree connections for career progression:\n\n## Maintenance Tree \\(Group A\\)\n- Root: 경정비 \\(maint_01\\)\n- Branches: 타이어→얼라인먼트→서스펜션, 변속기→엔진오버홀\n- Advanced: 진단가→하이브리드→EV 배터리\n\n## Aesthetic Tree \\(Group B/C\\)\n- Root: 디테일링 \\(body_01\\)\n- Film Path: 틴터→랩핑→PPF\n- Body Path: 도장→덴트\\(PDR\\), 조색사\n\n## EV/Future Tree \\(Group D\\)\n- Entry: 하이브리드→EV배터리 \\(transition from maintenance\\)\n- Branches: 모터수리, 폐배터리, ADAS→자율주행센서\n\n## Management Tree \\(Group E\\)\n- Root: 서비스어드바이저→점장→창업컨설턴트\n- Finance: 리스에이전트→구독매니저\n\n## Niche & NextGen \\(Group F/G\\)\n- Cross-group paths to advanced specializations\n- Final boss: 운산 아카데미 트레이너 \\(requires multiple paths\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(python manage.py makemigrations:*)",
+      "Bash(\"C:/Users/WD/unsan_academy/backend/venv/Scripts/python.exe\" \"C:/Users/WD/unsan_academy/backend/manage.py\" makemigrations)",
+      "Bash(\"C:/Users/WD/unsan_academy/backend/venv/Scripts/python.exe\" \"C:/Users/WD/unsan_academy/backend/manage.py\" migrate)"
+    ]
+  }
+}

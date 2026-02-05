@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  ArrowLeft,
   Search,
   TrendingUp,
   Flame,
@@ -133,7 +132,7 @@ export function JobLibrary() {
   const groups = Object.entries(groupInfo) as [JobGroup, typeof groupInfo[JobGroup]][];
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 pb-20">
       {/* Background */}
       <div className="fixed inset-0 opacity-30 pointer-events-none"
         style={{
@@ -146,16 +145,8 @@ export function JobLibrary() {
       <LiveToast />
 
       {/* Hero */}
-      <section className="relative pt-20 pb-12 px-4 border-b border-slate-800">
+      <section className="relative pt-6 pb-12 px-4 border-b border-slate-800">
         <div className="max-w-6xl mx-auto">
-          {/* Back link */}
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            홈으로
-          </Link>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -338,18 +329,11 @@ export function JobLibrary() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-slate-800">
+      <footer className="py-8 px-4 border-t border-slate-800">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-slate-500 mb-4">
+          <p className="text-slate-500 text-sm">
             데이터는 2024년 자동차 애프터마켓 산업 시장 조사를 기반으로 합니다.
           </p>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-yellow-300 hover:underline"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Unsan Academy로 돌아가기
-          </Link>
         </div>
       </footer>
 

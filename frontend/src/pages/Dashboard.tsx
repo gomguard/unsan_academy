@@ -4,14 +4,14 @@ import { useStore } from '@/store/useStore';
 import { StatRadarChart, StatBar } from '@/components/StatRadarChart';
 import { TierBadge, TierProgress } from '@/components/TierBadge';
 import type { StatType } from '@/types';
-import { Trophy, Target, Briefcase, ChevronRight, ArrowLeft, Zap, Flame } from 'lucide-react';
+import { Trophy, Target, MessageSquare, ChevronRight, Zap, Flame } from 'lucide-react';
 
 export function Dashboard() {
   const { profile, jobCards } = useStore();
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-slate-400">Loading...</div>
       </div>
     );
@@ -22,23 +22,27 @@ export function Dashboard() {
   const quickLinks = [
     { to: '/cards', icon: Trophy, label: '🏆 커리어 맵', desc: `${unlockedCount}/${jobCards.length} 카드`, color: 'yellow' },
     { to: '/tasks', icon: Target, label: '🎯 일일 미션', desc: '오늘의 도전', color: 'cyan' },
-    { to: '/jobs', icon: Briefcase, label: '📋 Job Library', desc: '88개 직업', color: 'pink' },
+    { to: '/community', icon: MessageSquare, label: '💬 커뮤니티', desc: '정보 공유', color: 'pink' },
   ];
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-slate-900">
       {/* Background */}
-      <div className="fixed inset-0 bg-grid-pattern bg-[size:60px_60px] opacity-30 pointer-events-none" />
+      <div className="fixed inset-0 opacity-30 pointer-events-none"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px)',
+          backgroundSize: '60px 60px'
+        }}
+      />
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-dark/80 backdrop-blur-md border-b border-dark-hover">
+      <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm">홈</span>
-          </Link>
-          <h1 className="font-bold text-white">My Dashboard</h1>
-          <div className="w-16" />
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🔧</span>
+            <span className="font-bold text-white">Unsan Academy</span>
+          </div>
+          <Flame className="w-5 h-5 text-orange-400" />
         </div>
       </header>
 
@@ -47,10 +51,10 @@ export function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="card p-6"
+          className="bg-slate-800 border border-slate-700 rounded-2xl p-6"
         >
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-dark-100 rounded-2xl flex items-center justify-center text-3xl border border-dark-hover">
+            <div className="w-16 h-16 bg-slate-700 rounded-2xl flex items-center justify-center text-3xl border border-slate-600">
               👨‍🔧
             </div>
             <div className="flex-1">
@@ -62,7 +66,7 @@ export function Dashboard() {
                 </span>
               </div>
             </div>
-            <Flame className="w-6 h-6 text-pop-orange" />
+            <Flame className="w-6 h-6 text-orange-400" />
           </div>
 
           {/* Tier Progress */}
@@ -85,20 +89,20 @@ export function Dashboard() {
             <Link
               key={link.to}
               to={link.to}
-              className="card p-4 flex items-center gap-4 hover:border-pop-yellow/30 transition-all"
+              className="bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-center gap-4 hover:border-yellow-400/30 transition-all"
             >
               <div
                 className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  link.color === 'yellow' ? 'bg-pop-yellow/20' :
-                  link.color === 'cyan' ? 'bg-pop-cyan/20' :
-                  'bg-pop-pink/20'
+                  link.color === 'yellow' ? 'bg-yellow-400/20' :
+                  link.color === 'cyan' ? 'bg-cyan-400/20' :
+                  'bg-pink-400/20'
                 }`}
               >
                 <link.icon
                   className={`w-6 h-6 ${
-                    link.color === 'yellow' ? 'text-pop-yellow' :
-                    link.color === 'cyan' ? 'text-pop-cyan' :
-                    'text-pop-pink'
+                    link.color === 'yellow' ? 'text-yellow-400' :
+                    link.color === 'cyan' ? 'text-cyan-400' :
+                    'text-pink-400'
                   }`}
                 />
               </div>
@@ -116,18 +120,18 @@ export function Dashboard() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="card p-6"
+          className="bg-slate-800 border border-slate-700 rounded-2xl p-6"
         >
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-bold text-white flex items-center gap-2">
-                <Zap className="w-5 h-5 text-pop-cyan" />
+                <Zap className="w-5 h-5 text-cyan-400" />
                 Penta-Stat
               </h3>
               <p className="text-sm text-slate-500">나의 5대 핵심 역량</p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-pop-yellow">
+              <p className="text-2xl font-bold text-yellow-400">
                 {Object.values(profile.stats).reduce((a, b) => a + b, 0)}
               </p>
               <p className="text-xs text-slate-500">총 스탯</p>
@@ -141,7 +145,7 @@ export function Dashboard() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="card p-4 space-y-4"
+          className="bg-slate-800 border border-slate-700 rounded-2xl p-4 space-y-4"
         >
           <h3 className="font-bold text-white">📊 스탯 상세</h3>
           {(Object.keys(profile.stats) as StatType[]).map((stat, index) => (
