@@ -4,3 +4,4 @@ export { Cards } from './Cards';
 export { Tasks } from './Tasks';
 export { Profile } from './Profile';
 export { JobLibrary } from './JobLibrary';
+export { SkillTree } from './SkillTree';

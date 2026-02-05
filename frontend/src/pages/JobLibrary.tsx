@@ -9,6 +9,7 @@ import {
   Sparkles,
   Star,
   X,
+  GitBranch,
 } from 'lucide-react';
 import { jobDatabase, groupInfo, getHotTrendJobs, getBestStarterJobs, formatSalaryKorean } from '@/lib/jobDatabase';
 import type { Job, JobGroup } from '@/lib/jobDatabase';
@@ -163,6 +164,13 @@ export function JobLibrary() {
             <div className="flex items-center gap-3 mb-4">
               <span className="text-4xl">🎯</span>
               <span className="px-3 py-1 bg-yellow-400/20 text-yellow-300 text-sm font-bold rounded-full">88개 직업</span>
+              <Link
+                to="/skill-tree"
+                className="flex items-center gap-1.5 px-3 py-1 bg-purple-500/20 text-purple-300 text-sm font-bold rounded-full hover:bg-purple-500/30 transition-colors"
+              >
+                <GitBranch className="w-4 h-4" />
+                Skill Tree
+              </Link>
             </div>
 
             <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">

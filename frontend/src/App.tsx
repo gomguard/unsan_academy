@@ -3,7 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useStore } from '@/store/useStore';
 import { mockDashboardData } from '@/lib/mockData';
 import { BottomNav, ToastContainer } from '@/components';
-import { Landing, Dashboard, Cards, Tasks, Profile, JobLibrary } from '@/pages';
+import { Landing, Dashboard, Cards, Tasks, Profile, JobLibrary, SkillTree } from '@/pages';
 
 function App() {
   const location = useLocation();
@@ -18,7 +18,7 @@ function App() {
   }, [setProfile, setJobCards, setDailyTasks, setTodayCompletions]);
 
   // Pages that don't need bottom nav
-  const noBottomNavPages = ['/', '/jobs'];
+  const noBottomNavPages = ['/', '/jobs', '/skill-tree'];
   const showBottomNav = !noBottomNavPages.includes(location.pathname);
 
   return (
@@ -26,6 +26,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/jobs" element={<JobLibrary />} />
+        <Route path="/skill-tree" element={<SkillTree />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/cards" element={<Cards />} />
         <Route path="/tasks" element={<Tasks />} />
