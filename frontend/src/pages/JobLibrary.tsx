@@ -132,82 +132,53 @@ export function JobLibrary() {
   const groups = Object.entries(groupInfo) as [JobGroup, typeof groupInfo[JobGroup]][];
 
   return (
-    <div className="min-h-screen bg-slate-900 pb-20">
-      {/* Background */}
-      <div className="fixed inset-0 opacity-30 pointer-events-none"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px)',
-          backgroundSize: '60px 60px'
-        }}
-      />
-
+    <div className="min-h-screen bg-slate-900 pb-24">
       {/* Live Toast */}
       <LiveToast />
 
-      {/* Hero */}
-      <section className="relative pt-6 pb-12 px-4 border-b border-slate-800">
-        <div className="max-w-6xl mx-auto">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          {/* Title Row */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🎯</span>
+              <div>
+                <h1 className="font-bold text-lg text-white">Job Library</h1>
+                <p className="text-xs text-slate-400">88개 직업 데이터</p>
+              </div>
+            </div>
+            <Link
+              to="/skill-tree"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/20 text-purple-300 text-sm font-bold rounded-lg hover:bg-purple-500/30 transition-colors"
+            >
+              <GitBranch className="w-4 h-4" />
+              Tree
+            </Link>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-4xl">🎯</span>
-              <span className="px-3 py-1 bg-yellow-400/20 text-yellow-300 text-sm font-bold rounded-full">88개 직업</span>
-              <Link
-                to="/skill-tree"
-                className="flex items-center gap-1.5 px-3 py-1 bg-purple-500/20 text-purple-300 text-sm font-bold rounded-full hover:bg-purple-500/30 transition-colors"
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input
+              type="text"
+              placeholder="직업 검색... (예: EV, PPF, 튜닝)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-10 pl-10 pr-10 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-yellow-400/50 transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
               >
-                <GitBranch className="w-4 h-4" />
-                Skill Tree
-              </Link>
-            </div>
-
-            <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
-              Job Library
-            </h1>
-            <p className="text-xl text-slate-400 max-w-2xl">
-              자동차 애프터마켓의 모든 커리어 경로.
-              <br />
-              <span className="text-yellow-300 font-medium">연봉, 시장 수요, 필요 역량</span>을 한눈에.
-            </p>
-          </motion.div>
-
-          {/* Search & Filter */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mt-8 flex flex-col sm:flex-row gap-4"
-          >
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-              <input
-                type="text"
-                placeholder="직업 검색... (예: EV, PPF, 튜닝)"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 pl-12 pr-4 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-yellow-400/50 transition-all"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              )}
-            </div>
-          </motion.div>
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
 
           {/* Group Filter */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mt-4 flex flex-wrap gap-2"
-          >
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4">
             <button
               onClick={() => setSelectedGroup('all')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -235,9 +206,9 @@ export function JobLibrary() {
                 </button>
               );
             })}
-          </motion.div>
+          </div>
         </div>
-      </section>
+      </header>
 
       {/* Hot Jobs Section */}
       {selectedGroup === 'all' && !searchQuery && (
