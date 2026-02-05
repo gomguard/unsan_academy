@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -12,6 +12,9 @@ import {
   Unlock,
   Star,
   X,
+  Target,
+  Navigation,
+  XCircle,
 } from 'lucide-react';
 import {
   jobDatabase,
@@ -23,6 +26,7 @@ import {
   type Job,
   type JobGroup,
 } from '@/lib/jobDatabase';
+import { useStore } from '@/store/useStore';
 
 // ============ TYPES ============
 interface TreeNode {
@@ -62,6 +66,37 @@ function getRootJobs(): Job[] {
   return jobDatabase.filter(
     (job) => !job.prerequisiteJobs || job.prerequisiteJobs.length === 0
   );
+}
+
+// Calculate path from any root to target job (for Career GPS)
+function calculatePathToTarget(targetId: string): string[] {
+  const target = getJobById(targetId);
+  if (!target) return [];
+
+  const path: string[] = [];
+  const visited = new Set<string>();
+
+  // Recursively collect all prerequisites
+  function collectPath(jobId: string) {
+    if (visited.has(jobId)) return;
+    visited.add(jobId);
+
+    const job = getJobById(jobId);
+    if (!job) return;
+
+    // Add all prerequisites first (depth-first)
+    if (job.prerequisiteJobs) {
+      for (const prereqId of job.prerequisiteJobs) {
+        collectPath(prereqId);
+      }
+    }
+
+    // Then add this job
+    path.push(jobId);
+  }
+
+  collectPath(targetId);
+  return path;
 }
 
 // Build tree structure for a group
@@ -137,6 +172,9 @@ function JobNode({
   y,
   isSelected,
   isLocked,
+  isInFocusPath,
+  isTarget,
+  isFocusModeActive,
   onClick,
   scale,
 }: {
@@ -145,20 +183,51 @@ function JobNode({
   y: number;
   isSelected: boolean;
   isLocked: boolean;
+  isInFocusPath: boolean;
+  isTarget: boolean;
+  isFocusModeActive: boolean;
   onClick: () => void;
   scale: number;
 }) {
   const group = groupInfo[job.group];
   const color = groupColors[job.group];
 
+  // Determine opacity based on focus mode
+  const isDimmed = isFocusModeActive && !isInFocusPath;
+  const nodeOpacity = isDimmed ? 0.25 : 1;
+
   return (
     <motion.g
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
+      animate={{ opacity: nodeOpacity, scale: 1 }}
       transition={{ duration: 0.3 }}
       style={{ cursor: 'pointer' }}
       onClick={onClick}
     >
+      {/* Glow effect for target */}
+      {isTarget && (
+        <motion.rect
+          x={x - 4}
+          y={y - 4}
+          width={NODE_WIDTH + 8}
+          height={NODE_HEIGHT + 8}
+          rx={16}
+          fill="none"
+          stroke="#fef08a"
+          strokeWidth={3}
+          animate={{
+            opacity: [0.5, 1, 0.5],
+            scale: [1, 1.02, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          style={{ transformOrigin: `${x + NODE_WIDTH / 2}px ${y + NODE_HEIGHT / 2}px` }}
+        />
+      )}
+
       {/* Node background */}
       <motion.rect
         x={x}
@@ -166,15 +235,23 @@ function JobNode({
         width={NODE_WIDTH}
         height={NODE_HEIGHT}
         rx={12}
-        fill={isSelected ? color : '#1e293b'}
-        stroke={color}
-        strokeWidth={isSelected ? 3 : 2}
+        fill={isTarget ? '#fef08a' : isSelected ? color : isInFocusPath && isFocusModeActive ? '#2d3a4f' : '#1e293b'}
+        stroke={isTarget ? '#fef08a' : isInFocusPath && isFocusModeActive ? '#fef08a' : color}
+        strokeWidth={isTarget ? 3 : isSelected ? 3 : isInFocusPath && isFocusModeActive ? 2 : 2}
         whileHover={{ scale: 1.05 }}
         style={{ transformOrigin: `${x + NODE_WIDTH / 2}px ${y + NODE_HEIGHT / 2}px` }}
       />
 
+      {/* Target icon */}
+      {isTarget && (
+        <g transform={`translate(${x + NODE_WIDTH - 28}, ${y + 4})`}>
+          <circle cx={12} cy={12} r={12} fill="#1e293b" />
+          <Target x={4} y={4} width={16} height={16} color="#fef08a" />
+        </g>
+      )}
+
       {/* Lock icon for locked jobs */}
-      {isLocked && (
+      {isLocked && !isTarget && (
         <g transform={`translate(${x + NODE_WIDTH - 24}, ${y + 8})`}>
           <circle cx={8} cy={8} r={10} fill="#374151" />
           <Lock x={2} y={2} width={12} height={12} color="#9ca3af" />
@@ -186,7 +263,7 @@ function JobNode({
         x={x + 12}
         y={y + 28}
         fontSize={scale < 0.7 ? 16 : 20}
-        fill="white"
+        fill={isTarget ? '#1e293b' : 'white'}
       >
         {group.icon}
       </text>
@@ -196,7 +273,7 @@ function JobNode({
         x={x + 40}
         y={y + 30}
         fontSize={scale < 0.7 ? 9 : 11}
-        fill={isSelected ? 'white' : '#e2e8f0'}
+        fill={isTarget ? '#1e293b' : isSelected ? 'white' : '#e2e8f0'}
         fontWeight="bold"
       >
         {job.title.length > 12 ? job.title.slice(0, 12) + '...' : job.title}
@@ -207,13 +284,13 @@ function JobNode({
         x={x + 40}
         y={y + 50}
         fontSize={scale < 0.7 ? 8 : 10}
-        fill={isSelected ? 'rgba(255,255,255,0.8)' : '#94a3b8'}
+        fill={isTarget ? '#374151' : isSelected ? 'rgba(255,255,255,0.8)' : '#94a3b8'}
       >
         {job.salaryRange.min / 100}k~{job.salaryRange.max / 100}k
       </text>
 
       {/* Demand indicator */}
-      {job.marketDemand === 'Explosive' && (
+      {job.marketDemand === 'Explosive' && !isTarget && (
         <text x={x + NODE_WIDTH - 24} y={y + NODE_HEIGHT - 8} fontSize={12}>
           🔥
         </text>
@@ -226,10 +303,14 @@ function ConnectionLine({
   from,
   to,
   color,
+  isInFocusPath,
+  isFocusModeActive,
 }: {
   from: { x: number; y: number };
   to: { x: number; y: number };
   color: string;
+  isInFocusPath: boolean;
+  isFocusModeActive: boolean;
 }) {
   const startX = from.x + NODE_WIDTH / 2;
   const startY = from.y + NODE_HEIGHT;
@@ -239,13 +320,19 @@ function ConnectionLine({
   // Bezier curve control points
   const midY = (startY + endY) / 2;
 
+  // Determine styling based on focus mode
+  const isDimmed = isFocusModeActive && !isInFocusPath;
+  const lineColor = isInFocusPath && isFocusModeActive ? '#fef08a' : color;
+  const lineOpacity = isDimmed ? 0.1 : isInFocusPath && isFocusModeActive ? 0.9 : 0.5;
+  const lineWidth = isInFocusPath && isFocusModeActive ? 3 : 2;
+
   return (
     <motion.path
       d={`M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`}
       fill="none"
-      stroke={color}
-      strokeWidth={2}
-      strokeOpacity={0.5}
+      stroke={lineColor}
+      strokeWidth={lineWidth}
+      strokeOpacity={lineOpacity}
       initial={{ pathLength: 0 }}
       animate={{ pathLength: 1 }}
       transition={{ duration: 0.5 }}
@@ -257,14 +344,21 @@ function JobDetailPanel({
   job,
   onClose,
   onNavigate,
+  onSetTarget,
+  isTarget,
+  focusPath,
 }: {
   job: Job;
   onClose: () => void;
   onNavigate: (jobId: string) => void;
+  onSetTarget: (jobId: string) => void;
+  isTarget: boolean;
+  focusPath: string[];
 }) {
   const prerequisites = getPrerequisiteJobs(job.id);
   const unlocks = getJobsThatRequire(job.id);
   const group = groupInfo[job.group];
+  const stepsToReach = focusPath.indexOf(job.id) + 1;
 
   return (
     <motion.div
@@ -325,6 +419,41 @@ function JobDetailPanel({
             </p>
           </div>
         </div>
+
+        {/* Career GPS Button */}
+        <button
+          onClick={() => onSetTarget(job.id)}
+          className={`w-full py-3 rounded-lg font-bold text-sm mb-4 transition-all flex items-center justify-center gap-2 ${
+            isTarget
+              ? 'bg-yellow-400 text-gray-900'
+              : 'bg-slate-700 hover:bg-slate-600 text-white'
+          }`}
+        >
+          {isTarget ? (
+            <>
+              <Target className="w-4 h-4" />
+              현재 목표 직업
+            </>
+          ) : (
+            <>
+              <Navigation className="w-4 h-4" />
+              이 직업을 목표로 설정
+            </>
+          )}
+        </button>
+
+        {/* Focus path info */}
+        {isTarget && focusPath.length > 0 && (
+          <div className="mb-4 p-3 bg-yellow-400/10 border border-yellow-400/30 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <GitBranch className="w-4 h-4 text-yellow-400" />
+              <span className="text-yellow-300 font-bold text-sm">Career GPS 활성화</span>
+            </div>
+            <p className="text-xs text-slate-400">
+              목표까지 <span className="text-yellow-300 font-bold">{stepsToReach}단계</span> 경로가 표시됩니다.
+            </p>
+          </div>
+        )}
 
         {/* Prerequisites */}
         {prerequisites.length > 0 && (
@@ -402,6 +531,32 @@ export function SkillTree() {
   const [pan, setPan] = useState({ x: 50, y: 50 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Career GPS state from store
+  const { targetJobId, focusPath, setTargetJobId, setFocusPath, clearFocusMode } = useStore();
+
+  // Calculate focus path when target changes
+  useEffect(() => {
+    if (targetJobId) {
+      const path = calculatePathToTarget(targetJobId);
+      setFocusPath(path);
+    } else {
+      setFocusPath([]);
+    }
+  }, [targetJobId, setFocusPath]);
+
+  // Check if focus mode is active
+  const isFocusModeActive = targetJobId !== null && focusPath.length > 0;
+
+  // Handle setting target job
+  const handleSetTarget = useCallback((jobId: string) => {
+    if (targetJobId === jobId) {
+      // If clicking same target, clear focus mode
+      clearFocusMode();
+    } else {
+      setTargetJobId(jobId);
+    }
+  }, [targetJobId, setTargetJobId, clearFocusMode]);
 
   // Build tree data
   const treeData = useMemo(() => {
@@ -626,12 +781,19 @@ export function SkillTree() {
               const toPos = allPositions.get(to);
               if (!fromPos || !toPos) return null;
 
+              // Check if this connection is in the focus path
+              const fromIndex = focusPath.indexOf(from);
+              const toIndex = focusPath.indexOf(to);
+              const isConnectionInPath = fromIndex !== -1 && toIndex !== -1 && toIndex === fromIndex + 1;
+
               return (
                 <ConnectionLine
                   key={`${from}-${to}`}
                   from={fromPos}
                   to={toPos}
                   color={color}
+                  isInFocusPath={isConnectionInPath}
+                  isFocusModeActive={isFocusModeActive}
                 />
               );
             })}
@@ -645,6 +807,8 @@ export function SkillTree() {
 
               const hasPrereqs =
                 job.prerequisiteJobs && job.prerequisiteJobs.length > 0;
+              const isInPath = focusPath.includes(id);
+              const isTargetNode = id === targetJobId;
 
               return (
                 <JobNode
@@ -654,6 +818,9 @@ export function SkillTree() {
                   y={pos.y}
                   isSelected={selectedJob?.id === id}
                   isLocked={hasPrereqs || false}
+                  isInFocusPath={isInPath}
+                  isTarget={isTargetNode}
+                  isFocusModeActive={isFocusModeActive}
                   onClick={() => setSelectedJob(job)}
                   scale={scale}
                 />
@@ -673,7 +840,38 @@ export function SkillTree() {
               const job = getJobById(jobId);
               if (job) setSelectedJob(job);
             }}
+            onSetTarget={handleSetTarget}
+            isTarget={selectedJob.id === targetJobId}
+            focusPath={focusPath}
           />
+        )}
+      </AnimatePresence>
+
+      {/* Focus Mode Indicator */}
+      <AnimatePresence>
+        {isFocusModeActive && targetJobId && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-36 left-1/2 -translate-x-1/2 z-50"
+          >
+            <div className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full shadow-lg flex items-center gap-3">
+              <Navigation className="w-4 h-4" />
+              <span className="font-bold text-sm">
+                Career GPS: {getJobById(targetJobId)?.title}
+              </span>
+              <span className="text-xs bg-gray-900/20 px-2 py-0.5 rounded-full">
+                {focusPath.length}단계
+              </span>
+              <button
+                onClick={clearFocusMode}
+                className="p-1 hover:bg-gray-900/20 rounded-full transition-colors"
+              >
+                <XCircle className="w-4 h-4" />
+              </button>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -693,6 +891,12 @@ export function SkillTree() {
             <span>🔥</span>
             <span className="text-slate-400">급성장 직업</span>
           </div>
+          {isFocusModeActive && (
+            <div className="flex items-center gap-2 text-xs">
+              <div className="w-4 h-4 bg-yellow-400/30 border-2 border-yellow-400 rounded" />
+              <span className="text-yellow-400">목표 경로</span>
+            </div>
+          )}
         </div>
       </div>
 

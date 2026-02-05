@@ -9,8 +9,8 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
-import { motion } from 'framer-motion';
-import { TrendingUp, User, Target, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { TrendingUp, User, Target, ChevronDown, ChevronUp, DollarSign, TrendingDown, Trophy, AlertTriangle } from 'lucide-react';
 import type { Job, JobStats } from '@/lib/jobDatabase';
 import {
   calculateSalary,
@@ -20,6 +20,7 @@ import {
   createSalaryInfoFromJob,
   projectSalaryGrowth,
 } from '@/lib/salaryCalculator';
+import { useStore } from '@/store/useStore';
 
 interface SalaryChartProps {
   job: Job;
@@ -79,9 +80,14 @@ function StatSlider({
 }
 
 export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartProps) {
-  // State for adjustable parameters
+  // Global state
+  const { currentSalary, setCurrentSalary } = useStore();
+
+  // Local state
   const [years, setYears] = useState(defaultYears);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showSalaryInput, setShowSalaryInput] = useState(false);
+  const [inputValue, setInputValue] = useState(currentSalary?.toString() || '');
   const [customStats, setCustomStats] = useState<JobStats>(
     userStats || { T: 50, H: 50, S: 50, A: 50, B: 50 }
   );
@@ -289,6 +295,153 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
           ))}
         </motion.div>
       )}
+
+      {/* Salary Gap Calculator */}
+      <div className="mt-4 pt-3 border-t border-slate-700">
+        <button
+          onClick={() => setShowSalaryInput(!showSalaryInput)}
+          className="w-full flex items-center justify-center gap-2 py-2 text-xs text-slate-400 hover:text-white transition-colors"
+        >
+          <DollarSign className="w-3 h-3" />
+          현재 연봉 비교하기
+          {showSalaryInput ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+        </button>
+
+        <AnimatePresence>
+          {showSalaryInput && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-3 space-y-4"
+            >
+              {/* Salary Input */}
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-green-400" />
+                <input
+                  type="number"
+                  placeholder="현재 연봉 (만원)"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onBlur={() => {
+                    const val = parseInt(inputValue);
+                    if (!isNaN(val) && val > 0) {
+                      setCurrentSalary(val);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const val = parseInt(inputValue);
+                      if (!isNaN(val) && val > 0) {
+                        setCurrentSalary(val);
+                      }
+                    }
+                  }}
+                  className="flex-1 h-10 px-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-green-400/50 transition-all text-sm"
+                />
+                <span className="text-slate-400 text-sm">만원</span>
+              </div>
+
+              {/* Gap Visualization */}
+              {currentSalary && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 rounded-xl bg-slate-900/80 border border-slate-600"
+                >
+                  {/* Two Points Display */}
+                  <div className="flex items-center justify-between mb-4">
+                    {/* Point A: Current */}
+                    <div className="text-center">
+                      <p className="text-xs text-slate-400 mb-1">Point A: 현재</p>
+                      <p className="text-lg font-bold text-slate-300">
+                        {currentSalary.toLocaleString()}
+                        <span className="text-xs font-normal text-slate-500">만원</span>
+                      </p>
+                    </div>
+
+                    {/* Arrow */}
+                    <div className="flex-1 flex items-center justify-center px-2">
+                      <div className="w-full h-0.5 bg-gradient-to-r from-slate-500 to-yellow-400 relative">
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-6 border-t-transparent border-b-transparent border-l-yellow-400" />
+                      </div>
+                    </div>
+
+                    {/* Point B: Market */}
+                    <div className="text-center">
+                      <p className="text-xs text-slate-400 mb-1">Point B: 시장가치</p>
+                      <p className="text-lg font-bold text-yellow-300">
+                        {userSalary.toLocaleString()}
+                        <span className="text-xs font-normal text-slate-500">만원</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Gap Display */}
+                  {(() => {
+                    const gap = userSalary - currentSalary;
+                    const gapPercent = ((gap / currentSalary) * 100).toFixed(1);
+                    const isUnderpaid = gap > 0;
+
+                    return (
+                      <div
+                        className={`p-3 rounded-lg ${
+                          isUnderpaid
+                            ? 'bg-red-500/10 border border-red-500/30'
+                            : 'bg-green-500/10 border border-green-500/30'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          {isUnderpaid ? (
+                            <>
+                              <TrendingDown className="w-4 h-4 text-red-400" />
+                              <span className="text-red-400 font-bold text-sm">
+                                📉 시장가치보다 {Math.abs(gap).toLocaleString()}만원 낮습니다!
+                              </span>
+                            </>
+                          ) : gap < 0 ? (
+                            <>
+                              <Trophy className="w-4 h-4 text-green-400" />
+                              <span className="text-green-400 font-bold text-sm">
+                                🏆 시장가치를 {Math.abs(gap).toLocaleString()}만원 상회합니다!
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <Target className="w-4 h-4 text-yellow-400" />
+                              <span className="text-yellow-400 font-bold text-sm">
+                                ⚖️ 시장가치와 일치합니다!
+                              </span>
+                            </>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-400">
+                          {isUnderpaid ? (
+                            <>
+                              <AlertTriangle className="w-3 h-3 inline mr-1 text-red-400" />
+                              역량 대비 <span className="text-red-400 font-medium">{gapPercent}%</span> 저평가 상태입니다.
+                              이직 또는 연봉 협상을 고려해보세요.
+                            </>
+                          ) : gap < 0 ? (
+                            <>
+                              현재 시장 평균보다 <span className="text-green-400 font-medium">{Math.abs(parseFloat(gapPercent))}%</span> 높은 연봉을 받고 있습니다.
+                              훌륭합니다!
+                            </>
+                          ) : (
+                            <>
+                              현재 적정 시장가치를 받고 있습니다.
+                            </>
+                          )}
+                        </p>
+                      </div>
+                    );
+                  })()}
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Market Range Info */}
       <div className="mt-4 pt-3 border-t border-slate-700 flex justify-between text-xs text-slate-500">

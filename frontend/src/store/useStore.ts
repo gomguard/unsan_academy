@@ -16,6 +16,11 @@ interface AppState {
   dailyTasks: Task[];
   todayCompletions: TaskCompletion[];
 
+  // Salary & Career GPS
+  currentSalary: number | null; // User's actual current salary (만원)
+  focusPath: string[]; // Career GPS: job IDs in the focused path
+  targetJobId: string | null; // The target job user wants to reach
+
   // UI state
   isLoading: boolean;
   toasts: Toast[];
@@ -30,6 +35,12 @@ interface AppState {
   setLoading: (loading: boolean) => void;
   setSelectedCardId: (cardId: string | null) => void;
   setHighlightedPath: (path: string[]) => void;
+
+  // Salary & Career GPS actions
+  setCurrentSalary: (salary: number | null) => void;
+  setFocusPath: (path: string[]) => void;
+  setTargetJobId: (jobId: string | null) => void;
+  clearFocusMode: () => void;
 
   // Card helpers
   isCardUnlocked: (cardId: string) => boolean;
@@ -63,6 +74,9 @@ export const useStore = create<AppState>((set, get) => ({
   jobCards: [],
   dailyTasks: [],
   todayCompletions: [],
+  currentSalary: null,
+  focusPath: [],
+  targetJobId: null,
   isLoading: false,
   toasts: [],
   selectedCardId: null,
@@ -75,6 +89,12 @@ export const useStore = create<AppState>((set, get) => ({
   setLoading: (loading) => set({ isLoading: loading }),
   setSelectedCardId: (cardId) => set({ selectedCardId: cardId }),
   setHighlightedPath: (path) => set({ highlightedPath: path }),
+
+  // Salary & Career GPS
+  setCurrentSalary: (salary) => set({ currentSalary: salary }),
+  setFocusPath: (path) => set({ focusPath: path }),
+  setTargetJobId: (jobId) => set({ targetJobId: jobId }),
+  clearFocusMode: () => set({ focusPath: [], targetJobId: null }),
 
   isCardUnlocked: (cardId) => {
     const { profile } = get();
