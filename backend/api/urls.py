@@ -8,6 +8,8 @@ router = DefaultRouter()
 router.register(r'profiles', views.MechanicProfileViewSet)
 router.register(r'cards', views.JobCardViewSet)
 router.register(r'tasks', views.TaskViewSet)
+router.register(r'posts', views.PostViewSet)
+router.register(r'comments', views.CommentViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

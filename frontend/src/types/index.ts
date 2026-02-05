@@ -110,3 +110,67 @@ export const rankInfo: Record<JobRank, { name: string; koreanName: string }> = {
   3: { name: 'Master', koreanName: '마스터' },
   4: { name: 'Legend', koreanName: '레전드' },
 };
+
+// ============ COMMUNITY TYPES ============
+
+export type PostCategory = 'Free' | 'Tech' | 'Salary' | 'Career';
+
+export const postCategoryInfo: Record<PostCategory, { name: string; icon: string; color: string }> = {
+  Free: { name: '자유게시판', icon: '🗣️', color: '#6366f1' },
+  Tech: { name: '기술 Q&A', icon: '🔧', color: '#3b82f6' },
+  Salary: { name: '연봉 대나무숲', icon: '💸', color: '#10b981' },
+  Career: { name: '이직/커리어', icon: '🚀', color: '#f59e0b' },
+};
+
+export interface PostAuthor {
+  id: number;
+  name: string;
+  tier: TierType;
+  avatar_url?: string;
+  stats: Stats;
+  stat_tech: number;
+  stat_hand: number;
+  stat_speed: number;
+  stat_art: number;
+  stat_biz: number;
+}
+
+export interface Comment {
+  id: number;
+  post: number;
+  author: PostAuthor;
+  content: string;
+  likes: number;
+  is_mine: boolean;
+  created_at: string;
+}
+
+export interface SalaryGapData {
+  currentSalary: number;
+  marketValue: number;
+  gap: number;
+  percentile: number;
+  jobTitle: string;
+  years: number;
+}
+
+export interface Post {
+  id: number;
+  author: PostAuthor;
+  category: PostCategory;
+  category_display: string;
+  title: string;
+  content: string;
+  likes: number;
+  views: number;
+  comment_count: number;
+  is_liked: boolean;
+  is_mine: boolean;
+  verified_card?: number;
+  verified_card_title?: string;
+  attached_salary_data?: SalaryGapData;
+  is_pinned: boolean;
+  created_at: string;
+  updated_at: string;
+  comments?: Comment[];
+}

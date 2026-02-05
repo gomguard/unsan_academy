@@ -167,3 +167,69 @@ class TaskCompletion(models.Model):
 
     def __str__(self):
         return f"{self.profile.name} completed {self.task.title}"
+
+
+# ============ COMMUNITY MODELS ============
+
+class PostCategory(models.TextChoices):
+    FREE = 'Free', '🗣️ 자유게시판'
+    TECH = 'Tech', '🔧 기술 Q&A'
+    SALARY = 'Salary', '💸 연봉 대나무숲'
+    CAREER = 'Career', '🚀 이직/커리어'
+
+
+class Post(models.Model):
+    """Community post with author tier/stats visible."""
+    author = models.ForeignKey(MechanicProfile, on_delete=models.CASCADE, related_name='posts')
+    category = models.CharField(max_length=20, choices=PostCategory.choices, default=PostCategory.FREE)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    likes = models.IntegerField(default=0)
+    views = models.IntegerField(default=0)
+
+    # Optional verification: Link to a JobCard the author has unlocked
+    verified_card = models.ForeignKey(JobCard, null=True, blank=True, on_delete=models.SET_NULL)
+
+    # Optional: Attached Salary Gap data
+    attached_salary_data = models.JSONField(null=True, blank=True, help_text="Salary gap calculator snapshot")
+
+    is_pinned = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Post"
+        verbose_name_plural = "Posts"
+        ordering = ['-is_pinned', '-created_at']
+
+    def __str__(self):
+        return f"[{self.category}] {self.title} by {self.author.name}"
+
+
+class Comment(models.Model):
+    """Comment on a post with author tier/stats visible."""
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(MechanicProfile, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField()
+    likes = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Comment"
+        verbose_name_plural = "Comments"
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Comment by {self.author.name} on {self.post.title}"
+
+
+class PostLike(models.Model):
+    """Track likes on posts to prevent duplicate likes."""
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_likes')
+    profile = models.ForeignKey(MechanicProfile, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['post', 'profile']
+        verbose_name = "Post Like"
+        verbose_name_plural = "Post Likes"

@@ -1,7 +1,7 @@
 """Serializers for the API."""
 
 from rest_framework import serializers
-from .models import MechanicProfile, JobCard, Task, TaskCompletion, UnlockedCard
+from .models import MechanicProfile, JobCard, Task, TaskCompletion, UnlockedCard, Post, Comment, PostLike
 
 
 class MechanicProfileSerializer(serializers.ModelSerializer):
@@ -92,3 +92,86 @@ class CompleteTaskSerializer(serializers.Serializer):
     """Serializer for completing a task."""
     task_id = serializers.IntegerField()
     photo_url = serializers.URLField(required=False, allow_blank=True)
+
+
+# ============ COMMUNITY SERIALIZERS ============
+
+class AuthorSerializer(serializers.ModelSerializer):
+    """Compact author info with tier and stats."""
+    stats = serializers.ReadOnlyField()
+
+    class Meta:
+        model = MechanicProfile
+        fields = ['id', 'name', 'tier', 'avatar_url', 'stats', 'stat_tech', 'stat_hand', 'stat_speed', 'stat_art', 'stat_biz']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Comment serializer with author info."""
+    author = AuthorSerializer(read_only=True)
+    is_mine = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'post', 'author', 'content', 'likes', 'is_mine', 'created_at']
+        read_only_fields = ['likes', 'created_at']
+
+    def get_is_mine(self, obj):
+        profile_id = self.context.get('profile_id')
+        return obj.author_id == profile_id if profile_id else False
+
+
+class PostSerializer(serializers.ModelSerializer):
+    """Post serializer with author info and stats."""
+    author = AuthorSerializer(read_only=True)
+    comment_count = serializers.SerializerMethodField()
+    is_liked = serializers.SerializerMethodField()
+    is_mine = serializers.SerializerMethodField()
+    category_display = serializers.CharField(source='get_category_display', read_only=True)
+    verified_card_title = serializers.CharField(source='verified_card.title', read_only=True, allow_null=True)
+
+    class Meta:
+        model = Post
+        fields = [
+            'id', 'author', 'category', 'category_display', 'title', 'content',
+            'likes', 'views', 'comment_count', 'is_liked', 'is_mine',
+            'verified_card', 'verified_card_title', 'attached_salary_data',
+            'is_pinned', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['likes', 'views', 'created_at', 'updated_at', 'is_pinned']
+
+    def get_comment_count(self, obj):
+        return obj.comments.count()
+
+    def get_is_liked(self, obj):
+        profile_id = self.context.get('profile_id')
+        if not profile_id:
+            return False
+        return PostLike.objects.filter(post=obj, profile_id=profile_id).exists()
+
+    def get_is_mine(self, obj):
+        profile_id = self.context.get('profile_id')
+        return obj.author_id == profile_id if profile_id else False
+
+
+class PostDetailSerializer(PostSerializer):
+    """Post serializer with comments included."""
+    comments = CommentSerializer(many=True, read_only=True)
+
+    class Meta(PostSerializer.Meta):
+        fields = PostSerializer.Meta.fields + ['comments']
+
+
+class CreatePostSerializer(serializers.ModelSerializer):
+    """Serializer for creating a post."""
+
+    class Meta:
+        model = Post
+        fields = ['category', 'title', 'content', 'verified_card', 'attached_salary_data']
+
+
+class CreateCommentSerializer(serializers.ModelSerializer):
+    """Serializer for creating a comment."""
+
+    class Meta:
+        model = Comment
+        fields = ['content']

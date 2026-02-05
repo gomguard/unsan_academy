@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { UserProfile, JobCard, Task, TaskCompletion, TierType, StatType } from '@/types';
+import type { UserProfile, JobCard, Task, TaskCompletion, TierType, StatType, Post, PostCategory } from '@/types';
 
 interface Toast {
   id: string;
@@ -20,6 +20,10 @@ interface AppState {
   currentSalary: number | null; // User's actual current salary (만원)
   focusPath: string[]; // Career GPS: job IDs in the focused path
   targetJobId: string | null; // The target job user wants to reach
+
+  // Community
+  posts: Post[];
+  selectedCategory: PostCategory | 'all';
 
   // UI state
   isLoading: boolean;
@@ -67,6 +71,12 @@ interface AppState {
   // Toasts
   addToast: (toast: Omit<Toast, 'id'>) => void;
   removeToast: (id: string) => void;
+
+  // Community
+  setPosts: (posts: Post[]) => void;
+  addPost: (post: Post) => void;
+  setSelectedCategory: (category: PostCategory | 'all') => void;
+  togglePostLike: (postId: number, liked: boolean, newLikes: number) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -77,6 +87,8 @@ export const useStore = create<AppState>((set, get) => ({
   currentSalary: null,
   focusPath: [],
   targetJobId: null,
+  posts: [],
+  selectedCategory: 'all',
   isLoading: false,
   toasts: [],
   selectedCardId: null,
@@ -183,6 +195,18 @@ export const useStore = create<AppState>((set, get) => ({
   removeToast: (id) => {
     set((state) => ({
       toasts: state.toasts.filter((t) => t.id !== id),
+    }));
+  },
+
+  // Community
+  setPosts: (posts) => set({ posts }),
+  addPost: (post) => set((state) => ({ posts: [post, ...state.posts] })),
+  setSelectedCategory: (category) => set({ selectedCategory: category }),
+  togglePostLike: (postId, liked, newLikes) => {
+    set((state) => ({
+      posts: state.posts.map((post) =>
+        post.id === postId ? { ...post, is_liked: liked, likes: newLikes } : post
+      ),
     }));
   },
 }));

@@ -6,10 +6,12 @@ from rest_framework.response import Response
 from django.utils import timezone
 from django.db.models import F
 
-from .models import MechanicProfile, JobCard, Task, TaskCompletion, UnlockedCard
+from .models import MechanicProfile, JobCard, Task, TaskCompletion, UnlockedCard, Post, Comment, PostLike
 from .serializers import (
     MechanicProfileSerializer, JobCardSerializer, TaskSerializer,
-    TaskCompletionSerializer, CompleteTaskSerializer
+    TaskCompletionSerializer, CompleteTaskSerializer,
+    PostSerializer, PostDetailSerializer, CreatePostSerializer,
+    CommentSerializer, CreateCommentSerializer
 )
 
 
@@ -169,3 +171,116 @@ def dashboard_data(request, profile_id):
         'daily_tasks': tasks_serializer.data,
         'today_completions': completions_serializer.data,
     })
+
+
+# ============ COMMUNITY VIEWS ============
+
+class PostViewSet(viewsets.ModelViewSet):
+    """ViewSet for community posts."""
+    queryset = Post.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return PostDetailSerializer
+        if self.action == 'create':
+            return CreatePostSerializer
+        return PostSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        profile_id = self.request.query_params.get('profile_id')
+        if profile_id:
+            context['profile_id'] = int(profile_id)
+        return context
+
+    def get_queryset(self):
+        queryset = Post.objects.all()
+        category = self.request.query_params.get('category')
+        if category:
+            queryset = queryset.filter(category=category)
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        profile_id = request.data.get('author_id') or request.query_params.get('profile_id')
+        if not profile_id:
+            return Response({'error': 'profile_id required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            profile = MechanicProfile.objects.get(id=profile_id)
+        except MechanicProfile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CreatePostSerializer(data=request.data)
+        if serializer.is_valid():
+            post = serializer.save(author=profile)
+            return Response(PostSerializer(post, context={'profile_id': int(profile_id)}).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        # Increment view count
+        instance.views = F('views') + 1
+        instance.save(update_fields=['views'])
+        instance.refresh_from_db()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        """Toggle like on a post."""
+        profile_id = request.data.get('profile_id') or request.query_params.get('profile_id')
+        if not profile_id:
+            return Response({'error': 'profile_id required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        post = self.get_object()
+        try:
+            profile = MechanicProfile.objects.get(id=profile_id)
+        except MechanicProfile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        like, created = PostLike.objects.get_or_create(post=post, profile=profile)
+        if not created:
+            # Already liked - unlike
+            like.delete()
+            post.likes = F('likes') - 1
+            post.save(update_fields=['likes'])
+            post.refresh_from_db()
+            return Response({'liked': False, 'likes': post.likes})
+        else:
+            # New like
+            post.likes = F('likes') + 1
+            post.save(update_fields=['likes'])
+            post.refresh_from_db()
+            return Response({'liked': True, 'likes': post.likes})
+
+    @action(detail=True, methods=['post'])
+    def comment(self, request, pk=None):
+        """Add a comment to a post."""
+        profile_id = request.data.get('profile_id') or request.query_params.get('profile_id')
+        if not profile_id:
+            return Response({'error': 'profile_id required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        post = self.get_object()
+        try:
+            profile = MechanicProfile.objects.get(id=profile_id)
+        except MechanicProfile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CreateCommentSerializer(data=request.data)
+        if serializer.is_valid():
+            comment = serializer.save(author=profile, post=post)
+            return Response(CommentSerializer(comment, context={'profile_id': int(profile_id)}).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """ViewSet for comments."""
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        profile_id = self.request.query_params.get('profile_id')
+        if profile_id:
+            context['profile_id'] = int(profile_id)
+        return context
