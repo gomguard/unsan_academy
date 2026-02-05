@@ -3,7 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useStore } from '@/store/useStore';
 import { mockDashboardData } from '@/lib/mockData';
 import { BottomNav, ToastContainer } from '@/components';
-import { Landing, Dashboard, Cards, Tasks, Profile, JobLibrary, SkillTree, Community } from '@/pages';
+import { Landing, Dashboard, Cards, Tasks, MissionCenter, Profile, JobLibrary, SkillTree, Community } from '@/pages';
 
 function App() {
   const location = useLocation();
@@ -30,6 +30,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/cards" element={<Cards />} />
         <Route path="/tasks" element={<Tasks />} />
+        <Route path="/missions" element={<MissionCenter />} />
         <Route path="/community" element={<Community />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>

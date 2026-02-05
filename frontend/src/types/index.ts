@@ -111,6 +111,45 @@ export const rankInfo: Record<JobRank, { name: string; koreanName: string }> = {
   4: { name: 'Legend', koreanName: '레전드' },
 };
 
+// ============ QUEST/MISSION TYPES ============
+
+export type QuestCategory = 'Daily' | 'Weekly' | 'Challenge' | 'Special';
+
+export const questCategoryInfo: Record<QuestCategory, { name: string; color: string; bgColor: string }> = {
+  Daily: { name: '일일 미션', color: '#3b82f6', bgColor: 'bg-blue-500/20' },
+  Weekly: { name: '주간 미션', color: '#8b5cf6', bgColor: 'bg-purple-500/20' },
+  Challenge: { name: '도전 과제', color: '#f59e0b', bgColor: 'bg-amber-500/20' },
+  Special: { name: '특별 미션', color: '#ec4899', bgColor: 'bg-pink-500/20' },
+};
+
+export interface Quest {
+  id: number;
+  title: string;
+  description: string;
+  target_stat: StatType;
+  stat_reward: number;
+  xp_reward: number;
+  icon: string;
+  category: QuestCategory;
+  requires_photo: boolean;
+  difficulty: number;
+  cooldown_hours: number;
+  is_available: boolean; // Can be completed now
+  last_completed_at?: string;
+  total_completions: number;
+}
+
+export interface QuestCompletion {
+  id: number;
+  quest_id: number;
+  quest_title: string;
+  target_stat: StatType;
+  stat_reward: number;
+  xp_reward: number;
+  proof_image_url?: string;
+  completed_at: string;
+}
+
 // ============ COMMUNITY TYPES ============
 
 export type PostCategory = 'Free' | 'Tech' | 'Salary' | 'Career';

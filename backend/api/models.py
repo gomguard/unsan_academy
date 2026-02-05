@@ -134,6 +134,13 @@ class StatType(models.TextChoices):
     BIZ = 'Biz', 'Biz'
 
 
+class QuestCategory(models.TextChoices):
+    DAILY = 'Daily', '일일 미션'
+    WEEKLY = 'Weekly', '주간 미션'
+    CHALLENGE = 'Challenge', '도전 과제'
+    SPECIAL = 'Special', '특별 미션'
+
+
 class Task(models.Model):
     """SOP Tasks that mechanics can complete."""
     title = models.CharField(max_length=200)
@@ -152,6 +159,60 @@ class Task(models.Model):
 
     def __str__(self):
         return f"{self.title} (+{self.stat_reward} {self.stat_type})"
+
+
+class Quest(models.Model):
+    """Mission quests with photo verification for stat growth."""
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    target_stat = models.CharField(max_length=10, choices=StatType.choices)
+    stat_reward = models.IntegerField(default=2, help_text="Stat points rewarded")
+    xp_reward = models.IntegerField(default=20, help_text="XP rewarded")
+    icon = models.CharField(max_length=50, default='Wrench', help_text="Lucide icon name")
+    category = models.CharField(max_length=20, choices=QuestCategory.choices, default=QuestCategory.DAILY)
+
+    # Quest settings
+    requires_photo = models.BooleanField(default=True)
+    cooldown_hours = models.IntegerField(default=24, help_text="Hours before quest can be repeated")
+    max_daily_completions = models.IntegerField(default=1)
+
+    # Difficulty/visibility
+    difficulty = models.IntegerField(default=1, help_text="1-5 difficulty rating")
+    is_active = models.BooleanField(default=True)
+    order = models.IntegerField(default=0, help_text="Display order")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Quest"
+        verbose_name_plural = "Quests"
+        ordering = ['order', 'category', 'title']
+
+    def __str__(self):
+        return f"{self.title} (+{self.stat_reward} {self.target_stat})"
+
+
+class QuestCompletion(models.Model):
+    """Record of completed quests with photo proof."""
+    profile = models.ForeignKey(MechanicProfile, on_delete=models.CASCADE, related_name='quest_completions')
+    quest = models.ForeignKey(Quest, on_delete=models.CASCADE, related_name='completions')
+    proof_image = models.ImageField(upload_to='quest_proofs/', null=True, blank=True)
+    proof_image_url = models.URLField(blank=True, null=True, help_text="External image URL if not using upload")
+    notes = models.TextField(blank=True, help_text="Optional notes from user")
+
+    # Verification status
+    is_verified = models.BooleanField(default=True, help_text="Auto-verified or admin verified")
+    verified_at = models.DateTimeField(null=True, blank=True)
+
+    completed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Quest Completion"
+        verbose_name_plural = "Quest Completions"
+        ordering = ['-completed_at']
+
+    def __str__(self):
+        return f"{self.profile.name} completed {self.quest.title}"
 
 
 class TaskCompletion(models.Model):

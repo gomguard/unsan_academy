@@ -47,8 +47,8 @@ interface NodePosition {
 // ============ CONSTANTS ============
 const NODE_WIDTH = 160;
 const NODE_HEIGHT = 80;
-const LEVEL_GAP = 120;
-const NODE_GAP = 20;
+const LEVEL_GAP = 130;
+const NODE_GAP = 40;
 
 const groupColors: Record<JobGroup, string> = {
   Maintenance: '#3b82f6',
@@ -102,13 +102,28 @@ function calculatePathToTarget(targetId: string): string[] {
 // Build tree structure for a group
 function buildGroupTree(group: JobGroup): TreeNode[] {
   const groupJobs = jobDatabase.filter((j) => j.group === group);
-  const roots = groupJobs.filter(
-    (j) => !j.prerequisiteJobs || j.prerequisiteJobs.length === 0
-  );
+
+  // A job is a "root" in this group if:
+  // 1. It has no prerequisites at all, OR
+  // 2. All its prerequisites are from OTHER groups (cross-group entry point)
+  const roots = groupJobs.filter((j) => {
+    if (!j.prerequisiteJobs || j.prerequisiteJobs.length === 0) return true;
+    // Check if all prerequisites are from other groups
+    const hasInGroupPrereq = j.prerequisiteJobs.some((prereqId) => {
+      const prereq = getJobById(prereqId);
+      return prereq && prereq.group === group;
+    });
+    return !hasInGroupPrereq;
+  });
+
+  // Track which jobs have been added to avoid duplicates
+  const addedJobs = new Set<string>();
 
   function buildNode(job: Job, depth: number): TreeNode {
+    addedJobs.add(job.id);
+
     const children = getJobsThatRequire(job.id)
-      .filter((j) => j.group === group)
+      .filter((j) => j.group === group && !addedJobs.has(j.id))
       .map((child) => buildNode(child, depth + 1));
 
     return {
@@ -527,8 +542,8 @@ function JobDetailPanel({
 export function SkillTree() {
   const [selectedGroup, setSelectedGroup] = useState<JobGroup | 'all'>('all');
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [scale, setScale] = useState(0.8);
-  const [pan, setPan] = useState({ x: 50, y: 50 });
+  const [scale, setScale] = useState(0.5);
+  const [pan, setPan] = useState({ x: 100, y: 20 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
@@ -669,6 +684,13 @@ export function SkillTree() {
     setIsDragging(false);
   }, []);
 
+  // Mouse wheel zoom
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    setScale((s) => Math.min(1.5, Math.max(0.3, s + delta)));
+  }, []);
+
   const groups = Object.entries(groupInfo) as [JobGroup, typeof groupInfo[JobGroup]][];
 
   return (
@@ -693,28 +715,43 @@ export function SkillTree() {
             </div>
 
             {/* Zoom controls */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <button
-                onClick={() => setScale((s) => Math.max(0.3, s - 0.1))}
+                onClick={() => setScale((s) => Math.max(0.3, s - 0.15))}
                 className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                title="축소"
               >
                 <ZoomOut className="w-4 h-4 text-slate-400" />
               </button>
-              <span className="text-sm text-slate-400 w-12 text-center">
-                {Math.round(scale * 100)}%
-              </span>
+              <div className="flex items-center gap-1 bg-slate-800 rounded-lg px-2">
+                {[0.5, 0.75, 1].map((z) => (
+                  <button
+                    key={z}
+                    onClick={() => setScale(z)}
+                    className={`px-2 py-1 text-xs rounded transition-colors ${
+                      Math.abs(scale - z) < 0.1
+                        ? 'bg-yellow-400 text-gray-900 font-bold'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {Math.round(z * 100)}%
+                  </button>
+                ))}
+              </div>
               <button
-                onClick={() => setScale((s) => Math.min(1.5, s + 0.1))}
+                onClick={() => setScale((s) => Math.min(1.5, s + 0.15))}
                 className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                title="확대"
               >
                 <ZoomIn className="w-4 h-4 text-slate-400" />
               </button>
               <button
                 onClick={() => {
-                  setScale(0.8);
-                  setPan({ x: 50, y: 50 });
+                  setScale(0.5);
+                  setPan({ x: 100, y: 20 });
                 }}
                 className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                title="화면 맞춤"
               >
                 <Maximize2 className="w-4 h-4 text-slate-400" />
               </button>
@@ -765,6 +802,7 @@ export function SkillTree() {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onWheel={handleWheel}
       >
         <svg
           width="100%"
@@ -901,10 +939,13 @@ export function SkillTree() {
       </div>
 
       {/* Instructions */}
-      <div className="fixed bottom-4 right-4 bg-slate-800/90 backdrop-blur-sm rounded-xl px-3 py-2 border border-slate-700">
-        <p className="text-xs text-slate-500">
-          드래그: 이동 | 스크롤: 확대/축소 | 클릭: 상세보기
-        </p>
+      <div className="fixed bottom-4 right-4 bg-slate-800/90 backdrop-blur-sm rounded-xl px-4 py-3 border border-slate-700">
+        <p className="text-xs text-slate-400 font-medium mb-1">조작법</p>
+        <div className="space-y-0.5 text-xs text-slate-500">
+          <p>🖱️ 드래그: 화면 이동</p>
+          <p>🔄 마우스 휠: 확대/축소</p>
+          <p>👆 노드 클릭: 상세 정보</p>
+        </div>
       </div>
     </div>
   );

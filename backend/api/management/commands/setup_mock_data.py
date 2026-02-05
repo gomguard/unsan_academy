@@ -2,7 +2,7 @@
 
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from api.models import MechanicProfile, JobCard, Task
+from api.models import MechanicProfile, JobCard, Task, Quest
 
 
 class Command(BaseCommand):
@@ -173,6 +173,157 @@ class Command(BaseCommand):
                 defaults=task_data
             )
         self.stdout.write(self.style.SUCCESS(f'Created {len(tasks_data)} tasks'))
+
+        # Create Quests (Mission Center)
+        quests_data = [
+            # Hand stat quests
+            {
+                'title': '엔진오일 교환 인증',
+                'description': '엔진오일 교환 작업 완료 후 사진을 업로드하세요. 오일 필터와 새 오일이 보이게 촬영해주세요.',
+                'target_stat': 'Hand',
+                'stat_reward': 2,
+                'xp_reward': 20,
+                'icon': 'Droplets',
+                'category': 'Daily',
+                'difficulty': 1,
+                'order': 1,
+            },
+            {
+                'title': '브레이크 패드 교환',
+                'description': '브레이크 패드 교환 작업 완료 후 Before/After 사진을 업로드하세요.',
+                'target_stat': 'Hand',
+                'stat_reward': 3,
+                'xp_reward': 30,
+                'icon': 'Disc',
+                'category': 'Daily',
+                'difficulty': 2,
+                'order': 2,
+            },
+            # Tech stat quests
+            {
+                'title': 'OBD 스캐너 진단 완료',
+                'description': 'OBD-II 스캐너로 차량 진단 후 결과 화면을 캡처하세요. 에러 코드 또는 정상 상태가 보여야 합니다.',
+                'target_stat': 'Tech',
+                'stat_reward': 2,
+                'xp_reward': 25,
+                'icon': 'Cpu',
+                'category': 'Daily',
+                'difficulty': 2,
+                'order': 3,
+            },
+            {
+                'title': '전기 회로 점검',
+                'description': '멀티미터로 전기 회로 점검 후 측정값이 보이는 사진을 업로드하세요.',
+                'target_stat': 'Tech',
+                'stat_reward': 3,
+                'xp_reward': 35,
+                'icon': 'Zap',
+                'category': 'Daily',
+                'difficulty': 3,
+                'order': 4,
+            },
+            # Art stat quests
+            {
+                'title': '거울 마감 광택',
+                'description': '광택 작업 완료 후 차량 보닛에 비친 반사가 보이는 사진을 업로드하세요.',
+                'target_stat': 'Art',
+                'stat_reward': 3,
+                'xp_reward': 30,
+                'icon': 'Sparkles',
+                'category': 'Daily',
+                'difficulty': 2,
+                'order': 5,
+            },
+            {
+                'title': '실내 디테일링 완료',
+                'description': '실내 클리닝 작업 완료 후 깨끗해진 실내 사진을 업로드하세요.',
+                'target_stat': 'Art',
+                'stat_reward': 2,
+                'xp_reward': 20,
+                'icon': 'Brush',
+                'category': 'Daily',
+                'difficulty': 1,
+                'order': 6,
+            },
+            # Speed stat quests
+            {
+                'title': '20분 이내 작업 완료',
+                'description': '간단한 정비 작업을 20분 이내에 완료하고 작업 완료 사진을 업로드하세요.',
+                'target_stat': 'Speed',
+                'stat_reward': 2,
+                'xp_reward': 25,
+                'icon': 'Timer',
+                'category': 'Challenge',
+                'difficulty': 2,
+                'order': 7,
+            },
+            {
+                'title': '3대 연속 정비',
+                'description': '3대의 차량을 연속으로 정비 완료 후 마지막 차량 사진을 업로드하세요.',
+                'target_stat': 'Speed',
+                'stat_reward': 3,
+                'xp_reward': 40,
+                'icon': 'Rocket',
+                'category': 'Challenge',
+                'difficulty': 3,
+                'order': 8,
+            },
+            # Biz stat quests
+            {
+                'title': '50만원 이상 정비 완료',
+                'description': '50만원 이상의 정비 견적서 또는 영수증을 업로드하세요. (개인정보는 가려주세요)',
+                'target_stat': 'Biz',
+                'stat_reward': 3,
+                'xp_reward': 35,
+                'icon': 'Receipt',
+                'category': 'Daily',
+                'difficulty': 2,
+                'order': 9,
+            },
+            {
+                'title': '고객 리뷰 획득',
+                'description': '고객에게 긍정적인 리뷰를 받고 스크린샷을 업로드하세요.',
+                'target_stat': 'Biz',
+                'stat_reward': 2,
+                'xp_reward': 25,
+                'icon': 'Star',
+                'category': 'Daily',
+                'difficulty': 2,
+                'order': 10,
+            },
+            # Weekly challenges
+            {
+                'title': '주간 챌린지: 5가지 스탯 올리기',
+                'description': '이번 주 동안 5가지 스탯을 모두 1회 이상 올리세요.',
+                'target_stat': 'Tech',
+                'stat_reward': 5,
+                'xp_reward': 100,
+                'icon': 'Trophy',
+                'category': 'Weekly',
+                'difficulty': 4,
+                'cooldown_hours': 168,
+                'order': 20,
+            },
+            {
+                'title': '주간 챌린지: 10개 미션 완료',
+                'description': '이번 주 동안 10개의 미션을 완료하세요.',
+                'target_stat': 'Speed',
+                'stat_reward': 5,
+                'xp_reward': 100,
+                'icon': 'Target',
+                'category': 'Weekly',
+                'difficulty': 4,
+                'cooldown_hours': 168,
+                'order': 21,
+            },
+        ]
+
+        for quest_data in quests_data:
+            Quest.objects.get_or_create(
+                title=quest_data['title'],
+                defaults=quest_data
+            )
+        self.stdout.write(self.style.SUCCESS(f'Created {len(quests_data)} quests'))
 
         self.stdout.write(self.style.SUCCESS('Mock data setup complete!'))
         self.stdout.write(f'Demo account: demo_mechanic / demo1234')

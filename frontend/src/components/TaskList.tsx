@@ -4,20 +4,39 @@ import {
   CheckCircle2,
   Circle,
   Camera,
-  ChevronRight,
+  ChevronDown,
   Loader2,
+  Zap,
+  Flame,
 } from 'lucide-react';
 import type { Task, StatType } from '@/types';
 import { useStore } from '@/store/useStore';
 import { simulateCompleteTask } from '@/lib/mockData';
-import { statColors, statLightBgColors, cn } from '@/lib/utils';
+import { statColors, cn } from '@/lib/utils';
+
+const statEmojis: Record<StatType, string> = {
+  T: '🔧',
+  H: '🤲',
+  S: '📚',
+  A: '🎨',
+  B: '💼',
+};
+
+const statNames: Record<StatType, string> = {
+  T: '기술력',
+  H: '손기술',
+  S: '지식',
+  A: '미적감각',
+  B: '비즈니스',
+};
 
 interface TaskItemProps {
   task: Task;
   onComplete: (taskId: number) => Promise<void>;
+  index: number;
 }
 
-function TaskItem({ task, onComplete }: TaskItemProps) {
+function TaskItem({ task, onComplete, index }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,13 +53,14 @@ function TaskItem({ task, onComplete }: TaskItemProps) {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.05 }}
       className={cn(
-        'rounded-xl overflow-hidden border transition-colors',
+        'rounded-xl overflow-hidden border-2 transition-all',
         task.is_completed_today
-          ? 'bg-green-50 border-green-200'
-          : 'bg-white border-gray-200 hover:border-gray-300'
+          ? 'bg-green-500/10 border-green-500/30'
+          : 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
       )}
     >
       <div
@@ -48,50 +68,59 @@ function TaskItem({ task, onComplete }: TaskItemProps) {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {/* Status icon */}
-        <div className="flex-shrink-0">
+        <motion.div
+          className="flex-shrink-0"
+          whileTap={{ scale: 0.9 }}
+        >
           {task.is_completed_today ? (
-            <CheckCircle2 className="w-5 h-5 text-green-500" />
+            <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-white" />
+            </div>
           ) : (
-            <Circle className="w-5 h-5 text-gray-300" />
+            <div className="w-8 h-8 rounded-full border-2 border-slate-600 flex items-center justify-center hover:border-cyan-400 transition-colors">
+              <Circle className="w-4 h-4 text-slate-500" />
+            </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Task info */}
         <div className="flex-1 min-w-0">
           <h4
             className={cn(
-              'font-medium text-sm',
-              task.is_completed_today ? 'text-green-700' : 'text-gray-900'
+              'font-bold text-sm',
+              task.is_completed_today ? 'text-green-400 line-through' : 'text-white'
             )}
           >
             {task.title}
           </h4>
-          <div className="flex items-center gap-2 text-xs mt-0.5">
+          <div className="flex items-center gap-2 mt-1">
+            {/* Stat reward */}
             <span
-              className={cn(
-                'px-1.5 py-0.5 rounded font-medium',
-                statLightBgColors[task.stat_type]
-              )}
-              style={{ color: statColors[task.stat_type] }}
+              className="px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1"
+              style={{
+                backgroundColor: `${statColors[task.stat_type]}20`,
+                color: statColors[task.stat_type],
+              }}
             >
-              +{task.stat_reward} {task.stat_type}
+              {statEmojis[task.stat_type]} +{task.stat_reward}
             </span>
-            <span className="text-gray-400">
-              +{task.xp_reward} XP
+            {/* XP reward */}
+            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400 flex items-center gap-1">
+              <Zap className="w-3 h-3" /> +{task.xp_reward}
             </span>
           </div>
         </div>
 
-        {/* Expand icon */}
+        {/* Right side */}
         <div className="flex items-center gap-2">
           {task.requires_photo && !task.is_completed_today && (
-            <Camera className="w-4 h-4 text-gray-400" />
+            <Camera className="w-4 h-4 text-slate-500" />
           )}
           <motion.div
-            animate={{ rotate: isExpanded ? 90 : 0 }}
+            animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronRight className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-5 h-5 text-slate-500" />
           </motion.div>
         </div>
       </div>
@@ -106,24 +135,30 @@ function TaskItem({ task, onComplete }: TaskItemProps) {
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 pt-0 space-y-3">
-              <p className="text-sm text-gray-500">{task.description}</p>
+              <p className="text-sm text-slate-400">{task.description}</p>
+
+              {/* Stat info */}
+              <div className="flex items-center gap-2 text-xs text-slate-500">
+                <span>{statEmojis[task.stat_type]}</span>
+                <span>{statNames[task.stat_type]} 스탯이 올라갑니다</span>
+              </div>
 
               {!task.is_completed_today && (
                 <div className="flex gap-2">
                   {task.requires_photo && (
                     <button
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-colors"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-700 text-slate-300 text-sm font-bold hover:bg-slate-600 transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleComplete();
                       }}
                     >
                       <Camera className="w-4 h-4" />
-                      사진 업로드
+                      사진 인증
                     </button>
                   )}
                   <button
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-cyan-500 text-white text-sm font-bold hover:bg-cyan-400 transition-colors disabled:opacity-50"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleComplete();
@@ -133,7 +168,7 @@ function TaskItem({ task, onComplete }: TaskItemProps) {
                     {isLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
-                      <CheckCircle2 className="w-4 h-4" />
+                      <Flame className="w-4 h-4" />
                     )}
                     완료하기
                   </button>
@@ -141,9 +176,10 @@ function TaskItem({ task, onComplete }: TaskItemProps) {
               )}
 
               {task.is_completed_today && (
-                <p className="text-center text-sm text-green-600 font-medium py-2">
-                  ✓ 오늘 완료됨
-                </p>
+                <div className="flex items-center justify-center gap-2 py-2 text-green-400 font-bold text-sm">
+                  <CheckCircle2 className="w-4 h-4" />
+                  오늘 완료!
+                </div>
               )}
             </div>
           </motion.div>
@@ -203,35 +239,13 @@ export function TaskList({ tasks }: TaskListProps) {
   const completedTasks = tasks.filter((t) => t.is_completed_today);
 
   return (
-    <div className="space-y-4">
-      {/* Progress */}
-      <div className="flex items-center justify-between text-sm">
-        <span className="font-semibold text-gray-900">오늘의 미션</span>
-        <span className="text-gray-500">
-          {completedTasks.length} / {tasks.length} 완료
-        </span>
-      </div>
-
-      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{
-            width: `${(completedTasks.length / tasks.length) * 100}%`,
-          }}
-          transition={{ duration: 0.5 }}
-          className="h-full bg-green-500 rounded-full"
-        />
-      </div>
-
-      {/* Task list */}
-      <div className="space-y-2">
-        {pendingTasks.map((task) => (
-          <TaskItem key={task.id} task={task} onComplete={handleCompleteTask} />
-        ))}
-        {completedTasks.map((task) => (
-          <TaskItem key={task.id} task={task} onComplete={handleCompleteTask} />
-        ))}
-      </div>
+    <div className="space-y-3">
+      {pendingTasks.map((task, index) => (
+        <TaskItem key={task.id} task={task} onComplete={handleCompleteTask} index={index} />
+      ))}
+      {completedTasks.map((task, index) => (
+        <TaskItem key={task.id} task={task} onComplete={handleCompleteTask} index={pendingTasks.length + index} />
+      ))}
     </div>
   );
 }

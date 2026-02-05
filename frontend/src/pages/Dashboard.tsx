@@ -4,7 +4,7 @@ import { useStore } from '@/store/useStore';
 import { StatRadarChart, StatBar } from '@/components/StatRadarChart';
 import { TierBadge, TierProgress } from '@/components/TierBadge';
 import type { StatType } from '@/types';
-import { Trophy, Target, MessageSquare, GitBranch, ChevronRight, Zap, Flame } from 'lucide-react';
+import { Trophy, Target, GitBranch, ChevronRight, Zap, Flame } from 'lucide-react';
 
 export function Dashboard() {
   const { profile, jobCards } = useStore();
@@ -22,7 +22,6 @@ export function Dashboard() {
   const quickLinks = [
     { to: '/cards', icon: Trophy, label: '🏆 커리어 맵', desc: `${unlockedCount}/${jobCards.length} 카드`, color: 'yellow' },
     { to: '/skill-tree', icon: GitBranch, label: '🌳 스킬 트리', desc: '88개 직업 경로', color: 'purple' },
-    { to: '/community', icon: MessageSquare, label: '💬 커뮤니티', desc: '정보 공유', color: 'pink' },
   ];
 
   return (
