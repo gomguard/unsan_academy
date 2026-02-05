@@ -28,13 +28,13 @@ export function BottomNav() {
                 className={cn(
                   'flex flex-col items-center py-2 px-4 relative',
                   'transition-colors duration-200',
-                  isActive ? 'text-primary-600' : 'text-gray-400 hover:text-gray-600'
+                  isActive ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
                 )}
               >
                 {isActive && (
                   <motion.div
                     layoutId="nav-indicator"
-                    className="absolute -top-px left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary-600 rounded-full"
+                    className="absolute -top-px left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-600 rounded-full"
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}

@@ -7,15 +7,6 @@ import type { JobCard, JobTrack } from '@/types';
 import { cn } from '@/lib/utils';
 import { isCardUnlockable } from '@/lib/mockData';
 
-// Position configurations for each track
-const trackPositions: Record<JobTrack, { x: number }> = {
-  Maintenance: { x: 0 },
-  BodySkin: { x: 1 },
-  HighTech: { x: 2 },
-  Management: { x: 3 },
-  Hybrid: { x: 1.5 }, // Center
-};
-
 interface SkillNodeProps {
   card: JobCard;
   isUnlocked: boolean;
@@ -71,7 +62,7 @@ function SkillNode({ card, isUnlocked, isUnlockable, isHighlighted, onClick, onH
         )}
         style={{
           borderColor: isUnlocked ? card.color : isUnlockable ? card.color : '#e5e7eb',
-          ringColor: isHighlighted ? card.color : undefined,
+          boxShadow: isHighlighted ? `0 0 0 2px white, 0 0 0 4px ${card.color}` : undefined,
         }}
       >
         {/* Icon or silhouette */}
@@ -112,52 +103,6 @@ function SkillNode({ card, isUnlocked, isUnlockable, isHighlighted, onClick, onH
         </div>
       </div>
     </motion.div>
-  );
-}
-
-interface ConnectionLineProps {
-  from: { x: number; y: number };
-  to: { x: number; y: number };
-  isHighlighted: boolean;
-  isCompleted: boolean;
-  color: string;
-}
-
-function ConnectionLine({ from, to, isHighlighted, isCompleted, color }: ConnectionLineProps) {
-  return (
-    <svg
-      className="absolute top-0 left-0 w-full h-full pointer-events-none"
-      style={{ zIndex: 0 }}
-    >
-      <defs>
-        <marker
-          id={`arrowhead-${color.replace('#', '')}`}
-          markerWidth="6"
-          markerHeight="4"
-          refX="5"
-          refY="2"
-          orient="auto"
-        >
-          <polygon
-            points="0 0, 6 2, 0 4"
-            fill={isHighlighted || isCompleted ? color : '#d1d5db'}
-          />
-        </marker>
-      </defs>
-      <motion.line
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 0.5 }}
-        x1={from.x}
-        y1={from.y}
-        x2={to.x}
-        y2={to.y}
-        stroke={isHighlighted || isCompleted ? color : '#d1d5db'}
-        strokeWidth={isHighlighted ? 3 : 2}
-        strokeDasharray={isCompleted ? undefined : '4 4'}
-        markerEnd={`url(#arrowhead-${color.replace('#', '')})`}
-      />
-    </svg>
   );
 }
 
@@ -312,7 +257,7 @@ function CardDetailModal({ card, isUnlocked, isUnlockable, onClose, onUnlock }: 
               ) : isUnlockable ? (
                 <button
                   onClick={onUnlock}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-600 text-white font-medium hover:bg-primary-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
                 >
                   카드 획득하기
                   <ChevronRight className="w-4 h-4" />
@@ -370,7 +315,7 @@ export function SkillTree() {
   const handleUnlock = () => {
     if (!selectedCard || !profile) return;
 
-    const unlockable = isCardUnlockable(selectedCard, profile, jobCards);
+    const unlockable = isCardUnlockable(selectedCard, profile);
     if (!unlockable) return;
 
     unlockCard(selectedCard.id);
@@ -384,7 +329,7 @@ export function SkillTree() {
   if (!profile) return null;
 
   const isUnlocked = (cardId: string) => profile.unlockedCardIds.includes(cardId);
-  const isUnlockable = (card: JobCard) => isCardUnlockable(card, profile, jobCards);
+  const isUnlockable = (card: JobCard) => isCardUnlockable(card, profile);
 
   return (
     <div className="pb-24">
@@ -424,7 +369,7 @@ export function SkillTree() {
                           ? 'bg-gray-300'
                           : 'bg-gray-200',
                         highlightedPath.includes(card.id) && highlightedPath.includes(card.prerequisiteCardIds[0] || '')
-                          && 'bg-primary-400'
+                          && 'bg-blue-400'
                       )}
                       style={{
                         backgroundColor: highlightedPath.includes(card.id) ? card.color : undefined,

@@ -123,7 +123,7 @@ function TaskItem({ task, onComplete }: TaskItemProps) {
                     </button>
                   )}
                   <button
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleComplete();

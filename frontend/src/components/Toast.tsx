@@ -5,7 +5,6 @@ import { statColors } from '@/lib/utils';
 import type { StatType } from '@/types';
 
 interface ToastItemProps {
-  id: string;
   message: string;
   type: 'success' | 'error' | 'info';
   statType?: StatType;
@@ -13,17 +12,11 @@ interface ToastItemProps {
   onClose: () => void;
 }
 
-function ToastItem({ id, message, type, statType, statChange, onClose }: ToastItemProps) {
+function ToastItem({ message, type, statType, statChange, onClose }: ToastItemProps) {
   const icons = {
     success: <CheckCircle className="w-5 h-5 text-green-500" />,
     error: <AlertCircle className="w-5 h-5 text-red-500" />,
     info: <Info className="w-5 h-5 text-blue-500" />,
-  };
-
-  const bgColors = {
-    success: 'bg-green-50 border-green-200',
-    error: 'bg-red-50 border-red-200',
-    info: 'bg-blue-50 border-blue-200',
   };
 
   return (

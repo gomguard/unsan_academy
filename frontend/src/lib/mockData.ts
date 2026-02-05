@@ -293,7 +293,7 @@ export const mockDashboardData: DashboardData = {
 };
 
 // Helper functions
-export function isCardUnlockable(card: JobCard, profile: UserProfile, allCards: JobCard[]): boolean {
+export function isCardUnlockable(card: JobCard, profile: UserProfile): boolean {
   // Check stat requirements
   for (const [stat, required] of Object.entries(card.requiredStats)) {
     if ((profile.stats[stat as keyof typeof profile.stats] || 0) < (required as number)) {

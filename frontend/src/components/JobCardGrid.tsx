@@ -5,15 +5,21 @@ import type { JobCard as JobCardType } from '@/types';
 
 interface JobCardGridProps {
   cards: JobCardType[];
+  unlockedCardIds?: string[];
 }
 
-export function JobCardGrid({ cards }: JobCardGridProps) {
+export function JobCardGrid({ cards, unlockedCardIds = [] }: JobCardGridProps) {
   const [selectedCard, setSelectedCard] = useState<JobCardType | null>(null);
 
-  // Sort: unlocked first, then by title
+  const isUnlocked = (cardId: string) => unlockedCardIds.includes(cardId);
+
+  // Sort: unlocked first, then by rank, then by title
   const sortedCards = [...cards].sort((a, b) => {
-    if (a.is_unlocked && !b.is_unlocked) return -1;
-    if (!a.is_unlocked && b.is_unlocked) return 1;
+    const aUnlocked = isUnlocked(a.id);
+    const bUnlocked = isUnlocked(b.id);
+    if (aUnlocked && !bUnlocked) return -1;
+    if (!aUnlocked && bUnlocked) return 1;
+    if (a.rank !== b.rank) return a.rank - b.rank;
     return a.title.localeCompare(b.title);
   });
 
@@ -42,13 +48,18 @@ export function JobCardGrid({ cards }: JobCardGridProps) {
       >
         {sortedCards.map((card) => (
           <motion.div key={card.id} variants={itemVariants}>
-            <JobCard card={card} onClick={() => setSelectedCard(card)} />
+            <JobCard
+              card={card}
+              isUnlocked={isUnlocked(card.id)}
+              onClick={() => setSelectedCard(card)}
+            />
           </motion.div>
         ))}
       </motion.div>
 
       <JobCardDetailModal
         card={selectedCard}
+        isUnlocked={selectedCard ? isUnlocked(selectedCard.id) : false}
         onClose={() => setSelectedCard(null)}
       />
     </>

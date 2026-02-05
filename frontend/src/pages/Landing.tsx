@@ -1,266 +1,515 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import {
-  Wrench,
-  TrendingUp,
-  Award,
-  Users,
   ChevronRight,
-  CheckCircle,
-  BarChart3,
-  Target,
+  Flame,
+  Zap,
+  Trophy,
+  Users,
+  TrendingUp,
+  Clock,
+  Star,
+  ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 
-const features = [
+// ============ FAKE LIVE DATA ============
+const liveUnlocks = [
+  { name: '김정비', job: 'EV 고전압 배터리 진단사', emoji: '⚡' },
+  { name: '이튜닝', job: 'PPF 인스톨러', emoji: '🎨' },
+  { name: '박기술', job: '테슬라 공인 바디샵', emoji: '🚗' },
+  { name: '최마스터', job: 'ADAS 캘리브레이션 전문가', emoji: '🎯' },
+  { name: '정프로', job: '디테일링 전문가', emoji: '✨' },
+  { name: '강메카닉', job: '변속기 전문가', emoji: '⚙️' },
+  { name: '오센서', job: '자율주행 센서 기술자', emoji: '🔬' },
+  { name: '한코팅', job: '세라믹 코팅 전문가', emoji: '💎' },
+];
+
+const activeMechanics = 342 + Math.floor(Math.random() * 50);
+
+// ============ TRACK DATA ============
+const tracks = [
   {
-    icon: BarChart3,
-    title: '스킬 시각화',
-    description: '5가지 핵심 역량을 한눈에 파악하고 성장 방향을 설정하세요.',
+    id: 'ev',
+    emoji: '⚡',
+    title: 'EV 마스터 트랙',
+    subtitle: '전기차 시대의 핵심 인재',
+    level: 4,
+    avgSalary: '6,000만원+',
+    jobs: 10,
+    color: 'cyan',
+    hot: true,
   },
   {
-    icon: Target,
-    title: '일일 미션',
-    description: 'SOP 기반 미션을 완료하고 경험치와 스탯을 올리세요.',
+    id: 'ppf',
+    emoji: '🎨',
+    title: 'PPF/랩핑 트랙',
+    subtitle: '억대 연봉의 시작',
+    level: 3,
+    avgSalary: '5,000~1억',
+    jobs: 10,
+    color: 'pink',
+    hot: true,
   },
   {
-    icon: Award,
-    title: '잡 카드 수집',
-    description: '전문 분야를 인증받고 레전더리 잡 카드를 획득하세요.',
+    id: 'diag',
+    emoji: '🔍',
+    title: '진단/튜닝 트랙',
+    subtitle: 'ECU부터 ADAS까지',
+    level: 5,
+    avgSalary: '5,500만원+',
+    jobs: 17,
+    color: 'yellow',
   },
   {
-    icon: TrendingUp,
-    title: '티어 시스템',
-    description: 'Bronze부터 Diamond까지, 당신의 성장을 증명하세요.',
+    id: 'body',
+    emoji: '🔧',
+    title: '바디/복원 트랙',
+    subtitle: '장인의 길',
+    level: 3,
+    avgSalary: '4,500만원+',
+    jobs: 12,
+    color: 'orange',
+  },
+  {
+    id: 'biz',
+    emoji: '💼',
+    title: '경영/딜러 트랙',
+    subtitle: '기름 안 묻히고 돈 버는 법',
+    level: 2,
+    avgSalary: '4,000~1억+',
+    jobs: 14,
+    color: 'purple',
+  },
+  {
+    id: 'future',
+    emoji: '🚀',
+    title: 'Next-Gen 트랙',
+    subtitle: '미래 직업 선점',
+    level: 5,
+    avgSalary: '6,000만원+',
+    jobs: 13,
+    color: 'lime',
+    new: true,
   },
 ];
 
-const stats = [
-  { value: '5,000+', label: '등록 정비사' },
-  { value: '50,000+', label: '완료된 미션' },
-  { value: '1,200+', label: '획득된 잡 카드' },
+// ============ CHALLENGES DATA ============
+const challenges = [
+  {
+    id: 1,
+    emoji: '🔥',
+    title: '7일 스킬 챌린지',
+    desc: '매일 1개 미션 완료하기',
+    participants: 1240,
+    dDay: 4,
+    reward: '+500 XP',
+  },
+  {
+    id: 2,
+    emoji: '⚡',
+    title: 'EV 입문 챌린지',
+    desc: '고전압 안전교육 이수',
+    participants: 856,
+    dDay: 7,
+    reward: 'EV 뱃지',
+  },
+  {
+    id: 3,
+    emoji: '🎯',
+    title: '진단왕 챌린지',
+    desc: 'OBD 진단 10회 완료',
+    participants: 432,
+    dDay: 14,
+    reward: '+1,000 XP',
+  },
 ];
 
+// ============ COMPONENTS ============
+function LiveTicker() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % liveUnlocks.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const current = liveUnlocks[currentIndex];
+
+  return (
+    <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-hover rounded-full px-4 py-2 inline-flex items-center gap-2">
+      <span className="relative flex h-2 w-2">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-live opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-status-live"></span>
+      </span>
+      <span className="text-sm text-slate-400">
+        <span className="text-white font-medium">{current.name}</span>님이{' '}
+        <span className="text-pop-yellow font-medium">{current.emoji} {current.job}</span> 카드를 획득했습니다!
+      </span>
+    </div>
+  );
+}
+
+function TrackCard({ track }: { track: typeof tracks[0] }) {
+  const colorClasses = {
+    cyan: 'border-pop-cyan/30 hover:border-pop-cyan/60 shadow-pop-cyan/20 hover:shadow-glow-cyan',
+    pink: 'border-pop-pink/30 hover:border-pop-pink/60 shadow-pop-pink/20 hover:shadow-glow-pink',
+    yellow: 'border-pop-yellow/30 hover:border-pop-yellow/60 shadow-pop/20 hover:shadow-glow-yellow',
+    orange: 'border-pop-orange/30 hover:border-pop-orange/60',
+    purple: 'border-pop-purple/30 hover:border-pop-purple/60',
+    lime: 'border-pop-lime/30 hover:border-pop-lime/60',
+  };
+
+  const textColors = {
+    cyan: 'text-pop-cyan',
+    pink: 'text-pop-pink',
+    yellow: 'text-pop-yellow',
+    orange: 'text-pop-orange',
+    purple: 'text-pop-purple',
+    lime: 'text-pop-lime',
+  };
+
+  return (
+    <motion.div
+      whileHover={{ y: -4, scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className={`relative bg-dark-card rounded-2xl p-6 border-2 transition-all duration-300 cursor-pointer ${colorClasses[track.color as keyof typeof colorClasses]}`}
+    >
+      {/* Badges */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        {track.hot && (
+          <span className="px-2 py-1 bg-status-hot/20 text-status-hot text-xs font-bold rounded-full flex items-center gap-1">
+            <Flame className="w-3 h-3" /> HOT
+          </span>
+        )}
+        {track.new && (
+          <span className="px-2 py-1 bg-status-new/20 text-status-new text-xs font-bold rounded-full flex items-center gap-1">
+            <Sparkles className="w-3 h-3" /> NEW
+          </span>
+        )}
+      </div>
+
+      {/* Emoji Icon */}
+      <div className="text-5xl mb-4">{track.emoji}</div>
+
+      {/* Title */}
+      <h3 className={`text-xl font-bold mb-1 ${textColors[track.color as keyof typeof textColors]}`}>
+        {track.title}
+      </h3>
+      <p className="text-slate-400 text-sm mb-4">{track.subtitle}</p>
+
+      {/* Meta */}
+      <div className="flex items-center gap-4 text-sm">
+        <div className="flex items-center gap-1">
+          <Star className="w-4 h-4 text-pop-yellow" />
+          <span className="text-slate-300">Lv.{track.level}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <TrendingUp className="w-4 h-4 text-pop-lime" />
+          <span className="text-slate-300">{track.avgSalary}</span>
+        </div>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="mt-4 h-2 bg-dark-100 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full bg-gradient-to-r ${
+            track.color === 'cyan' ? 'from-pop-cyan to-pop-cyan/50' :
+            track.color === 'pink' ? 'from-pop-pink to-pop-pink/50' :
+            track.color === 'yellow' ? 'from-pop-yellow to-pop-yellow/50' :
+            track.color === 'orange' ? 'from-pop-orange to-pop-orange/50' :
+            track.color === 'purple' ? 'from-pop-purple to-pop-purple/50' :
+            'from-pop-lime to-pop-lime/50'
+          }`}
+          style={{ width: `${(track.jobs / 20) * 100}%` }}
+        />
+      </div>
+      <p className="text-xs text-slate-500 mt-2">{track.jobs}개 직업 커리어</p>
+    </motion.div>
+  );
+}
+
+function ChallengeCard({ challenge }: { challenge: typeof challenges[0] }) {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      className="bg-dark-card border border-dark-hover rounded-xl p-5 hover:border-pop-yellow/30 transition-all"
+    >
+      <div className="flex items-start justify-between mb-3">
+        <span className="text-3xl">{challenge.emoji}</span>
+        <span className="px-2 py-1 bg-status-urgent/20 text-status-urgent text-xs font-bold rounded-full flex items-center gap-1">
+          <Clock className="w-3 h-3" /> D-{challenge.dDay}
+        </span>
+      </div>
+
+      <h4 className="text-white font-bold mb-1">{challenge.title}</h4>
+      <p className="text-slate-400 text-sm mb-4">{challenge.desc}</p>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1 text-sm text-slate-400">
+          <Users className="w-4 h-4" />
+          <span>{challenge.participants.toLocaleString()}명 참여 중</span>
+        </div>
+        <span className="text-pop-yellow text-sm font-medium">{challenge.reward}</span>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============ MAIN COMPONENT ============
 export function Landing() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-dark">
+      {/* Background Pattern */}
+      <div className="fixed inset-0 bg-grid-pattern bg-[size:60px_60px] opacity-30 pointer-events-none" />
+
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-md border-b border-dark-hover">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <Wrench className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-900">Unsan Academy</span>
+            <span className="text-2xl">🔧</span>
+            <span className="font-bold text-xl text-white">Unsan Academy</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Link
-              to="/dashboard"
-              className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+              to="/jobs"
+              className="text-sm text-slate-400 hover:text-white font-medium transition-colors"
             >
-              로그인
+              🎯 Job Library
             </Link>
             <Link
               to="/dashboard"
-              className="text-sm bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors"
+              className="text-sm bg-pop-yellow text-dark-200 px-4 py-2 rounded-lg font-bold hover:bg-pop-yellow/90 transition-colors"
             >
-              시작하기
+              시작하기 →
             </Link>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-32 pb-20 px-4 relative">
         <div className="max-w-4xl mx-auto text-center">
+          {/* Live Ticker */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <LiveTicker />
+          </motion.div>
+
+          {/* Main Headline */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ delay: 0.1 }}
           >
-            <span className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 bg-primary-50 px-3 py-1 rounded-full mb-6">
-              <Wrench className="w-4 h-4" />
-              자동차 정비사를 위한 성장 플랫폼
-            </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              당신의 정비 실력을
+            <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-tight tracking-tight">
+              Make Real Money.
               <br />
-              <span className="text-primary-600">눈에 보이게</span> 만드세요
+              <span className="text-pop-yellow">Become a Master.</span>
             </h1>
-            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-              Unsan Academy와 함께 체계적으로 성장하세요.
-              스킬 트래킹, 미션 시스템, 잡 카드 컬렉션으로
-              정비사 커리어의 새로운 기준을 경험하세요.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/dashboard"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-700 transition-colors"
-              >
-                무료로 시작하기
-                <ChevronRight className="w-5 h-5" />
-              </Link>
-              <Link
-                to="/dashboard"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
-              >
-                데모 체험하기
-              </Link>
+          </motion.div>
+
+          {/* Sub */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed"
+          >
+            기름쟁이가 아닙니다. <span className="text-white font-medium">기술자</span>입니다.
+            <br />
+            88가지 직업 데이터로 당신의 <span className="text-pop-yellow font-bold">'진짜 몸값'</span>을 찾으세요.
+          </motion.p>
+
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <Link
+              to="/jobs"
+              className="group inline-flex items-center gap-2 bg-pop-yellow text-dark-200 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-glow-yellow transition-all"
+            >
+              <Flame className="w-5 h-5" />
+              내 몸값 진단하기
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-2 bg-dark-card border border-dark-hover text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-pop-yellow/50 transition-all"
+            >
+              <Zap className="w-5 h-5 text-pop-cyan" />
+              무료로 시작하기
+            </Link>
+          </motion.div>
+
+          {/* Social Proof */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mt-12 flex items-center justify-center gap-6 text-sm text-slate-500"
+          >
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-live opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-status-live"></span>
+              </span>
+              <span>🔧 <span className="text-white font-medium">{activeMechanics}</span>명의 기술자가 레벨업 중</span>
+            </div>
+            <div className="hidden sm:block h-4 w-px bg-dark-hover" />
+            <div className="hidden sm:flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-pop-yellow" />
+              <span><span className="text-white font-medium">88</span>개 직업 데이터</span>
             </div>
           </motion.div>
         </div>
       </section>
 
+      {/* Tracks Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="text-pop-yellow font-bold text-sm tracking-wider">🎮 CAREER TRACKS</span>
+            <h2 className="text-4xl font-black text-white mt-2 mb-4">
+              어떤 마스터가 될래?
+            </h2>
+            <p className="text-slate-400 max-w-xl mx-auto">
+              6개의 전문 트랙 중 하나를 선택하고, 체계적으로 레벨업하세요.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tracks.map((track, index) => (
+              <motion.div
+                key={track.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Link to="/jobs">
+                  <TrackCard track={track} />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Challenges Section */}
+      <section className="py-20 px-4 bg-dark-100/50">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="text-pop-pink font-bold text-sm tracking-wider">🏆 ACTIVE CHALLENGES</span>
+            <h2 className="text-4xl font-black text-white mt-2 mb-4">
+              지금 참여하세요
+            </h2>
+            <p className="text-slate-400">
+              챌린지를 완료하고 XP와 특별 뱃지를 획득하세요.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {challenges.map((challenge, index) => (
+              <motion.div
+                key={challenge.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <ChallengeCard challenge={challenge} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="grid grid-cols-3 gap-8">
-            {stats.map((stat, index) => (
+      <section className="py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { emoji: '🔧', value: '88', label: '직업 데이터' },
+              { emoji: '💰', value: '1억+', label: '최고 연봉' },
+              { emoji: '🚀', value: '7', label: '전문 트랙' },
+              { emoji: '⚡', value: '24개', label: '급성장 직업' },
+            ].map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="text-center"
+                className="text-center p-6 bg-dark-card rounded-2xl border border-dark-hover"
               >
-                <div className="text-2xl md:text-3xl font-bold text-gray-900">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
+                <span className="text-3xl mb-2 block">{stat.emoji}</span>
+                <p className="text-3xl font-black text-white">{stat.value}</p>
+                <p className="text-slate-500 text-sm">{stat.label}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              게이미피케이션으로 성장을 즐겁게
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              일상적인 정비 업무가 성장의 기회가 됩니다.
-              미션을 완료하고, 스탯을 올리고, 특별한 잡 카드를 획득하세요.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition-shadow"
-              >
-                <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
-                  <feature.icon className="w-6 h-6 text-primary-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Penta-Stat Preview */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                5가지 핵심 역량,
-                <br />
-                Penta-Stat 시스템
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Tech, Hand, Speed, Art, Biz - 정비사에게 필요한 모든 역량을
-                체계적으로 관리하고 성장시키세요.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  { name: 'Tech', desc: '진단 능력과 기술 지식' },
-                  { name: 'Hand', desc: '정비 손기술과 꼼꼼함' },
-                  { name: 'Speed', desc: '작업 효율성과 속도' },
-                  { name: 'Art', desc: '디테일링과 마감 미학' },
-                  { name: 'Biz', desc: '고객 응대와 영업력' },
-                ].map((stat) => (
-                  <li key={stat.name} className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span className="text-gray-700">
-                      <span className="font-semibold">{stat.name}</span> - {stat.desc}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-              <div className="aspect-square flex items-center justify-center">
-                <svg viewBox="0 0 200 200" className="w-full max-w-[250px]">
-                  {/* Pentagon background */}
-                  <polygon
-                    points="100,20 180,70 160,160 40,160 20,70"
-                    fill="#f3f4f6"
-                    stroke="#e5e7eb"
-                    strokeWidth="2"
-                  />
-                  {/* Stats polygon */}
-                  <polygon
-                    points="100,50 150,80 140,130 60,130 50,80"
-                    fill="#3b82f6"
-                    fillOpacity="0.2"
-                    stroke="#3b82f6"
-                    strokeWidth="2"
-                  />
-                  {/* Labels */}
-                  <text x="100" y="15" textAnchor="middle" className="text-xs fill-gray-500">Tech</text>
-                  <text x="190" y="75" textAnchor="start" className="text-xs fill-gray-500">Hand</text>
-                  <text x="170" y="170" textAnchor="start" className="text-xs fill-gray-500">Speed</text>
-                  <text x="30" y="170" textAnchor="end" className="text-xs fill-gray-500">Art</text>
-                  <text x="10" y="75" textAnchor="end" className="text-xs fill-gray-500">Biz</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
+      {/* Final CTA */}
       <section className="py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            지금 바로 시작하세요
-          </h2>
-          <p className="text-gray-600 mb-8">
-            무료로 가입하고 당신의 정비사 커리어를 레벨업하세요.
-          </p>
-          <Link
-            to="/dashboard"
-            className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-700 transition-colors"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="bg-gradient-to-br from-dark-card to-dark-100 rounded-3xl p-12 border border-pop-yellow/20"
           >
-            무료로 시작하기
-            <ChevronRight className="w-5 h-5" />
-          </Link>
+            <span className="text-5xl mb-4 block">🔥</span>
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
+              기술자의 몸값은<br />
+              <span className="text-pop-yellow">데이터로 증명</span>하는 시대
+            </h2>
+            <p className="text-slate-400 mb-8">
+              더 이상 감으로 커리어를 결정하지 마세요.<br />
+              88개 직업, 실제 연봉, 채용 기업 정보를 확인하세요.
+            </p>
+            <Link
+              to="/jobs"
+              className="inline-flex items-center gap-2 bg-pop-yellow text-dark-200 px-10 py-4 rounded-xl font-bold text-lg hover:shadow-glow-yellow transition-all"
+            >
+              <Flame className="w-5 h-5" />
+              지금 시작하기
+              <ChevronRight className="w-5 h-5" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-gray-200">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="py-12 px-4 border-t border-dark-hover">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-primary-600 rounded flex items-center justify-center">
-              <Wrench className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-semibold text-gray-900">Unsan Academy</span>
+            <span className="text-xl">🔧</span>
+            <span className="font-bold text-white">Unsan Academy</span>
           </div>
-          <p className="text-sm text-gray-500">
-            © 2024 Unsan Academy. All rights reserved.
+          <p className="text-sm text-slate-500">
+            © 2024 Unsan Academy. 자동차 애프터마켓 전문가를 위한 성장 플랫폼.
           </p>
         </div>
       </footer>

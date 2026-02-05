@@ -3,7 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useStore } from '@/store/useStore';
 import { mockDashboardData } from '@/lib/mockData';
 import { BottomNav, ToastContainer } from '@/components';
-import { Landing, Dashboard, Cards, Tasks, Profile } from '@/pages';
+import { Landing, Dashboard, Cards, Tasks, Profile, JobLibrary } from '@/pages';
 
 function App() {
   const location = useLocation();
@@ -17,26 +17,20 @@ function App() {
     setTodayCompletions(mockDashboardData.today_completions);
   }, [setProfile, setJobCards, setDailyTasks, setTodayCompletions]);
 
-  const isLandingPage = location.pathname === '/';
-  const showBottomNav = !isLandingPage;
+  // Pages that don't need bottom nav
+  const noBottomNavPages = ['/', '/jobs'];
+  const showBottomNav = !noBottomNavPages.includes(location.pathname);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Main content */}
-      {isLandingPage ? (
-        <Routes>
-          <Route path="/" element={<Landing />} />
-        </Routes>
-      ) : (
-        <main className="max-w-lg mx-auto px-4 pt-4 pb-20 bg-white min-h-screen">
-          <Routes>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/cards" element={<Cards />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
-        </main>
-      )}
+    <div className="min-h-screen bg-slate-50">
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/jobs" element={<JobLibrary />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/cards" element={<Cards />} />
+        <Route path="/tasks" element={<Tasks />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
 
       {/* Bottom Navigation */}
       {showBottomNav && <BottomNav />}
