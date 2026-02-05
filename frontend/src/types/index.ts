@@ -1,5 +1,15 @@
 export type StatType = 'Tech' | 'Hand' | 'Speed' | 'Art' | 'Biz';
 
+// Salary Simulator Types
+export type JobStatType = 'T' | 'H' | 'S' | 'A' | 'B';
+
+export interface SalaryInfo {
+  base: number;       // Entry level salary in 만원 (e.g., 3500)
+  cap: number;        // Maximum salary in 만원 (e.g., 8000)
+  growthRate: number; // Curve steepness (0.1~0.3)
+  keyStat: JobStatType; // The stat that boosts salary
+}
+
 export type TierType = 'Unranked' | 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond';
 
 export type JobTrack = 'Maintenance' | 'BodySkin' | 'HighTech' | 'Management' | 'Hybrid';

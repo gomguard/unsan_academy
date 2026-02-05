@@ -4,6 +4,7 @@ import type { Job } from '@/lib/jobDatabase';
 import { groupInfo, demandInfo, formatSalaryKorean, getPrerequisiteJobs } from '@/lib/jobDatabase';
 import { getJobPostings, getBadgeStyle, getSourceIcon, type JobPosting } from '@/lib/jobFeed';
 import { cn } from '@/lib/utils';
+import { SalaryChart } from '@/components/SalaryChart';
 
 interface JobDetailModalProps {
   job: Job | null;
@@ -183,6 +184,11 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
                   </span>
                 </div>
               </div>
+            </div>
+
+            {/* Salary Simulator Chart */}
+            <div className="mb-6">
+              <SalaryChart job={job} />
             </div>
 
             {/* LIVE JOB FEED SECTION */}
