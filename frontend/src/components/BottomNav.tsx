@@ -1,13 +1,12 @@
 import { motion } from 'framer-motion';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, Briefcase, ClipboardList, MessageSquare, User } from 'lucide-react';
+import { Home, Briefcase, ClipboardList, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/dashboard', icon: Home, label: '홈' },
   { path: '/jobs', icon: Briefcase, label: '직업' },
   { path: '/tasks', icon: ClipboardList, label: '미션' },
-  { path: '/community', icon: MessageSquare, label: '커뮤니티' },
   { path: '/profile', icon: User, label: '프로필' },
 ];
 

@@ -4,7 +4,7 @@ import { useStore } from '@/store/useStore';
 import { StatRadarChart, StatBar } from '@/components/StatRadarChart';
 import { TierBadge, TierProgress } from '@/components/TierBadge';
 import type { StatType } from '@/types';
-import { Trophy, Target, MessageSquare, ChevronRight, Zap, Flame } from 'lucide-react';
+import { Trophy, Target, MessageSquare, GitBranch, ChevronRight, Zap, Flame } from 'lucide-react';
 
 export function Dashboard() {
   const { profile, jobCards } = useStore();
@@ -21,7 +21,7 @@ export function Dashboard() {
 
   const quickLinks = [
     { to: '/cards', icon: Trophy, label: '🏆 커리어 맵', desc: `${unlockedCount}/${jobCards.length} 카드`, color: 'yellow' },
-    { to: '/tasks', icon: Target, label: '🎯 일일 미션', desc: '오늘의 도전', color: 'cyan' },
+    { to: '/skill-tree', icon: GitBranch, label: '🌳 스킬 트리', desc: '88개 직업 경로', color: 'purple' },
     { to: '/community', icon: MessageSquare, label: '💬 커뮤니티', desc: '정보 공유', color: 'pink' },
   ];
 
@@ -95,6 +95,7 @@ export function Dashboard() {
                 className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                   link.color === 'yellow' ? 'bg-yellow-400/20' :
                   link.color === 'cyan' ? 'bg-cyan-400/20' :
+                  link.color === 'purple' ? 'bg-purple-400/20' :
                   'bg-pink-400/20'
                 }`}
               >
@@ -102,6 +103,7 @@ export function Dashboard() {
                   className={`w-6 h-6 ${
                     link.color === 'yellow' ? 'text-yellow-400' :
                     link.color === 'cyan' ? 'text-cyan-400' :
+                    link.color === 'purple' ? 'text-purple-400' :
                     'text-pink-400'
                   }`}
                 />
