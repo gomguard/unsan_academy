@@ -7,56 +7,36 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Dark Base
-        dark: {
-          DEFAULT: '#0f0f23',
-          50: '#1e1e2e',
-          100: '#181825',
-          200: '#11111b',
-          300: '#0f0f23',
-          400: '#0a0a14',
-          surface: '#1e1e2e',
-          card: '#262638',
-          hover: '#2e2e42',
-        },
+        // Dark Base - using flat naming
+        'dark': '#0f0f23',
+        'dark-50': '#1e1e2e',
+        'dark-100': '#181825',
+        'dark-200': '#11111b',
+        'dark-300': '#0f0f23',
+        'dark-400': '#0a0a14',
+        'dark-surface': '#1e1e2e',
+        'dark-card': '#262638',
+        'dark-hover': '#2e2e42',
         // Pop Accent Colors (Neon)
-        pop: {
-          yellow: '#fef08a',      // Neon Yellow
-          lime: '#a3e635',        // Electric Lime
-          pink: '#f472b6',        // Hot Pink
-          cyan: '#22d3ee',        // Cyan
-          orange: '#fb923c',      // Bright Orange
-          purple: '#c084fc',      // Electric Purple
-        },
-        // Primary (Yellow accent like Nomad)
-        primary: {
-          DEFAULT: '#fef08a',
-          50: '#fefce8',
-          100: '#fef9c3',
-          200: '#fef08a',
-          300: '#fde047',
-          400: '#facc15',
-          500: '#eab308',
-          600: '#ca8a04',
-          700: '#a16207',
-        },
-        // Tier Colors (Gamified)
-        tier: {
-          unranked: '#6b7280',
-          bronze: '#cd7f32',
-          silver: '#c0c0c0',
-          gold: '#ffd700',
-          platinum: '#22d3ee',
-          diamond: '#c084fc',
-          master: '#f472b6',
-        },
+        'pop-yellow': '#fef08a',
+        'pop-lime': '#a3e635',
+        'pop-pink': '#f472b6',
+        'pop-cyan': '#22d3ee',
+        'pop-orange': '#fb923c',
+        'pop-purple': '#c084fc',
         // Status Colors
-        status: {
-          live: '#22c55e',
-          hot: '#ef4444',
-          new: '#3b82f6',
-          urgent: '#f97316',
-        }
+        'status-live': '#22c55e',
+        'status-hot': '#ef4444',
+        'status-new': '#3b82f6',
+        'status-urgent': '#f97316',
+        // Tier Colors
+        'tier-unranked': '#6b7280',
+        'tier-bronze': '#cd7f32',
+        'tier-silver': '#c0c0c0',
+        'tier-gold': '#ffd700',
+        'tier-platinum': '#22d3ee',
+        'tier-diamond': '#c084fc',
+        'tier-master': '#f472b6',
       },
       fontFamily: {
         sans: ['Pretendard', 'system-ui', 'sans-serif'],
@@ -85,10 +65,6 @@ export default {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
         }
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'grid-pattern': 'linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px)',
       },
     },
   },

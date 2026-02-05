@@ -336,7 +336,7 @@ export function Landing() {
           >
             <Link
               to="/jobs"
-              className="group inline-flex items-center gap-2 bg-pop-yellow text-dark-200 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-glow-yellow transition-all"
+              className="group inline-flex items-center gap-2 bg-yellow-300 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all"
             >
               <Flame className="w-5 h-5" />
               내 몸값 진단하기
@@ -344,9 +344,9 @@ export function Landing() {
             </Link>
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-2 bg-dark-card border border-dark-hover text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-pop-yellow/50 transition-all"
+              className="inline-flex items-center gap-2 bg-slate-800 border border-slate-700 text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-yellow-400 transition-all"
             >
-              <Zap className="w-5 h-5 text-pop-cyan" />
+              <Zap className="w-5 h-5 text-cyan-400" />
               무료로 시작하기
             </Link>
           </motion.div>

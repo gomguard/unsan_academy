@@ -4,12 +4,10 @@ import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
   Search,
-  Filter,
   TrendingUp,
   Flame,
   Sparkles,
   Star,
-  ChevronRight,
   X,
 } from 'lucide-react';
 import { jobDatabase, groupInfo, getHotTrendJobs, getBestStarterJobs, formatSalaryKorean } from '@/lib/jobDatabase';
@@ -48,7 +46,7 @@ function LiveToast() {
           initial={{ opacity: 0, y: 50, x: '-50%' }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="fixed bottom-24 left-1/2 z-50 bg-dark-card border border-pop-yellow/30 rounded-xl px-4 py-3 shadow-glow-yellow"
+          className="fixed bottom-24 left-1/2 z-50 bg-slate-800 border border-yellow-400/30 rounded-xl px-4 py-3 shadow-lg"
         >
           <div className="flex items-center gap-3">
             <span className="text-2xl">{current.emoji}</span>
@@ -56,7 +54,7 @@ function LiveToast() {
               <p className="text-sm text-slate-400">
                 <span className="text-white font-medium">{current.name}</span>님이 방금
               </p>
-              <p className="text-pop-yellow font-bold">{current.job} 카드 획득!</p>
+              <p className="text-yellow-300 font-bold">{current.job} 카드 획득!</p>
             </div>
           </div>
         </motion.div>
@@ -76,35 +74,35 @@ function JobCard({ job, onClick }: { job: Job; onClick: () => void }) {
       whileHover={{ y: -4, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="bg-dark-card border border-dark-hover rounded-2xl p-5 cursor-pointer
-                 hover:border-pop-yellow/30 transition-all group"
+      className="bg-slate-800 border border-slate-700 rounded-2xl p-5 cursor-pointer
+                 hover:border-yellow-400/30 transition-all group"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <span className="text-3xl">{group.icon}</span>
         <div className="flex gap-1">
           {isHot && (
-            <span className="badge badge-hot text-[10px]">
-              <Flame className="w-3 h-3 mr-0.5" /> HOT
+            <span className="px-2 py-1 bg-red-500/20 text-red-400 text-[10px] font-bold rounded-full flex items-center gap-0.5">
+              <Flame className="w-3 h-3" /> HOT
             </span>
           )}
           {isNew && (
-            <span className="badge badge-new text-[10px]">
-              <Sparkles className="w-3 h-3 mr-0.5" /> NEW
+            <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-[10px] font-bold rounded-full flex items-center gap-0.5">
+              <Sparkles className="w-3 h-3" /> NEW
             </span>
           )}
         </div>
       </div>
 
       {/* Title */}
-      <h3 className="text-white font-bold mb-1 group-hover:text-pop-yellow transition-colors">
+      <h3 className="text-white font-bold mb-1 group-hover:text-yellow-300 transition-colors">
         {job.title}
       </h3>
       <p className="text-slate-500 text-sm line-clamp-2 mb-4">{job.description}</p>
 
       {/* Meta */}
       <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center gap-1 text-pop-lime">
+        <div className="flex items-center gap-1 text-green-400">
           <TrendingUp className="w-4 h-4" />
           <span className="font-medium">{formatSalaryKorean(job.salaryRange)}</span>
         </div>
@@ -134,15 +132,20 @@ export function JobLibrary() {
   const groups = Object.entries(groupInfo) as [JobGroup, typeof groupInfo[JobGroup]][];
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-slate-900">
       {/* Background */}
-      <div className="fixed inset-0 bg-grid-pattern bg-[size:60px_60px] opacity-30 pointer-events-none" />
+      <div className="fixed inset-0 opacity-30 pointer-events-none"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px)',
+          backgroundSize: '60px 60px'
+        }}
+      />
 
       {/* Live Toast */}
       <LiveToast />
 
       {/* Hero */}
-      <section className="relative pt-20 pb-12 px-4 border-b border-dark-hover">
+      <section className="relative pt-20 pb-12 px-4 border-b border-slate-800">
         <div className="max-w-6xl mx-auto">
           {/* Back link */}
           <Link
@@ -159,7 +162,7 @@ export function JobLibrary() {
           >
             <div className="flex items-center gap-3 mb-4">
               <span className="text-4xl">🎯</span>
-              <span className="badge badge-yellow">88개 직업</span>
+              <span className="px-3 py-1 bg-yellow-400/20 text-yellow-300 text-sm font-bold rounded-full">88개 직업</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
@@ -168,7 +171,7 @@ export function JobLibrary() {
             <p className="text-xl text-slate-400 max-w-2xl">
               자동차 애프터마켓의 모든 커리어 경로.
               <br />
-              <span className="text-pop-yellow font-medium">연봉, 시장 수요, 필요 역량</span>을 한눈에.
+              <span className="text-yellow-300 font-medium">연봉, 시장 수요, 필요 역량</span>을 한눈에.
             </p>
           </motion.div>
 
@@ -186,7 +189,7 @@ export function JobLibrary() {
                 placeholder="직업 검색... (예: EV, PPF, 튜닝)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-dark pl-12"
+                className="w-full h-12 pl-12 pr-4 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-yellow-400/50 transition-all"
               />
               {searchQuery && (
                 <button
@@ -210,8 +213,8 @@ export function JobLibrary() {
               onClick={() => setSelectedGroup('all')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 selectedGroup === 'all'
-                  ? 'bg-pop-yellow text-dark-200'
-                  : 'bg-dark-card border border-dark-hover text-slate-400 hover:text-white hover:border-pop-yellow/30'
+                  ? 'bg-yellow-300 text-gray-900'
+                  : 'bg-slate-800 border border-slate-700 text-slate-400 hover:text-white hover:border-yellow-400/30'
               }`}
             >
               전체 ({jobDatabase.length})
@@ -224,8 +227,8 @@ export function JobLibrary() {
                   onClick={() => setSelectedGroup(key)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
                     selectedGroup === key
-                      ? 'bg-pop-yellow text-dark-200'
-                      : 'bg-dark-card border border-dark-hover text-slate-400 hover:text-white hover:border-pop-yellow/30'
+                      ? 'bg-yellow-300 text-gray-900'
+                      : 'bg-slate-800 border border-slate-700 text-slate-400 hover:text-white hover:border-yellow-400/30'
                   }`}
                 >
                   <span>{info.icon}</span>
@@ -242,7 +245,7 @@ export function JobLibrary() {
         <section className="py-12 px-4">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center gap-2 mb-6">
-              <Flame className="w-5 h-5 text-status-hot" />
+              <Flame className="w-5 h-5 text-red-500" />
               <h2 className="text-2xl font-bold text-white">🔥 급성장 직업 TOP 6</h2>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -263,10 +266,10 @@ export function JobLibrary() {
 
       {/* Starter Jobs Section */}
       {selectedGroup === 'all' && !searchQuery && (
-        <section className="py-12 px-4 bg-dark-100/50">
+        <section className="py-12 px-4 bg-slate-800/50">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center gap-2 mb-6">
-              <Star className="w-5 h-5 text-pop-yellow" />
+              <Star className="w-5 h-5 text-yellow-400" />
               <h2 className="text-2xl font-bold text-white">⭐ 입문 추천 직업</h2>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -317,7 +320,7 @@ export function JobLibrary() {
                   setSearchQuery('');
                   setSelectedGroup('all');
                 }}
-                className="mt-4 text-pop-yellow hover:underline"
+                className="mt-4 text-yellow-300 hover:underline"
               >
                 필터 초기화
               </button>
@@ -327,14 +330,14 @@ export function JobLibrary() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-dark-hover">
+      <footer className="py-12 px-4 border-t border-slate-800">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-slate-500 mb-4">
             데이터는 2024년 자동차 애프터마켓 산업 시장 조사를 기반으로 합니다.
           </p>
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-pop-yellow hover:underline"
+            className="inline-flex items-center gap-2 text-yellow-300 hover:underline"
           >
             <ArrowLeft className="w-4 h-4" />
             Unsan Academy로 돌아가기

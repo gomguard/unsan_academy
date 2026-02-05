@@ -28,11 +28,11 @@ function LiveJobPostingCard({ posting }: { posting: JobPosting }) {
       href={posting.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="block p-3 bg-dark-100 hover:bg-dark-hover rounded-xl transition-colors group border border-dark-hover"
+      className="block p-3 bg-slate-800/50 hover:bg-slate-700 rounded-xl transition-colors group border border-slate-700"
     >
       <div className="flex items-start gap-3">
         {/* Company Logo */}
-        <div className="w-10 h-10 bg-dark-card rounded-lg flex items-center justify-center text-xl border border-dark-hover">
+        <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-xl border border-slate-700">
           {posting.companyLogo || '🏢'}
         </div>
 
@@ -52,7 +52,7 @@ function LiveJobPostingCard({ posting }: { posting: JobPosting }) {
           </div>
           <p className="text-slate-300 text-sm line-clamp-1">{posting.title}</p>
           <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
-            {posting.salary && <span className="text-pop-lime">{posting.salary}</span>}
+            {posting.salary && <span className="text-green-400">{posting.salary}</span>}
             {posting.location && (
               <>
                 <span>•</span>
@@ -67,8 +67,8 @@ function LiveJobPostingCard({ posting }: { posting: JobPosting }) {
           <span className={cn(
             'px-2 py-0.5 rounded text-xs font-bold',
             posting.deadline.startsWith('D-') && parseInt(posting.deadline.slice(2)) <= 5
-              ? 'bg-status-hot/20 text-status-hot'
-              : 'bg-dark-hover text-slate-400'
+              ? 'bg-red-500/20 text-red-500'
+              : 'bg-slate-700 text-slate-400'
           )}>
             {posting.deadline}
           </span>
@@ -80,7 +80,7 @@ function LiveJobPostingCard({ posting }: { posting: JobPosting }) {
       </div>
 
       {/* Apply indicator */}
-      <div className="mt-2 flex items-center justify-end gap-1 text-pop-yellow text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="mt-2 flex items-center justify-end gap-1 text-yellow-300 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
         <span>지원하기</span>
         <ExternalLink className="w-3 h-3" />
       </div>
@@ -102,10 +102,10 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
       ? TrendingDown
       : Minus;
 
-  const demandColor = job.marketDemand === 'Explosive' ? 'text-status-hot' :
-                      job.marketDemand === 'High' ? 'text-pop-orange' :
+  const demandColor = job.marketDemand === 'Explosive' ? 'text-red-500' :
+                      job.marketDemand === 'High' ? 'text-orange-400' :
                       job.marketDemand === 'Declining' ? 'text-slate-500' :
-                      'text-pop-lime';
+                      'text-green-400';
 
   return (
     <AnimatePresence>
@@ -113,7 +113,7 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-dark-200/80 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/80 backdrop-blur-sm"
         onClick={onClose}
       >
         <motion.div
@@ -121,7 +121,7 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 100 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-lg bg-dark-card rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto border border-dark-hover"
+          className="relative w-full max-w-lg bg-slate-800 rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto border border-slate-700"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header with gradient */}
@@ -134,7 +134,7 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 bg-dark-card/80 hover:bg-dark-hover rounded-full transition-colors"
+              className="absolute top-4 right-4 p-2 bg-slate-800/80 hover:bg-slate-700 rounded-full transition-colors"
             >
               <X className="w-5 h-5 text-slate-400" />
             </button>
@@ -142,7 +142,7 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
             {/* Icon and group */}
             <div className="flex items-center gap-4">
               <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-dark-card shadow-lg border border-dark-hover"
+                className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-slate-800 shadow-lg border border-slate-700"
               >
                 {group.icon}
               </div>
@@ -166,15 +166,15 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
             {/* Stats grid */}
             <div className="grid grid-cols-2 gap-4 mb-6">
               {/* Salary */}
-              <div className="bg-dark-100 rounded-xl p-4 border border-dark-hover">
+              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
                 <p className="text-sm text-slate-500 mb-1">예상 연봉</p>
-                <p className="text-xl font-bold text-pop-lime">
+                <p className="text-xl font-bold text-green-400">
                   {formatSalaryKorean(job.salaryRange)}
                 </p>
               </div>
 
               {/* Demand */}
-              <div className="bg-dark-100 rounded-xl p-4 border border-dark-hover">
+              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
                 <p className="text-sm text-slate-500 mb-1">시장 수요</p>
                 <div className="flex items-center gap-2">
                   <DemandIcon className={cn('w-5 h-5', demandColor)} />
@@ -189,9 +189,9 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Flame className="w-4 h-4 text-status-hot" />
+                  <Flame className="w-4 h-4 text-red-500" />
                   <h3 className="font-bold text-white">현재 채용 중인 공고</h3>
-                  <span className="text-[10px] px-1.5 py-0.5 bg-status-live/20 text-status-live rounded font-bold animate-pulse">
+                  <span className="text-[10px] px-1.5 py-0.5 bg-green-500/20 text-green-500 rounded font-bold animate-pulse">
                     LIVE
                   </span>
                 </div>
@@ -207,9 +207,9 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
                   ))}
                 </div>
               ) : (
-                <div className="p-4 bg-dark-100 rounded-xl text-center border border-dark-hover">
+                <div className="p-4 bg-slate-800/50 rounded-xl text-center border border-slate-700">
                   <p className="text-slate-500 text-sm mb-2">현재 채용 공고 대기 중</p>
-                  <button className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-pop-yellow text-dark-200 text-sm font-bold rounded-lg hover:shadow-glow-yellow transition-all">
+                  <button className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-300 text-gray-900 text-sm font-bold rounded-lg hover:bg-yellow-400 transition-all">
                     <Bell className="w-3.5 h-3.5" />
                     알림 받기
                   </button>
@@ -228,7 +228,7 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
                   {job.hiringCompanies.map((company) => (
                     <span
                       key={company}
-                      className="px-3 py-1.5 bg-pop-cyan/10 text-pop-cyan rounded-lg text-sm font-medium border border-pop-cyan/20"
+                      className="px-3 py-1.5 bg-cyan-400/10 text-cyan-400 rounded-lg text-sm font-medium border border-cyan-400/20"
                     >
                       {company}
                     </span>
@@ -249,7 +249,7 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
                     <button
                       key={prereq.id}
                       onClick={() => onJobClick?.(prereq)}
-                      className="w-full flex items-center gap-3 p-3 bg-dark-100 hover:bg-dark-hover rounded-xl transition-colors text-left border border-dark-hover"
+                      className="w-full flex items-center gap-3 p-3 bg-slate-800/50 hover:bg-slate-700 rounded-xl transition-colors text-left border border-slate-700"
                     >
                       <span className="text-xl">{groupInfo[prereq.group].icon}</span>
                       <div className="flex-1">
@@ -277,7 +277,7 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
                       <div className="w-14 text-sm">
                         <span className="font-medium text-slate-300">{stat.ko}</span>
                       </div>
-                      <div className="flex-1 h-2 bg-dark-100 rounded-full overflow-hidden">
+                      <div className="flex-1 h-2 bg-slate-800/50 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${value}%` }}
@@ -307,7 +307,7 @@ export function JobDetailModal({ job, onClose, onJobClick }: JobDetailModalProps
 
             {/* Data Source */}
             {job.source && (
-              <div className="mb-6 p-3 bg-dark-100 rounded-xl border border-dark-hover">
+              <div className="mb-6 p-3 bg-slate-800/50 rounded-xl border border-slate-700">
                 <div className="flex items-center gap-2 text-slate-500">
                   <FileText className="w-4 h-4" />
                   <span className="text-xs">출처: {job.source}</span>
