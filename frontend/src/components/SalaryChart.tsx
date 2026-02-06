@@ -40,11 +40,11 @@ function CustomTooltip({ active, payload }: any) {
   if (!data) return null;
 
   return (
-    <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-xl">
-      <p className="text-slate-400 text-xs mb-1">연봉</p>
-      <p className="text-white font-bold">{data.salary?.toLocaleString()}만원</p>
+    <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-lg">
+      <p className="text-gray-500 text-xs mb-1">연봉</p>
+      <p className="text-gray-900 font-bold">{data.salary?.toLocaleString()}만원</p>
       {data.isUser > 0 && (
-        <p className="text-yellow-300 text-xs mt-1 font-medium">
+        <p className="text-amber-600 text-xs mt-1 font-medium">
           내 예상 연봉
         </p>
       )}
@@ -66,19 +66,19 @@ function StatSlider({
 }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-slate-400 w-8">{label}</span>
+      <span className="text-xs text-gray-500 w-8">{label}</span>
       <input
         type="range"
         min="10"
         max="100"
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="flex-1 h-1.5 bg-slate-700 rounded-full appearance-none cursor-pointer"
+        className="flex-1 h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer"
         style={{
           accentColor: color,
         }}
       />
-      <span className="text-xs font-medium text-white w-8 text-right">{value}</span>
+      <span className="text-xs font-medium text-gray-900 w-8 text-right">{value}</span>
     </div>
   );
 }
@@ -149,7 +149,7 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
         market_max: job.salaryRange.max,
         percentile: percentile,
         years_experience: years,
-        user_stats: customStats,
+        user_stats: customStats as unknown as Record<string, number>,
       };
 
       const response = await fetch(`${API_BASE}/reports/?profile_id=${profile.id}`, {
@@ -193,11 +193,11 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
   };
 
   const statColors: Record<string, string> = {
-    T: '#22d3ee',
-    H: '#f472b6',
-    S: '#a3e635',
-    A: '#c084fc',
-    B: '#fef08a',
+    T: '#0891b2',
+    H: '#ec4899',
+    S: '#84cc16',
+    A: '#a855f7',
+    B: '#f59e0b',
   };
 
   const statLabels: Record<string, string> = {
@@ -212,13 +212,13 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-slate-800/50 rounded-xl p-4 border border-slate-700"
+      className="bg-white rounded-xl p-4 shadow-sm ring-1 ring-black/5"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-green-400" />
-          <h3 className="font-bold text-white text-sm">연봉 시뮬레이터</h3>
+          <TrendingUp className="w-4 h-4 text-green-500" />
+          <h3 className="font-bold text-gray-900 text-sm">연봉 시뮬레이터</h3>
         </div>
         <span
           className="px-2 py-0.5 rounded text-xs font-bold"
@@ -229,16 +229,16 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
       </div>
 
       {/* Main Result */}
-      <div className="flex items-center justify-between mb-4 p-3 bg-slate-900/50 rounded-lg">
+      <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
         <div>
-          <p className="text-slate-400 text-xs">내 예상 연봉 ({years}년차)</p>
-          <p className="text-2xl font-black text-yellow-300">
+          <p className="text-gray-500 text-xs">내 예상 연봉 ({years}년차)</p>
+          <p className="text-2xl font-black text-amber-600">
             {userSalary.toLocaleString()}
-            <span className="text-sm font-normal text-slate-400">만원</span>
+            <span className="text-sm font-normal text-gray-500">만원</span>
           </p>
         </div>
         <div className="text-right">
-          <p className="text-slate-400 text-xs">시장 내 위치</p>
+          <p className="text-gray-500 text-xs">시장 내 위치</p>
           <p className="text-lg font-bold" style={{ color: tierInfo.color }}>
             상위 {100 - percentile}%
           </p>
@@ -257,9 +257,9 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
             </defs>
             <XAxis
               dataKey="salary"
-              tick={{ fill: '#64748b', fontSize: 10 }}
+              tick={{ fill: '#6b7280', fontSize: 10 }}
               tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
-              axisLine={{ stroke: '#334155' }}
+              axisLine={{ stroke: '#e5e7eb' }}
               tickLine={false}
             />
             <YAxis hide />
@@ -276,19 +276,19 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
             {/* User Position Bar */}
             <Bar
               dataKey="isUser"
-              fill="#fef08a"
+              fill="#f59e0b"
               radius={[4, 4, 0, 0]}
               name="내 위치"
             />
             {/* Reference Lines */}
             <ReferenceLine
               x={job.salaryRange.min}
-              stroke="#64748b"
+              stroke="#9ca3af"
               strokeDasharray="3 3"
             />
             <ReferenceLine
               x={job.salaryRange.max}
-              stroke="#64748b"
+              stroke="#9ca3af"
               strokeDasharray="3 3"
             />
           </ComposedChart>
@@ -299,19 +299,19 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
       <div className="flex items-center justify-center gap-6 mb-4 text-xs">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded bg-blue-500/50" />
-          <span className="text-slate-400">시장 분포</span>
+          <span className="text-gray-500">시장 분포</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-yellow-300" />
-          <span className="text-slate-400">내 예상 연봉</span>
+          <div className="w-3 h-3 rounded bg-amber-500" />
+          <span className="text-gray-500">내 예상 연봉</span>
         </div>
       </div>
 
       {/* Years Slider */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-slate-400">경력 연차</span>
-          <span className="text-sm font-bold text-white">{years}년</span>
+          <span className="text-xs text-gray-500">경력 연차</span>
+          <span className="text-sm font-bold text-gray-900">{years}년</span>
         </div>
         <input
           type="range"
@@ -319,10 +319,10 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
           max="15"
           value={years}
           onChange={(e) => setYears(Number(e.target.value))}
-          className="w-full h-2 bg-slate-700 rounded-full appearance-none cursor-pointer"
-          style={{ accentColor: '#22d3ee' }}
+          className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer"
+          style={{ accentColor: '#0891b2' }}
         />
-        <div className="flex justify-between text-[10px] text-slate-500 mt-1">
+        <div className="flex justify-between text-[10px] text-gray-400 mt-1">
           <span>신입</span>
           <span>5년</span>
           <span>10년</span>
@@ -333,7 +333,7 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
       {/* Advanced Settings Toggle */}
       <button
         onClick={() => setShowAdvanced(!showAdvanced)}
-        className="w-full flex items-center justify-center gap-1 py-2 text-xs text-slate-400 hover:text-white transition-colors"
+        className="w-full flex items-center justify-center gap-1 py-2 text-xs text-gray-500 hover:text-gray-900 transition-colors"
       >
         <User className="w-3 h-3" />
         내 스탯 조정하기
@@ -346,12 +346,12 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          className="mt-3 p-3 bg-slate-900/50 rounded-lg space-y-3"
+          className="mt-3 p-3 bg-gray-50 rounded-lg space-y-3"
         >
           <div className="flex items-center gap-2 mb-2">
-            <Target className="w-3 h-3 text-cyan-400" />
-            <span className="text-xs text-slate-400">
-              핵심 스탯: <span className="text-cyan-400 font-medium">{statLabels[salaryInfo.keyStat]}</span>
+            <Target className="w-3 h-3 text-cyan-600" />
+            <span className="text-xs text-gray-500">
+              핵심 스탯: <span className="text-cyan-600 font-medium">{statLabels[salaryInfo.keyStat]}</span>
             </span>
           </div>
           {(Object.keys(customStats) as Array<keyof JobStats>).map((key) => (
@@ -360,17 +360,17 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
               label={statLabels[key]}
               value={customStats[key]}
               onChange={(v) => setCustomStats({ ...customStats, [key]: v })}
-              color={key === salaryInfo.keyStat ? statColors[key] : '#64748b'}
+              color={key === salaryInfo.keyStat ? statColors[key] : '#9ca3af'}
             />
           ))}
         </motion.div>
       )}
 
       {/* Salary Gap Calculator */}
-      <div className="mt-4 pt-3 border-t border-slate-700">
+      <div className="mt-4 pt-3 border-t border-gray-200">
         <button
           onClick={() => setShowSalaryInput(!showSalaryInput)}
-          className="w-full flex items-center justify-center gap-2 py-2 text-xs text-slate-400 hover:text-white transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2 text-xs text-gray-500 hover:text-gray-900 transition-colors"
         >
           <DollarSign className="w-3 h-3" />
           현재 연봉 비교하기
@@ -387,7 +387,7 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
             >
               {/* Salary Input */}
               <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-green-400" />
+                <DollarSign className="w-4 h-4 text-green-500" />
                 <input
                   type="number"
                   placeholder="현재 연봉 (만원)"
@@ -407,9 +407,9 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
                       }
                     }
                   }}
-                  className="flex-1 h-10 px-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-green-400/50 transition-all text-sm"
+                  className="flex-1 h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-400 transition-all text-sm"
                 />
-                <span className="text-slate-400 text-sm">만원</span>
+                <span className="text-gray-500 text-sm">만원</span>
               </div>
 
               {/* Gap Visualization */}
@@ -417,32 +417,32 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 rounded-xl bg-slate-900/80 border border-slate-600"
+                  className="p-4 rounded-xl bg-gray-50 border border-gray-200"
                 >
                   {/* Two Points Display */}
                   <div className="flex items-center justify-between mb-4">
                     {/* Point A: Current */}
                     <div className="text-center">
-                      <p className="text-xs text-slate-400 mb-1">Point A: 현재</p>
-                      <p className="text-lg font-bold text-slate-300">
+                      <p className="text-xs text-gray-500 mb-1">Point A: 현재</p>
+                      <p className="text-lg font-bold text-gray-700">
                         {currentSalary.toLocaleString()}
-                        <span className="text-xs font-normal text-slate-500">만원</span>
+                        <span className="text-xs font-normal text-gray-400">만원</span>
                       </p>
                     </div>
 
                     {/* Arrow */}
                     <div className="flex-1 flex items-center justify-center px-2">
-                      <div className="w-full h-0.5 bg-gradient-to-r from-slate-500 to-yellow-400 relative">
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-6 border-t-transparent border-b-transparent border-l-yellow-400" />
+                      <div className="w-full h-0.5 bg-gradient-to-r from-gray-400 to-amber-500 relative">
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-6 border-t-transparent border-b-transparent border-l-amber-500" />
                       </div>
                     </div>
 
                     {/* Point B: Market */}
                     <div className="text-center">
-                      <p className="text-xs text-slate-400 mb-1">Point B: 시장가치</p>
-                      <p className="text-lg font-bold text-yellow-300">
+                      <p className="text-xs text-gray-500 mb-1">Point B: 시장가치</p>
+                      <p className="text-lg font-bold text-amber-600">
                         {userSalary.toLocaleString()}
-                        <span className="text-xs font-normal text-slate-500">만원</span>
+                        <span className="text-xs font-normal text-gray-400">만원</span>
                       </p>
                     </div>
                   </div>
@@ -457,44 +457,44 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
                       <div
                         className={`p-3 rounded-lg ${
                           isUnderpaid
-                            ? 'bg-red-500/10 border border-red-500/30'
-                            : 'bg-green-500/10 border border-green-500/30'
+                            ? 'bg-red-50 border border-red-200'
+                            : 'bg-green-50 border border-green-200'
                         }`}
                       >
                         <div className="flex items-center gap-2 mb-1">
                           {isUnderpaid ? (
                             <>
-                              <TrendingDown className="w-4 h-4 text-red-400" />
-                              <span className="text-red-400 font-bold text-sm">
+                              <TrendingDown className="w-4 h-4 text-red-500" />
+                              <span className="text-red-600 font-bold text-sm">
                                 📉 시장가치보다 {Math.abs(gap).toLocaleString()}만원 낮습니다!
                               </span>
                             </>
                           ) : gap < 0 ? (
                             <>
-                              <Trophy className="w-4 h-4 text-green-400" />
-                              <span className="text-green-400 font-bold text-sm">
+                              <Trophy className="w-4 h-4 text-green-500" />
+                              <span className="text-green-600 font-bold text-sm">
                                 🏆 시장가치를 {Math.abs(gap).toLocaleString()}만원 상회합니다!
                               </span>
                             </>
                           ) : (
                             <>
-                              <Target className="w-4 h-4 text-yellow-400" />
-                              <span className="text-yellow-400 font-bold text-sm">
+                              <Target className="w-4 h-4 text-amber-500" />
+                              <span className="text-amber-600 font-bold text-sm">
                                 ⚖️ 시장가치와 일치합니다!
                               </span>
                             </>
                           )}
                         </div>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-gray-600">
                           {isUnderpaid ? (
                             <>
-                              <AlertTriangle className="w-3 h-3 inline mr-1 text-red-400" />
-                              역량 대비 <span className="text-red-400 font-medium">{gapPercent}%</span> 저평가 상태입니다.
+                              <AlertTriangle className="w-3 h-3 inline mr-1 text-red-500" />
+                              역량 대비 <span className="text-red-600 font-medium">{gapPercent}%</span> 저평가 상태입니다.
                               이직 또는 연봉 협상을 고려해보세요.
                             </>
                           ) : gap < 0 ? (
                             <>
-                              현재 시장 평균보다 <span className="text-green-400 font-medium">{Math.abs(parseFloat(gapPercent))}%</span> 높은 연봉을 받고 있습니다.
+                              현재 시장 평균보다 <span className="text-green-600 font-medium">{Math.abs(parseFloat(gapPercent))}%</span> 높은 연봉을 받고 있습니다.
                               훌륭합니다!
                             </>
                           ) : (
@@ -515,8 +515,8 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
                     disabled={isSaving || savedReport !== null}
                     className={`w-full mt-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all ${
                       savedReport
-                        ? 'bg-green-500/20 text-green-400 cursor-default'
-                        : 'bg-yellow-400 text-gray-900 hover:bg-yellow-300'
+                        ? 'bg-green-100 text-green-600 cursor-default'
+                        : 'bg-amber-400 text-gray-900 hover:bg-amber-500'
                     }`}
                   >
                     {savedReport ? (
@@ -541,7 +541,7 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
                   {savedReport && savedReport.status === 'None' && (
                     <button
                       onClick={() => setShowVerificationModal(true)}
-                      className="w-full mt-2 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 bg-slate-700 text-slate-300 hover:bg-slate-600 transition-colors"
+                      className="w-full mt-2 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
                     >
                       <Shield className="w-4 h-4" />
                       인증하고 뱃지 받기
@@ -549,13 +549,13 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
                   )}
 
                   {savedReport && savedReport.status === 'Pending' && (
-                    <div className="w-full mt-2 py-2 px-3 rounded-lg text-xs text-center bg-yellow-500/10 text-yellow-400 border border-yellow-500/30">
+                    <div className="w-full mt-2 py-2 px-3 rounded-lg text-xs text-center bg-amber-50 text-amber-700 border border-amber-200">
                       인증 심사 중입니다
                     </div>
                   )}
 
                   {savedReport && savedReport.status === 'Verified' && (
-                    <div className="w-full mt-2 py-2 px-3 rounded-lg text-xs text-center bg-green-500/10 text-green-400 border border-green-500/30 flex items-center justify-center gap-1">
+                    <div className="w-full mt-2 py-2 px-3 rounded-lg text-xs text-center bg-green-50 text-green-700 border border-green-200 flex items-center justify-center gap-1">
                       <Shield className="w-3 h-3" />
                       인증 완료됨
                     </div>
@@ -578,7 +578,7 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
       )}
 
       {/* Market Range Info */}
-      <div className="mt-4 pt-3 border-t border-slate-700 flex justify-between text-xs text-slate-500">
+      <div className="mt-4 pt-3 border-t border-gray-200 flex justify-between text-xs text-gray-500">
         <span>시장 최소: {job.salaryRange.min.toLocaleString()}만원</span>
         <span>시장 최대: {job.salaryRange.max.toLocaleString()}만원</span>
       </div>

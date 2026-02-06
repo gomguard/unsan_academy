@@ -1,6 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { BentoCard } from '@/components/ui/BentoCard';
+import { Heading, Subheading } from '@/components/ui/Typography';
+import { Button } from '@/components/ui/Button';
 import {
   ArrowLeft,
   Clock,
@@ -12,15 +15,13 @@ import {
   Award,
   BookOpen,
   CheckCircle,
-  Calendar,
-  DollarSign,
   Briefcase,
   MessageSquare,
   ChevronRight,
   Building,
   GraduationCap,
 } from 'lucide-react';
-import { getCourseById, getAcademyById, getCoursesByAcademy, formatCoursePrice } from '@/lib/educationData';
+import { getCourseById, getAcademyById, getCoursesByAcademy } from '@/lib/educationData';
 import { getJobById } from '@/lib/jobDatabase';
 import { getReviewsForJob } from '@/lib/careerData';
 import { courseCategoryInfo, courseTypeInfo } from '@/types';
@@ -28,6 +29,11 @@ import { courseCategoryInfo, courseTypeInfo } from '@/types';
 export function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [courseId]);
 
   const course = useMemo(() => (courseId ? getCourseById(courseId) : null), [courseId]);
   const academy = useMemo(() => (course ? getAcademyById(course.academyId) : null), [course]);
@@ -56,15 +62,12 @@ export function CourseDetail() {
 
   if (!course || !academy) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-400 mb-4">과정을 찾을 수 없습니다</p>
-          <button
-            onClick={() => navigate('/education')}
-            className="text-yellow-400 hover:underline"
-          >
+          <p className="text-gray-500 mb-4">과정을 찾을 수 없습니다</p>
+          <Button variant="ghost" onClick={() => navigate('/education')}>
             교육 허브로 돌아가기
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -75,85 +78,87 @@ export function CourseDetail() {
   const isFree = course.price === 0;
 
   return (
-    <div className="min-h-screen bg-slate-900 pb-24 md:pb-8">
+    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
       {/* Header */}
       <div
-        className="relative pt-4 pb-8"
+        className="relative pt-4 pb-10"
         style={{
-          background: `linear-gradient(135deg, ${categoryInfo.color}20, ${categoryInfo.color}05)`,
+          background: `linear-gradient(135deg, ${categoryInfo.color}08, ${categoryInfo.color}03, transparent)`,
         }}
       >
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(168,85,247,0.03),transparent_50%)]" />
+
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 z-10 p-2 rounded-full bg-slate-800/80 text-white hover:bg-slate-700 transition-colors"
+          className="absolute top-4 left-4 z-10 p-2.5 rounded-xl bg-white/80 text-gray-700 hover:bg-white transition-colors shadow-sm ring-1 ring-black/5"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
 
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-12">
+        <div className="relative max-w-2xl mx-auto px-4 sm:px-6 pt-14">
           {/* Academy Badge */}
           <Link
             to={`/education/academy/${academy.id}`}
-            className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-800/80 rounded-full mb-4 hover:bg-slate-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl mb-5 hover:bg-gray-50 transition-colors shadow-sm ring-1 ring-black/5"
           >
-            <span className="text-lg">{academy.logo}</span>
-            <span className="text-sm text-slate-300">{academy.name}</span>
+            <span className="text-xl">{academy.logo}</span>
+            <span className="text-sm font-medium text-gray-700">{academy.name}</span>
             {academy.isPartner && (
-              <BadgeCheck className="w-4 h-4 text-cyan-400" />
+              <BadgeCheck className="w-4 h-4 text-cyan-500" />
             )}
           </Link>
 
           {/* Title */}
-          <h1 className="text-2xl font-bold text-white mb-3">{course.title}</h1>
+          <Heading as="h1" size="2xl" className="mb-4">{course.title}</Heading>
 
           {/* Badges */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-5">
             <span
-              className="px-3 py-1 rounded-full text-sm font-medium"
+              className="px-4 py-1.5 rounded-xl text-sm font-semibold"
               style={{
-                backgroundColor: `${categoryInfo.color}30`,
+                backgroundColor: `${categoryInfo.color}20`,
                 color: categoryInfo.color,
               }}
             >
               {categoryInfo.icon} {categoryInfo.name}
             </span>
             <span
-              className="px-3 py-1 rounded-full text-sm font-medium"
+              className="px-4 py-1.5 rounded-xl text-sm font-semibold"
               style={{
-                backgroundColor: `${typeInfo.color}30`,
+                backgroundColor: `${typeInfo.color}20`,
                 color: typeInfo.color,
               }}
             >
               {typeInfo.icon} {typeInfo.name}
             </span>
             {isFree && (
-              <span className="px-3 py-1 bg-green-500/30 text-green-400 rounded-full text-sm font-bold">
+              <span className="px-4 py-1.5 bg-green-500/20 text-green-400 rounded-xl text-sm font-bold ring-1 ring-green-500/30">
                 무료
               </span>
             )}
           </div>
 
           {/* Quick Stats */}
-          <div className="flex flex-wrap gap-4 text-sm text-slate-400">
-            <div className="flex items-center gap-1">
+          <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-1.5">
               <Clock className="w-4 h-4" />
               {course.duration}
             </div>
             {course.rating && (
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                <span className="text-yellow-400 font-medium">{course.rating}</span>
+              <div className="flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <span className="text-amber-600 font-medium">{course.rating}</span>
               </div>
             )}
             {course.enrollCount && (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <Users className="w-4 h-4" />
                 {course.enrollCount.toLocaleString()}명 수강
               </div>
             )}
             {academy.location && (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4" />
                 {academy.location}
               </div>
@@ -167,23 +172,24 @@ export function CourseDetail() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-slate-800 border border-slate-700 rounded-2xl p-5"
+          className="relative overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5 p-6"
         >
-          <div className="flex items-center justify-between mb-4">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-transparent to-orange-50 pointer-events-none" />
+          <div className="relative flex items-center justify-between mb-5">
             <div>
-              <p className="text-sm text-slate-400 mb-1">수강료</p>
-              <p className={`text-3xl font-black ${isFree ? 'text-green-400' : 'text-white'}`}>
+              <Subheading>수강료</Subheading>
+              <p className={`text-4xl font-black mt-1 ${isFree ? 'text-green-600' : 'text-gray-900'}`}>
                 {isFree ? '무료' : `${course.price.toLocaleString()}만원`}
               </p>
               {course.priceNote && (
-                <p className="text-sm text-emerald-400 mt-1">{course.priceNote}</p>
+                <p className="text-sm text-emerald-600 mt-1">{course.priceNote}</p>
               )}
             </div>
             <a
               href={course.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold rounded-xl transition-colors"
+              className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-gray-900 font-bold rounded-xl transition-all shadow-lg shadow-orange-500/20"
             >
               수강 신청하기
               <ExternalLink className="w-5 h-5" />
@@ -195,7 +201,7 @@ export function CourseDetail() {
             {course.tags.map(tag => (
               <span
                 key={tag}
-                className="px-3 py-1 bg-slate-700 text-slate-300 rounded-lg text-sm"
+                className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-sm"
               >
                 {tag}
               </span>
@@ -204,164 +210,155 @@ export function CourseDetail() {
         </motion.div>
 
         {/* Description */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-slate-800 border border-slate-700 rounded-2xl p-5"
+        <BentoCard
+          eyebrow="Course Overview"
+          title={
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-purple-500" />
+              과정 소개
+            </div>
+          }
         >
-          <h2 className="font-bold text-white mb-3 flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-purple-400" />
-            과정 소개
-          </h2>
-          <p className="text-slate-300 leading-relaxed">{course.description}</p>
-        </motion.div>
+          <p className="text-gray-600 leading-relaxed mt-3">{course.description}</p>
+        </BentoCard>
 
         {/* Certifications */}
         {course.certifications && course.certifications.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="bg-slate-800 border border-slate-700 rounded-2xl p-5"
+          <BentoCard
+            eyebrow="Certifications"
+            title={
+              <div className="flex items-center gap-2">
+                <Award className="w-5 h-5 text-amber-500" />
+                취득 가능 자격증
+              </div>
+            }
           >
-            <h2 className="font-bold text-white mb-3 flex items-center gap-2">
-              <Award className="w-5 h-5 text-yellow-400" />
-              취득 가능 자격증
-            </h2>
-            <div className="space-y-2">
+            <div className="space-y-2 mt-3">
               {course.certifications.map((cert, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl"
+                  className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl"
                 >
-                  <CheckCircle className="w-5 h-5 text-yellow-400" />
-                  <span className="text-white font-medium">{cert}</span>
+                  <CheckCircle className="w-5 h-5 text-amber-500" />
+                  <span className="text-gray-900 font-medium">{cert}</span>
                 </div>
               ))}
             </div>
-          </motion.div>
+          </BentoCard>
         )}
 
         {/* Target Jobs */}
         {targetJobs.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-slate-800 border border-slate-700 rounded-2xl p-5"
+          <BentoCard
+            eyebrow="Career Path"
+            title={
+              <div className="flex items-center gap-2">
+                <Briefcase className="w-5 h-5 text-cyan-500" />
+                이 과정으로 진출 가능한 직업
+              </div>
+            }
           >
-            <h2 className="font-bold text-white mb-3 flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-cyan-400" />
-              이 과정으로 진출 가능한 직업
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 mt-3">
               {targetJobs.map(job => (
                 <Link
                   key={job.id}
                   to={`/career/${job.id}`}
-                  className="p-3 bg-slate-900/50 hover:bg-slate-700 rounded-xl transition-colors group"
+                  className="p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group border border-gray-200"
                 >
-                  <p className="font-medium text-white group-hover:text-yellow-400 transition-colors">
+                  <p className="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">
                     {job.title}
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-gray-500 mt-1">
                     {job.salaryRange.min.toLocaleString()} ~ {job.salaryRange.max.toLocaleString()}만원
                   </p>
                 </Link>
               ))}
             </div>
-          </motion.div>
+          </BentoCard>
         )}
 
         {/* Related Reviews */}
         {relatedReviews.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="bg-slate-800 border border-slate-700 rounded-2xl p-5"
+          <BentoCard
+            eyebrow="Reviews"
+            title={
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-green-500" />
+                  현직자 후기
+                </div>
+                <Link
+                  to="/community"
+                  className="text-xs text-amber-600 flex items-center gap-1 hover:text-amber-700"
+                >
+                  더보기 <ChevronRight className="w-3 h-3" />
+                </Link>
+              </div>
+            }
           >
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="font-bold text-white flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-green-400" />
-                현직자 후기
-              </h2>
-              <Link
-                to="/community"
-                className="text-xs text-yellow-400 flex items-center gap-1"
-              >
-                더보기 <ChevronRight className="w-3 h-3" />
-              </Link>
-            </div>
-            <div className="space-y-3">
+            <div className="space-y-3 mt-3">
               {relatedReviews.map(review => {
                 const job = getJobById(review.jobId);
                 return (
-                  <div key={review.id} className="p-3 bg-slate-900/50 rounded-xl">
+                  <div key={review.id} className="p-4 bg-gray-50 rounded-xl border border-gray-200">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium text-white">{review.authorName}</span>
-                      <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-xs text-slate-500">{job?.title}</span>
+                      <span className="font-semibold text-gray-900">{review.authorName}</span>
+                      <BadgeCheck className="w-4 h-4 text-emerald-500" />
+                      <span className="text-xs text-gray-500">{job?.title}</span>
                     </div>
-                    <p className="text-sm text-slate-300 line-clamp-2">{review.advice}</p>
+                    <p className="text-sm text-gray-600 line-clamp-2">{review.advice}</p>
                   </div>
                 );
               })}
             </div>
-          </motion.div>
+          </BentoCard>
         )}
 
         {/* Academy Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-slate-800 border border-slate-700 rounded-2xl p-5"
+        <BentoCard
+          eyebrow="Academy"
+          title={
+            <div className="flex items-center gap-2">
+              <Building className="w-5 h-5 text-purple-500" />
+              교육기관 정보
+            </div>
+          }
         >
-          <h2 className="font-bold text-white mb-4 flex items-center gap-2">
-            <Building className="w-5 h-5 text-purple-400" />
-            교육기관 정보
-          </h2>
           <Link
             to={`/education/academy/${academy.id}`}
-            className="flex items-center gap-4 p-4 bg-slate-900/50 hover:bg-slate-700 rounded-xl transition-colors group"
+            className="flex items-center gap-4 p-5 mt-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group border border-gray-200"
           >
-            <div className="w-16 h-16 bg-slate-700 rounded-xl flex items-center justify-center text-3xl">
+            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm ring-1 ring-black/5">
               {academy.logo}
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-bold text-white group-hover:text-yellow-400 transition-colors">
+                <h3 className="font-bold text-gray-900 group-hover:text-amber-600 transition-colors">
                   {academy.name}
                 </h3>
                 {academy.isPartner && (
-                  <span className="text-xs px-2 py-0.5 bg-cyan-500/20 text-cyan-400 rounded-full">
+                  <span className="text-xs px-2 py-1 bg-cyan-100 text-cyan-700 rounded-lg">
                     파트너
                   </span>
                 )}
               </div>
-              <p className="text-sm text-slate-400 line-clamp-1">{academy.description}</p>
-              <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
+              <p className="text-sm text-gray-500 line-clamp-1">{academy.description}</p>
+              <div className="flex items-center gap-2 mt-1.5 text-xs text-gray-400">
                 <MapPin className="w-3 h-3" />
                 {academy.location}
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-yellow-400" />
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-amber-600" />
           </Link>
-        </motion.div>
+        </BentoCard>
 
         {/* Related Courses */}
         {relatedCourses.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-          >
-            <h2 className="font-bold text-white mb-4 flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-purple-400" />
-              이 기관의 다른 과정
-            </h2>
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <GraduationCap className="w-5 h-5 text-purple-500" />
+              <Subheading>이 기관의 다른 과정</Subheading>
+            </div>
             <div className="space-y-3">
               {relatedCourses.map(c => {
                 const cTypeInfo = courseTypeInfo[c.type];
@@ -369,26 +366,26 @@ export function CourseDetail() {
                   <Link
                     key={c.id}
                     to={`/education/course/${c.id}`}
-                    className="flex items-center gap-4 p-4 bg-slate-800 border border-slate-700 hover:border-slate-600 rounded-xl transition-colors group"
+                    className="flex items-center gap-4 p-5 bg-white shadow-sm ring-1 ring-black/5 hover:ring-amber-400/50 rounded-2xl transition-colors group"
                   >
                     <div className="flex-1">
-                      <p className="font-medium text-white group-hover:text-yellow-400 transition-colors">
+                      <p className="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">
                         {c.title}
                       </p>
-                      <div className="flex items-center gap-3 mt-1 text-sm text-slate-500">
+                      <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
                         <span>{cTypeInfo.icon} {cTypeInfo.name}</span>
                         <span>{c.duration}</span>
-                        <span className={c.price === 0 ? 'text-green-400' : 'text-white'}>
+                        <span className={c.price === 0 ? 'text-green-600 font-medium' : 'text-gray-900'}>
                           {c.price === 0 ? '무료' : `${c.price}만원`}
                         </span>
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-slate-500" />
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
                   </Link>
                 );
               })}
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
     </div>

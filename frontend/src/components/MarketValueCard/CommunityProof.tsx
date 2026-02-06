@@ -23,22 +23,22 @@ export function CommunityProof({
   return (
     <div className="px-4 pb-4 space-y-3">
       {/* Data Source Badge */}
-      <div className="flex items-center justify-between p-3 bg-slate-900/50 rounded-xl border border-slate-700/50">
+      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-            <Users className="w-5 h-5 text-cyan-400" />
+          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <Users className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <p className="text-xs text-slate-500">커뮤니티 데이터 기반</p>
-            <p className="text-sm text-white font-medium">
-              <span className="text-cyan-400">{reviewCount}</span>개 리뷰 ·{' '}
-              <span className="text-emerald-400">{verifiedCount}</span>명 인증
+            <p className="text-xs text-gray-500">커뮤니티 데이터 기반</p>
+            <p className="text-sm text-gray-900 font-medium">
+              <span className="text-blue-600">{reviewCount}</span>개 리뷰 ·{' '}
+              <span className="text-emerald-600">{verifiedCount}</span>명 인증
             </p>
           </div>
         </div>
         <Link
           to={`/career/${jobId}`}
-          className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
+          className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1"
         >
           전체 보기
           <ChevronRight className="w-3 h-3" />
@@ -51,34 +51,34 @@ export function CommunityProof({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="p-4 bg-slate-800/50 rounded-xl border border-slate-700"
+          className="p-4 bg-white rounded-xl border border-gray-200 shadow-sm"
         >
           <div className="flex items-center gap-2 mb-2">
-            <MessageSquare className="w-4 h-4 text-yellow-400" />
-            <span className="text-xs text-slate-400">현직자 리뷰</span>
+            <MessageSquare className="w-4 h-4 text-amber-500" />
+            <span className="text-xs text-gray-500">현직자 리뷰</span>
           </div>
 
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-lg shrink-0">
+            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-lg shrink-0">
               👤
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium text-white text-sm">{topReview.authorName}</span>
+                <span className="font-medium text-gray-900 text-sm">{topReview.authorName}</span>
                 {topReview.verified && (
-                  <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <BadgeCheck className="w-3.5 h-3.5 text-emerald-500" />
                 )}
                 <div className="flex items-center gap-0.5">
                   {Array.from({ length: topReview.rating }).map((_, i) => (
-                    <Star key={i} className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                    <Star key={i} className="w-3 h-3 text-amber-400 fill-amber-400" />
                   ))}
                 </div>
               </div>
-              <p className="text-sm text-slate-300 line-clamp-2 mb-2">
+              <p className="text-sm text-gray-600 line-clamp-2 mb-2">
                 "{topReview.title}"
               </p>
               {topReview.salaryGrowth && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500/20 rounded text-xs text-emerald-400 font-medium">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 rounded text-xs text-emerald-700 font-medium">
                   <TrendingUp className="w-3 h-3" />
                   연봉 {topReview.salaryGrowth}
                 </span>
@@ -88,7 +88,7 @@ export function CommunityProof({
 
           <Link
             to={`/career/${jobId}`}
-            className="mt-3 block text-center py-2 text-xs text-yellow-400 hover:text-yellow-300 transition-colors"
+            className="mt-3 block text-center py-2 text-xs text-amber-600 hover:text-amber-700 transition-colors"
           >
             리뷰 {reviewCount}개 더 보기 →
           </Link>
@@ -101,24 +101,24 @@ export function CommunityProof({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="p-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl border border-yellow-500/20"
+          className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200"
         >
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">🚀</span>
-            <span className="text-xs text-yellow-400 font-medium">성공 스토리</span>
+            <span className="text-xs text-amber-700 font-medium">성공 스토리</span>
           </div>
 
-          <p className="font-bold text-white mb-2">{successStory.title}</p>
-          <p className="text-sm text-slate-400 line-clamp-2 mb-3">{successStory.summary}</p>
+          <p className="font-bold text-gray-900 mb-2">{successStory.title}</p>
+          <p className="text-sm text-gray-600 line-clamp-2 mb-3">{successStory.summary}</p>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-emerald-400">{successStory.salaryChange.split('(')[0]}</span>
-              <span className="text-xs text-slate-500">({successStory.totalDuration})</span>
+              <span className="text-lg font-bold text-emerald-600">{successStory.salaryChange.split('(')[0]}</span>
+              <span className="text-xs text-gray-500">({successStory.totalDuration})</span>
             </div>
             <Link
               to={`/career/${jobId}`}
-              className="text-xs text-yellow-400 hover:text-yellow-300 flex items-center gap-1"
+              className="text-xs text-amber-600 hover:text-amber-700 flex items-center gap-1"
             >
               스토리 읽기
               <ChevronRight className="w-3 h-3" />
@@ -129,11 +129,11 @@ export function CommunityProof({
 
       {/* No Data State */}
       {!topReview && !successStory && (
-        <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 text-center">
-          <p className="text-sm text-slate-400 mb-2">아직 이 직군의 리뷰가 없습니다</p>
+        <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
+          <p className="text-sm text-gray-500 mb-2">아직 이 직군의 리뷰가 없습니다</p>
           <Link
             to="/community"
-            className="text-xs text-yellow-400 hover:text-yellow-300"
+            className="text-xs text-amber-600 hover:text-amber-700"
           >
             첫 번째 리뷰 작성하기 →
           </Link>

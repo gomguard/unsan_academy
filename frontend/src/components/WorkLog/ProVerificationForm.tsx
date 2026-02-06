@@ -74,20 +74,20 @@ export function ProVerificationForm({ onSubmit }: ProVerificationFormProps) {
   const selectedTypeInfo = verificationTypes.find(t => t.id === selectedType);
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5">
+    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-          <Camera className="w-4 h-4 text-purple-400" />
+        <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+          <Camera className="w-4 h-4 text-purple-600" />
         </div>
         <div>
-          <h3 className="font-bold text-white">Pro Verification</h3>
-          <p className="text-xs text-slate-500">사진 인증으로 스탯 부스트</p>
+          <h3 className="font-bold text-gray-900">Pro Verification</h3>
+          <p className="text-xs text-gray-500">사진 인증으로 스탯 부스트</p>
         </div>
       </div>
 
       {/* Task Type Selection */}
       <div className="mb-4">
-        <label className="block text-sm text-slate-400 mb-2">인증 유형</label>
+        <label className="block text-sm text-gray-600 mb-2">인증 유형</label>
         <div className="grid grid-cols-2 gap-2">
           {verificationTypes.map(type => (
             <button
@@ -95,14 +95,14 @@ export function ProVerificationForm({ onSubmit }: ProVerificationFormProps) {
               onClick={() => setSelectedType(type.id)}
               className={`p-3 rounded-xl border-2 text-left transition-all ${
                 selectedType === type.id
-                  ? 'border-purple-500 bg-purple-500/10'
-                  : 'border-slate-700 hover:border-slate-600'
+                  ? 'border-purple-500 bg-purple-50'
+                  : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <p className={`text-sm font-medium ${selectedType === type.id ? 'text-purple-400' : 'text-white'}`}>
+              <p className={`text-sm font-medium ${selectedType === type.id ? 'text-purple-600' : 'text-gray-900'}`}>
                 {type.label}
               </p>
-              <p className="text-xs text-green-400">{type.statBoost}</p>
+              <p className="text-xs text-emerald-600">{type.statBoost}</p>
             </button>
           ))}
         </div>
@@ -112,13 +112,13 @@ export function ProVerificationForm({ onSubmit }: ProVerificationFormProps) {
       <div className="grid grid-cols-2 gap-3 mb-4">
         {/* Before Image */}
         <div>
-          <label className="block text-sm text-slate-400 mb-2">작업 전</label>
+          <label className="block text-sm text-gray-600 mb-2">작업 전</label>
           <div
             onClick={() => beforeInputRef.current?.click()}
             className={`relative aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all ${
               beforeImage
-                ? 'border-purple-500/50 bg-purple-500/10'
-                : 'border-slate-600 hover:border-slate-500'
+                ? 'border-purple-400 bg-purple-50'
+                : 'border-gray-300 hover:border-gray-400 bg-gray-50'
             }`}
           >
             {beforeImage ? (
@@ -140,8 +140,8 @@ export function ProVerificationForm({ onSubmit }: ProVerificationFormProps) {
               </>
             ) : (
               <>
-                <ImageIcon className="w-6 h-6 text-slate-500 mb-1" />
-                <span className="text-xs text-slate-500">탭하여 업로드</span>
+                <ImageIcon className="w-6 h-6 text-gray-400 mb-1" />
+                <span className="text-xs text-gray-500">탭하여 업로드</span>
               </>
             )}
           </div>
@@ -157,13 +157,13 @@ export function ProVerificationForm({ onSubmit }: ProVerificationFormProps) {
 
         {/* After Image */}
         <div>
-          <label className="block text-sm text-slate-400 mb-2">작업 후</label>
+          <label className="block text-sm text-gray-600 mb-2">작업 후</label>
           <div
             onClick={() => afterInputRef.current?.click()}
             className={`relative aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all ${
               afterImage
-                ? 'border-purple-500/50 bg-purple-500/10'
-                : 'border-slate-600 hover:border-slate-500'
+                ? 'border-purple-400 bg-purple-50'
+                : 'border-gray-300 hover:border-gray-400 bg-gray-50'
             }`}
           >
             {afterImage ? (
@@ -185,8 +185,8 @@ export function ProVerificationForm({ onSubmit }: ProVerificationFormProps) {
               </>
             ) : (
               <>
-                <ImageIcon className="w-6 h-6 text-slate-500 mb-1" />
-                <span className="text-xs text-slate-500">탭하여 업로드</span>
+                <ImageIcon className="w-6 h-6 text-gray-400 mb-1" />
+                <span className="text-xs text-gray-500">탭하여 업로드</span>
               </>
             )}
           </div>
@@ -203,26 +203,26 @@ export function ProVerificationForm({ onSubmit }: ProVerificationFormProps) {
 
       {/* Description */}
       <div className="mb-4">
-        <label className="block text-sm text-slate-400 mb-2">
-          작업 내용 <span className="text-slate-600">(최소 10자)</span>
+        <label className="block text-sm text-gray-600 mb-2">
+          작업 내용 <span className="text-gray-400">(최소 10자)</span>
         </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="수행한 작업을 상세히 기술해주세요..."
           rows={3}
-          className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white resize-none focus:border-purple-500 focus:outline-none transition-colors"
+          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 resize-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 focus:outline-none transition-all"
         />
-        <p className="text-xs text-slate-500 mt-1 text-right">{description.length}/100</p>
+        <p className="text-xs text-gray-500 mt-1 text-right">{description.length}/100</p>
       </div>
 
       {/* Reward Preview */}
       {selectedTypeInfo && (
-        <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-3 mb-4">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4">
           <div className="flex items-center gap-2">
-            <span className="text-green-400 text-sm font-bold">보상:</span>
-            <span className="text-green-400 text-sm">{selectedTypeInfo.statBoost}</span>
-            <span className="text-xs text-slate-500">+ "Verified" 뱃지</span>
+            <span className="text-emerald-700 text-sm font-bold">보상:</span>
+            <span className="text-emerald-600 text-sm">{selectedTypeInfo.statBoost}</span>
+            <span className="text-xs text-gray-500">+ "Verified" 뱃지</span>
           </div>
         </div>
       )}
@@ -234,8 +234,8 @@ export function ProVerificationForm({ onSubmit }: ProVerificationFormProps) {
         whileTap={{ scale: 0.98 }}
         className={`w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
           isValid
-            ? 'bg-purple-500 text-white hover:bg-purple-400'
-            : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+            ? 'bg-purple-500 text-white hover:bg-purple-600'
+            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
         }`}
       >
         {showSuccess ? (

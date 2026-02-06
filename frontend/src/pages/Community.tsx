@@ -29,8 +29,7 @@ const mockPosts: Post[] = [
       name: '김정비',
       tier: 'S-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 92, Mechanical: 85, Efficiency: 78, Quality: 65, Communication: 70 },
-      stat_tech: 92, stat_hand: 85, stat_speed: 78, stat_art: 65, stat_biz: 70,
+      verifiedSkillCount: 35,
     },
     category: 'Tech',
     category_display: '🔧 기술 Q&A',
@@ -54,8 +53,7 @@ const mockPosts: Post[] = [
       name: '이PPF',
       tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 65, Mechanical: 95, Efficiency: 82, Quality: 90, Communication: 60 },
-      stat_tech: 65, stat_hand: 95, stat_speed: 82, stat_art: 90, stat_biz: 60,
+      verifiedSkillCount: 28,
     },
     category: 'Salary',
     category_display: '💸 연봉 대나무숲',
@@ -85,8 +83,7 @@ const mockPosts: Post[] = [
       name: '박튜닝',
       tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 78, Mechanical: 72, Efficiency: 70, Quality: 55, Communication: 82 },
-      stat_tech: 78, stat_hand: 72, stat_speed: 70, stat_art: 55, stat_biz: 82,
+      verifiedSkillCount: 18,
     },
     category: 'Career',
     category_display: '🚀 이직/커리어',
@@ -108,8 +105,7 @@ const mockPosts: Post[] = [
       name: '최디테일',
       tier: 'C-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 45, Mechanical: 68, Efficiency: 55, Quality: 75, Communication: 40 },
-      stat_tech: 45, stat_hand: 68, stat_speed: 55, stat_art: 75, stat_biz: 40,
+      verifiedSkillCount: 8,
     },
     category: 'Free',
     category_display: '🗣️ 자유게시판',
@@ -131,8 +127,7 @@ const mockPosts: Post[] = [
       name: '정ADAS',
       tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 88, Mechanical: 70, Efficiency: 75, Quality: 50, Communication: 65 },
-      stat_tech: 88, stat_hand: 70, stat_speed: 75, stat_art: 50, stat_biz: 65,
+      verifiedSkillCount: 25,
     },
     category: 'Tech',
     category_display: '🔧 기술 Q&A',
@@ -154,8 +149,7 @@ const mockPosts: Post[] = [
       name: '한덴트',
       tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 55, Mechanical: 92, Efficiency: 80, Quality: 70, Communication: 55 },
-      stat_tech: 55, stat_hand: 92, stat_speed: 80, stat_art: 70, stat_biz: 55,
+      verifiedSkillCount: 15,
     },
     category: 'Salary',
     category_display: '💸 연봉 대나무숲',
@@ -185,8 +179,7 @@ const mockPosts: Post[] = [
       name: '윤하이브리드',
       tier: 'S-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 95, Mechanical: 78, Efficiency: 82, Quality: 45, Communication: 60 },
-      stat_tech: 95, stat_hand: 78, stat_speed: 82, stat_art: 45, stat_biz: 60,
+      verifiedSkillCount: 38,
     },
     category: 'Tech',
     category_display: '🔧 기술 Q&A',
@@ -210,8 +203,7 @@ const mockPosts: Post[] = [
       name: '송랩핑',
       tier: 'C-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 50, Mechanical: 85, Efficiency: 70, Quality: 88, Communication: 45 },
-      stat_tech: 50, stat_hand: 85, stat_speed: 70, stat_art: 88, stat_biz: 45,
+      verifiedSkillCount: 12,
     },
     category: 'Free',
     category_display: '🗣️ 자유게시판',
@@ -233,8 +225,7 @@ const mockPosts: Post[] = [
       name: '오SA',
       tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 72, Mechanical: 55, Efficiency: 68, Quality: 50, Communication: 90 },
-      stat_tech: 72, stat_hand: 55, stat_speed: 68, stat_art: 50, stat_biz: 90,
+      verifiedSkillCount: 22,
     },
     category: 'Career',
     category_display: '🚀 이직/커리어',
@@ -256,8 +247,7 @@ const mockPosts: Post[] = [
       name: '임휠',
       tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 60, Mechanical: 88, Efficiency: 75, Quality: 82, Communication: 50 },
-      stat_tech: 60, stat_hand: 88, stat_speed: 75, stat_art: 82, stat_biz: 50,
+      verifiedSkillCount: 16,
     },
     category: 'Tech',
     category_display: '🔧 기술 Q&A',
@@ -279,8 +269,7 @@ const mockPosts: Post[] = [
       name: '강충전',
       tier: 'C-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 75, Mechanical: 60, Efficiency: 70, Quality: 40, Communication: 55 },
-      stat_tech: 75, stat_hand: 60, stat_speed: 70, stat_art: 40, stat_biz: 55,
+      verifiedSkillCount: 10,
     },
     category: 'Salary',
     category_display: '💸 연봉 대나무숲',
@@ -310,8 +299,7 @@ const mockPosts: Post[] = [
       name: '배캠퍼',
       tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 68, Mechanical: 80, Efficiency: 65, Quality: 75, Communication: 72 },
-      stat_tech: 68, stat_hand: 80, stat_speed: 65, stat_art: 75, stat_biz: 72,
+      verifiedSkillCount: 20,
     },
     category: 'Free',
     category_display: '🗣️ 자유게시판',
@@ -333,8 +321,7 @@ const mockPosts: Post[] = [
       name: '조ECU',
       tier: 'S-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 98, Mechanical: 65, Efficiency: 72, Quality: 55, Communication: 68 },
-      stat_tech: 98, stat_hand: 65, stat_speed: 72, stat_art: 55, stat_biz: 68,
+      verifiedSkillCount: 42,
     },
     category: 'Tech',
     category_display: '🔧 기술 Q&A',
@@ -358,8 +345,7 @@ const mockPosts: Post[] = [
       name: '신틴팅',
       tier: 'Trainee',
       avatar_url: undefined,
-      stats: { Diagnostic: 40, Mechanical: 72, Efficiency: 65, Quality: 68, Communication: 35 },
-      stat_tech: 40, stat_hand: 72, stat_speed: 65, stat_art: 68, stat_biz: 35,
+      verifiedSkillCount: 5,
     },
     category: 'Career',
     category_display: '🚀 이직/커리어',
@@ -381,8 +367,7 @@ const mockPosts: Post[] = [
       name: '문판금',
       tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 70, Mechanical: 95, Efficiency: 78, Quality: 72, Communication: 55 },
-      stat_tech: 70, stat_hand: 95, stat_speed: 78, stat_art: 72, stat_biz: 55,
+      verifiedSkillCount: 24,
     },
     category: 'Salary',
     category_display: '💸 연봉 대나무숲',
@@ -412,8 +397,7 @@ const mockPosts: Post[] = [
       name: '양세라믹',
       tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 58, Mechanical: 88, Efficiency: 72, Quality: 85, Communication: 60 },
-      stat_tech: 58, stat_hand: 88, stat_speed: 72, stat_art: 85, stat_biz: 60,
+      verifiedSkillCount: 18,
     },
     category: 'Free',
     category_display: '🗣️ 자유게시판',
@@ -435,8 +419,7 @@ const mockPosts: Post[] = [
       name: '권진단',
       tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 90, Mechanical: 72, Efficiency: 80, Quality: 48, Communication: 65 },
-      stat_tech: 90, stat_hand: 72, stat_speed: 80, stat_art: 48, stat_biz: 65,
+      verifiedSkillCount: 30,
     },
     category: 'Tech',
     category_display: '🔧 기술 Q&A',
@@ -460,8 +443,7 @@ const mockPosts: Post[] = [
       name: '홍브레이크',
       tier: 'C-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 55, Mechanical: 78, Efficiency: 70, Quality: 45, Communication: 50 },
-      stat_tech: 55, stat_hand: 78, stat_speed: 70, stat_art: 45, stat_biz: 50,
+      verifiedSkillCount: 9,
     },
     category: 'Career',
     category_display: '🚀 이직/커리어',
@@ -483,8 +465,7 @@ const mockPosts: Post[] = [
       name: '유광택',
       tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Diagnostic: 52, Mechanical: 90, Efficiency: 75, Quality: 92, Communication: 58 },
-      stat_tech: 52, stat_hand: 90, stat_speed: 75, stat_art: 92, stat_biz: 58,
+      verifiedSkillCount: 14,
     },
     category: 'Salary',
     category_display: '💸 연봉 대나무숲',
@@ -511,16 +492,16 @@ const mockPosts: Post[] = [
 
 // ============ MOCK COMMENTS ============
 const mockCommentAuthors: PostAuthor[] = [
-  { id: 101, name: '김정비', tier: 'S-Class', stats: { Diagnostic: 92, Mechanical: 85, Efficiency: 78, Quality: 65, Communication: 70 }, stat_tech: 92, stat_hand: 85, stat_speed: 78, stat_art: 65, stat_biz: 70 },
-  { id: 102, name: '이PPF', tier: 'A-Class', stats: { Diagnostic: 65, Mechanical: 95, Efficiency: 82, Quality: 90, Communication: 60 }, stat_tech: 65, stat_hand: 95, stat_speed: 82, stat_art: 90, stat_biz: 60 },
-  { id: 103, name: '박튜닝', tier: 'B-Class', stats: { Diagnostic: 78, Mechanical: 72, Efficiency: 70, Quality: 55, Communication: 82 }, stat_tech: 78, stat_hand: 72, stat_speed: 70, stat_art: 55, stat_biz: 82 },
-  { id: 104, name: '최디테일', tier: 'C-Class', stats: { Diagnostic: 45, Mechanical: 68, Efficiency: 55, Quality: 75, Communication: 40 }, stat_tech: 45, stat_hand: 68, stat_speed: 55, stat_art: 75, stat_biz: 40 },
-  { id: 105, name: '정ADAS', tier: 'A-Class', stats: { Diagnostic: 88, Mechanical: 70, Efficiency: 75, Quality: 50, Communication: 65 }, stat_tech: 88, stat_hand: 70, stat_speed: 75, stat_art: 50, stat_biz: 65 },
-  { id: 106, name: '한덴트', tier: 'B-Class', stats: { Diagnostic: 55, Mechanical: 92, Efficiency: 80, Quality: 70, Communication: 55 }, stat_tech: 55, stat_hand: 92, stat_speed: 80, stat_art: 70, stat_biz: 55 },
-  { id: 107, name: '윤하이브리드', tier: 'S-Class', stats: { Diagnostic: 95, Mechanical: 78, Efficiency: 82, Quality: 45, Communication: 60 }, stat_tech: 95, stat_hand: 78, stat_speed: 82, stat_art: 45, stat_biz: 60 },
-  { id: 108, name: '송랩핑', tier: 'C-Class', stats: { Diagnostic: 50, Mechanical: 85, Efficiency: 70, Quality: 88, Communication: 45 }, stat_tech: 50, stat_hand: 85, stat_speed: 70, stat_art: 88, stat_biz: 45 },
-  { id: 109, name: '오SA', tier: 'A-Class', stats: { Diagnostic: 72, Mechanical: 55, Efficiency: 68, Quality: 50, Communication: 90 }, stat_tech: 72, stat_hand: 55, stat_speed: 68, stat_art: 50, stat_biz: 90 },
-  { id: 110, name: '임휠', tier: 'B-Class', stats: { Diagnostic: 60, Mechanical: 88, Efficiency: 75, Quality: 82, Communication: 50 }, stat_tech: 60, stat_hand: 88, stat_speed: 75, stat_art: 82, stat_biz: 50 },
+  { id: 101, name: '김정비', tier: 'S-Class', verifiedSkillCount: 35 },
+  { id: 102, name: '이PPF', tier: 'A-Class', verifiedSkillCount: 28 },
+  { id: 103, name: '박튜닝', tier: 'B-Class', verifiedSkillCount: 18 },
+  { id: 104, name: '최디테일', tier: 'C-Class', verifiedSkillCount: 8 },
+  { id: 105, name: '정ADAS', tier: 'A-Class', verifiedSkillCount: 25 },
+  { id: 106, name: '한덴트', tier: 'B-Class', verifiedSkillCount: 15 },
+  { id: 107, name: '윤하이브리드', tier: 'S-Class', verifiedSkillCount: 38 },
+  { id: 108, name: '송랩핑', tier: 'C-Class', verifiedSkillCount: 12 },
+  { id: 109, name: '오SA', tier: 'A-Class', verifiedSkillCount: 22 },
+  { id: 110, name: '임휠', tier: 'B-Class', verifiedSkillCount: 16 },
 ];
 
 const commentTemplates = [
@@ -581,12 +562,12 @@ mockPosts.forEach(post => {
 
 // ============ CLASS BADGE (Professional Grading) ============
 const classColors: Record<TierType, { bg: string; text: string; glow: string }> = {
-  Trainee: { bg: 'bg-slate-600', text: 'text-slate-300', glow: '' },
-  'C-Class': { bg: 'bg-violet-500', text: 'text-violet-100', glow: '' },
-  'B-Class': { bg: 'bg-cyan-400', text: 'text-cyan-900', glow: 'shadow-cyan-400/30' },
-  'A-Class': { bg: 'bg-amber-400', text: 'text-amber-900', glow: 'shadow-amber-400/30' },
-  'S-Class': { bg: 'bg-pink-400', text: 'text-pink-900', glow: 'shadow-pink-400/40' },
-  Master: { bg: 'bg-purple-400', text: 'text-purple-900', glow: 'shadow-purple-400/50' },
+  Trainee: { bg: 'bg-gray-200', text: 'text-gray-600', glow: '' },
+  'C-Class': { bg: 'bg-violet-100', text: 'text-violet-700', glow: '' },
+  'B-Class': { bg: 'bg-cyan-100', text: 'text-cyan-700', glow: '' },
+  'A-Class': { bg: 'bg-amber-100', text: 'text-amber-700', glow: '' },
+  'S-Class': { bg: 'bg-pink-100', text: 'text-pink-700', glow: '' },
+  Master: { bg: 'bg-purple-100', text: 'text-purple-700', glow: '' },
 };
 // Legacy tier alias
 const tierColors = classColors;
@@ -601,11 +582,11 @@ function TierBadge({ tier }: { tier: TierType }) {
 }
 
 // ============ AUTHOR CARD ============
-function AuthorInfo({ author, showStat }: { author: PostAuthor; showStat?: keyof typeof author.stats }) {
+function AuthorInfo({ author, showSkillCount }: { author: PostAuthor; showSkillCount?: boolean }) {
   return (
     <div className="flex items-center gap-2">
       {/* Avatar */}
-      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-white font-bold">
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-600 font-bold">
         {author.avatar_url ? (
           <img src={author.avatar_url} alt={author.name} className="w-full h-full rounded-full object-cover" />
         ) : (
@@ -616,13 +597,13 @@ function AuthorInfo({ author, showStat }: { author: PostAuthor; showStat?: keyof
       {/* Name & Tier */}
       <div>
         <div className="flex items-center gap-2">
-          <span className="font-bold text-white text-sm">{author.name}</span>
+          <span className="font-bold text-gray-950 text-sm">{author.name}</span>
           <TierBadge tier={author.tier} />
         </div>
-        {showStat && (
+        {showSkillCount && author.verifiedSkillCount !== undefined && author.verifiedSkillCount > 0 && (
           <div className="flex items-center gap-1 text-xs">
-            <Award className="w-3 h-3 text-cyan-400" />
-            <span className="text-cyan-400 font-medium">{showStat} {author.stats[showStat]}</span>
+            <Award className="w-3 h-3 text-cyan-600" />
+            <span className="text-cyan-600 font-medium">인증 스킬 {author.verifiedSkillCount}개</span>
           </div>
         )}
       </div>
@@ -633,7 +614,7 @@ function AuthorInfo({ author, showStat }: { author: PostAuthor; showStat?: keyof
 // ============ POST CARD ============
 function PostCard({ post, onClick }: { post: Post; onClick: () => void }) {
   const categoryInfo = postCategoryInfo[post.category];
-  const showStat = post.category === 'Tech' ? 'Diagnostic' : undefined;
+  const showSkillCount = post.category === 'Tech';
 
   const timeAgo = getTimeAgo(post.created_at);
 
@@ -642,20 +623,20 @@ function PostCard({ post, onClick }: { post: Post; onClick: () => void }) {
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.99 }}
       onClick={onClick}
-      className="bg-slate-800 border border-slate-700 rounded-xl p-4 cursor-pointer hover:border-slate-600 transition-all"
+      className="bg-white shadow-sm ring-1 ring-black/5 rounded-xl p-4 cursor-pointer hover:ring-gray-300 transition-all"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
-        <AuthorInfo author={post.author} showStat={showStat} />
+        <AuthorInfo author={post.author} showSkillCount={showSkillCount} />
         <div className="flex items-center gap-2">
           {post.is_pinned && (
-            <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-300 text-[10px] font-bold rounded">
+            <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded">
               PINNED
             </span>
           )}
           <span
             className="px-2 py-0.5 rounded text-[10px] font-bold"
-            style={{ backgroundColor: `${categoryInfo.color}20`, color: categoryInfo.color }}
+            style={{ backgroundColor: `${categoryInfo.color}15`, color: categoryInfo.color }}
           >
             {categoryInfo.icon} {categoryInfo.name}
           </span>
@@ -663,15 +644,15 @@ function PostCard({ post, onClick }: { post: Post; onClick: () => void }) {
       </div>
 
       {/* Title */}
-      <h3 className="text-white font-bold mb-2 line-clamp-2">
+      <h3 className="text-gray-950 font-bold mb-2 line-clamp-2">
         {post.verified_card_title && (
-          <Verified className="w-4 h-4 inline mr-1 text-blue-400" />
+          <Verified className="w-4 h-4 inline mr-1 text-blue-500" />
         )}
         {post.title}
       </h3>
 
       {/* Content Preview */}
-      <p className="text-slate-400 text-sm line-clamp-2 mb-3">{post.content}</p>
+      <p className="text-gray-500 text-sm line-clamp-2 mb-3">{post.content}</p>
 
       {/* Attached Salary Report */}
       {post.attached_report ? (
@@ -679,14 +660,14 @@ function PostCard({ post, onClick }: { post: Post; onClick: () => void }) {
           <ReportCard report={post.attached_report} compact />
         </div>
       ) : post.attached_salary_data && (
-        <div className="mb-3 p-2 bg-green-500/10 border border-green-500/30 rounded-lg">
+        <div className="mb-3 p-2 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-center gap-2 text-xs">
-            <TrendingUp className="w-3 h-3 text-green-400" />
-            <span className="text-green-400 font-medium">
+            <TrendingUp className="w-3 h-3 text-green-600" />
+            <span className="text-green-600 font-medium">
               연봉 {post.attached_salary_data.currentSalary.toLocaleString()}만원 공개
             </span>
-            <span className="text-slate-500">|</span>
-            <span className="text-slate-400">
+            <span className="text-gray-400">|</span>
+            <span className="text-gray-500">
               상위 {100 - post.attached_salary_data.percentile}%
             </span>
           </div>
@@ -694,7 +675,7 @@ function PostCard({ post, onClick }: { post: Post; onClick: () => void }) {
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-xs text-slate-500">
+      <div className="flex items-center justify-between text-xs text-gray-400">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
             <Heart className={`w-4 h-4 ${post.is_liked ? 'fill-red-500 text-red-500' : ''}`} />
@@ -733,7 +714,7 @@ function PostDetailModal({
   if (!post) return null;
 
   const categoryInfo = postCategoryInfo[post.category];
-  const showStat = post.category === 'Tech' ? 'Diagnostic' : undefined;
+  const showSkillCount = post.category === 'Tech';
 
   return (
     <AnimatePresence>
@@ -771,7 +752,7 @@ function PostDetailModal({
           <div className="flex-1 overflow-y-auto p-4">
             {/* Author */}
             <div className="flex items-center justify-between mb-4">
-              <AuthorInfo author={post.author} showStat={showStat} />
+              <AuthorInfo author={post.author} showSkillCount={showSkillCount} />
               <span className="text-xs text-slate-500">{getTimeAgo(post.created_at)}</span>
             </div>
 
@@ -1088,8 +1069,9 @@ export function Community() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
 
-  // Load mock posts on mount
+  // Scroll to top and load mock posts on mount
   useEffect(() => {
+    window.scrollTo(0, 0);
     setPosts(mockPosts);
   }, [setPosts]);
 
@@ -1127,12 +1109,7 @@ export function Community() {
         name: profile?.name || '익명',
         tier: profile?.tier || 'Trainee',
         avatar_url: profile?.avatar_url,
-        stats: profile?.stats || { Diagnostic: 10, Mechanical: 10, Efficiency: 10, Quality: 10, Communication: 10 },
-        stat_tech: profile?.stat_tech || 10,
-        stat_hand: profile?.stat_hand || 10,
-        stat_speed: profile?.stat_speed || 10,
-        stat_art: profile?.stat_art || 10,
-        stat_biz: profile?.stat_biz || 10,
+        verifiedSkillCount: profile?.skills?.filter(s => s.isVerified).length || 0,
       },
       category: data.category,
       category_display: postCategoryInfo[data.category].icon + ' ' + postCategoryInfo[data.category].name,
@@ -1155,16 +1132,18 @@ export function Community() {
   const categories = ['all', ...Object.keys(postCategoryInfo)] as const;
 
   return (
-    <div className="min-h-screen bg-slate-900 pb-24 md:pb-8">
+    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center gap-2 mb-4">
-            <MessageSquare className="w-6 h-6 text-yellow-400" />
-            <h1 className="text-xl font-bold text-white">커뮤니티</h1>
-            <span className="px-2 py-0.5 bg-yellow-400/20 text-yellow-300 text-xs font-bold rounded-full">
-              {posts.length}개 글
-            </span>
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+              <MessageSquare className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-medium tracking-tighter text-pretty text-gray-950">커뮤니티</h1>
+              <p className="text-sm text-gray-500 mt-0.5">{posts.length}개의 이야기</p>
+            </div>
           </div>
 
           {/* Category Tabs */}
@@ -1177,10 +1156,10 @@ export function Community() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat as PostCategory | 'all')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
                     isActive
-                      ? 'bg-yellow-400 text-gray-900'
-                      : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-white text-gray-500 ring-1 ring-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   {cat === 'all' ? '전체' : `${info?.icon} ${info?.name}`}
@@ -1206,11 +1185,11 @@ export function Community() {
           ))
         ) : (
           <div className="text-center py-20">
-            <MessageSquare className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-            <p className="text-slate-500">아직 글이 없습니다.</p>
+            <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500">아직 글이 없습니다.</p>
             <button
               onClick={() => setIsWriteModalOpen(true)}
-              className="mt-4 px-6 py-2 bg-yellow-400 text-gray-900 font-bold rounded-lg hover:bg-yellow-300 transition-colors"
+              className="mt-4 px-6 py-2 bg-gray-900 text-white font-bold rounded-full hover:bg-gray-800 transition-colors"
             >
               첫 글 작성하기
             </button>
@@ -1223,7 +1202,7 @@ export function Community() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsWriteModalOpen(true)}
-        className="fixed bottom-24 right-4 w-14 h-14 bg-yellow-400 rounded-full shadow-lg shadow-yellow-400/30 flex items-center justify-center text-gray-900 z-40"
+        className="fixed bottom-24 right-4 w-14 h-14 bg-gray-900 rounded-full shadow-lg shadow-gray-900/30 flex items-center justify-center text-white z-40"
       >
         <Plus className="w-6 h-6" />
       </motion.button>

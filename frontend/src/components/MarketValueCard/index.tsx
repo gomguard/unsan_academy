@@ -74,17 +74,17 @@ export function MarketValueCard({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-slate-800 via-slate-800 to-slate-900 border border-slate-700 rounded-2xl overflow-hidden"
+      className="bg-white shadow-sm ring-1 ring-black/5 rounded-2xl overflow-hidden"
     >
       {/* Header */}
-      <div className="p-4 border-b border-slate-700/50">
+      <div className="p-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xl">💰</span>
-            <h3 className="font-bold text-white">시장가치 분석</h3>
+            <h3 className="font-bold text-gray-950">시장가치 분석</h3>
           </div>
           {isVerified && (
-            <span className="flex items-center gap-1 text-xs px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full">
+            <span className="flex items-center gap-1 text-xs px-2 py-1 bg-emerald-50 text-emerald-600 rounded-full">
               <BadgeCheck className="w-3 h-3" />
               인증됨
             </span>
@@ -93,19 +93,19 @@ export function MarketValueCard({
       </div>
 
       {/* Job & Experience Selector */}
-      <div className="p-4 bg-slate-900/30">
+      <div className="p-4 bg-gray-50">
         <div className="flex gap-3">
           {/* Job Selector */}
           <div className="flex-1 relative">
             <button
               onClick={() => setShowJobSelector(!showJobSelector)}
-              className="w-full flex items-center justify-between p-3 bg-slate-800 border border-slate-600 rounded-xl text-left hover:border-yellow-500/50 transition-colors"
+              className="w-full flex items-center justify-between p-3 bg-white border border-gray-200 rounded-xl text-left hover:border-gray-400 transition-colors shadow-sm"
             >
               <div>
-                <p className="text-xs text-slate-500">현재 직무</p>
-                <p className="font-medium text-white">{selectedJob.title}</p>
+                <p className="text-xs text-gray-500">현재 직무</p>
+                <p className="font-medium text-gray-950">{selectedJob.title}</p>
               </div>
-              <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${showJobSelector ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${showJobSelector ? 'rotate-180' : ''}`} />
             </button>
 
             <AnimatePresence>
@@ -114,7 +114,7 @@ export function MarketValueCard({
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="absolute z-20 top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-xl overflow-hidden max-h-64 overflow-y-auto"
+                  className="absolute z-20 top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden max-h-64 overflow-y-auto"
                 >
                   {popularJobs.map((job) => (
                     <button
@@ -123,19 +123,19 @@ export function MarketValueCard({
                         setSelectedJobId(job.id);
                         setShowJobSelector(false);
                       }}
-                      className={`w-full p-3 text-left hover:bg-slate-700 transition-colors ${
-                        job.id === selectedJobId ? 'bg-yellow-500/10 text-yellow-400' : 'text-white'
+                      className={`w-full p-3 text-left hover:bg-gray-50 transition-colors ${
+                        job.id === selectedJobId ? 'bg-blue-50 text-blue-600' : 'text-gray-950'
                       }`}
                     >
                       <p className="font-medium">{job.title}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-gray-500">
                         {job.salaryRange.min.toLocaleString()} ~ {job.salaryRange.max.toLocaleString()}만원
                       </p>
                     </button>
                   ))}
                   <Link
                     to="/jobs"
-                    className="block w-full p-3 text-center text-yellow-400 hover:bg-slate-700 transition-colors border-t border-slate-700"
+                    className="block w-full p-3 text-center text-blue-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
                   >
                     전체 직업 보기 →
                   </Link>
@@ -146,8 +146,8 @@ export function MarketValueCard({
 
           {/* Experience Selector */}
           <div className="w-24">
-            <div className="p-3 bg-slate-800 border border-slate-600 rounded-xl">
-              <p className="text-xs text-slate-500 mb-1">경력</p>
+            <div className="p-3 bg-white border border-gray-200 rounded-xl shadow-sm">
+              <p className="text-xs text-gray-500 mb-1">경력</p>
               <div className="flex items-center gap-1">
                 <input
                   type="number"
@@ -155,9 +155,9 @@ export function MarketValueCard({
                   max="20"
                   value={years}
                   onChange={(e) => setYears(Math.max(1, Math.min(20, parseInt(e.target.value) || 1)))}
-                  className="w-10 bg-transparent text-white font-bold text-lg focus:outline-none"
+                  className="w-10 bg-transparent text-gray-950 font-bold text-lg focus:outline-none"
                 />
-                <span className="text-slate-400 text-sm">년</span>
+                <span className="text-gray-400 text-sm">년</span>
               </div>
             </div>
           </div>
@@ -178,23 +178,23 @@ export function MarketValueCard({
         <div
           className={`rounded-xl p-4 ${
             isUnderpaid
-              ? 'bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20'
-              : 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20'
+              ? 'bg-gradient-to-r from-red-50 to-orange-50 border border-red-200'
+              : 'bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               {isUnderpaid ? (
-                <TrendingDown className="w-5 h-5 text-red-400" />
+                <TrendingDown className="w-5 h-5 text-red-500" />
               ) : (
-                <TrendingUp className="w-5 h-5 text-green-400" />
+                <TrendingUp className="w-5 h-5 text-green-500" />
               )}
-              <span className={`text-sm font-medium ${isUnderpaid ? 'text-red-400' : 'text-green-400'}`}>
+              <span className={`text-sm font-medium ${isUnderpaid ? 'text-red-600' : 'text-green-600'}`}>
                 {isUnderpaid ? '시장가치보다 낮음' : '시장가치보다 높음'}
               </span>
             </div>
             <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-              isUnderpaid ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'
+              isUnderpaid ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'
             }`}>
               {isUnderpaid ? '-' : '+'}{gapPercent}%
             </span>
@@ -202,15 +202,15 @@ export function MarketValueCard({
 
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-xs text-slate-500 mb-1">시장가치와의 차이</p>
-              <p className={`text-3xl font-black ${isUnderpaid ? 'text-red-400' : 'text-green-400'}`}>
+              <p className="text-xs text-gray-500 mb-1">시장가치와의 차이</p>
+              <p className={`text-3xl font-black ${isUnderpaid ? 'text-red-600' : 'text-green-600'}`}>
                 {isUnderpaid ? '-' : '+'}{formatSalary(Math.abs(gap))}
-                <span className="text-sm font-normal text-slate-500 ml-1">만원/년</span>
+                <span className="text-sm font-normal text-gray-500 ml-1">만원/년</span>
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-slate-500">추정 시장가치</p>
-              <p className="text-xl font-bold text-cyan-400">{formatSalary(marketValue)}만</p>
+              <p className="text-xs text-gray-500">추정 시장가치</p>
+              <p className="text-xl font-bold text-blue-600">{formatSalary(marketValue)}만</p>
             </div>
           </div>
         </div>
@@ -235,22 +235,22 @@ export function MarketValueCard({
       )}
 
       {/* Community CTA */}
-      <div className="p-4 bg-slate-900/50 border-t border-slate-700/50">
+      <div className="p-4 bg-gray-50 border-t border-gray-100">
         <div className="flex items-center gap-3 mb-3">
-          <HelpCircle className="w-5 h-5 text-yellow-400" />
-          <p className="text-sm text-slate-300">이 직군에 대해 궁금한 점이 있으신가요?</p>
+          <HelpCircle className="w-5 h-5 text-amber-500" />
+          <p className="text-sm text-gray-600">이 직군에 대해 궁금한 점이 있으신가요?</p>
         </div>
         <div className="flex gap-2">
           <Link
             to="/community"
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold rounded-xl transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold rounded-xl transition-colors shadow-sm"
           >
             <MessageSquare className="w-4 h-4" />
             커뮤니티에 질문하기
           </Link>
           <Link
             to={`/career/${selectedJobId}`}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-xl transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-xl transition-colors"
           >
             상세 보기
             <ArrowRight className="w-4 h-4" />

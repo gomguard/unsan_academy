@@ -36,7 +36,7 @@ export function SalaryPositionBar({
   return (
     <div className="space-y-3">
       {/* Labels */}
-      <div className="flex justify-between text-xs text-slate-500">
+      <div className="flex justify-between text-xs text-gray-500">
         <span>{formatSalary(min)}</span>
         <span>{formatSalary(max)}</span>
       </div>
@@ -44,13 +44,13 @@ export function SalaryPositionBar({
       {/* Bar Container */}
       <div className="relative h-12">
         {/* Background Bar */}
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-3 bg-slate-700 rounded-full overflow-hidden">
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-3 bg-gray-200 rounded-full overflow-hidden">
           {/* Gradient fill to market value */}
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${marketPosition}%` }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="h-full bg-gradient-to-r from-cyan-500/50 to-cyan-400/50 rounded-full"
+            className="h-full bg-gradient-to-r from-blue-400 to-blue-500 rounded-full"
           />
         </div>
 
@@ -61,7 +61,7 @@ export function SalaryPositionBar({
             className="absolute top-1/2 -translate-y-1/2"
             style={{ left: `${p.position}%` }}
           >
-            <div className="w-0.5 h-5 bg-slate-600 -translate-x-1/2" />
+            <div className="w-0.5 h-5 bg-gray-300 -translate-x-1/2" />
           </div>
         ))}
 
@@ -73,11 +73,11 @@ export function SalaryPositionBar({
           className="absolute top-0 bottom-0 flex flex-col items-center"
           style={{ transform: 'translateX(-50%)' }}
         >
-          <div className="px-2 py-1 bg-white text-slate-900 text-xs font-bold rounded shadow-lg whitespace-nowrap">
+          <div className="px-2 py-1 bg-gray-800 text-white text-xs font-bold rounded shadow-lg whitespace-nowrap">
             내 연봉
           </div>
-          <div className="w-0.5 flex-1 bg-white" />
-          <div className="w-3 h-3 bg-white rounded-full border-2 border-slate-900" />
+          <div className="w-0.5 flex-1 bg-gray-800" />
+          <div className="w-3 h-3 bg-gray-800 rounded-full border-2 border-white shadow" />
         </motion.div>
 
         {/* Market Value Marker */}
@@ -88,11 +88,11 @@ export function SalaryPositionBar({
           className="absolute top-0 bottom-0 flex flex-col items-center"
           style={{ transform: 'translateX(-50%)' }}
         >
-          <div className="px-2 py-1 bg-cyan-500 text-white text-xs font-bold rounded shadow-lg whitespace-nowrap">
+          <div className="px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded shadow-lg whitespace-nowrap">
             시장가치
           </div>
-          <div className="w-0.5 flex-1 bg-cyan-500" />
-          <div className="w-3 h-3 bg-cyan-500 rounded-full border-2 border-slate-900" />
+          <div className="w-0.5 flex-1 bg-blue-500" />
+          <div className="w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow" />
         </motion.div>
       </div>
 
@@ -100,8 +100,8 @@ export function SalaryPositionBar({
       <div className="flex justify-between px-6">
         {percentiles.map((p) => (
           <div key={p.position} className="text-center">
-            <p className="text-[10px] text-slate-500">{p.label}</p>
-            <p className="text-xs text-slate-400 font-medium">{formatSalary(p.value)}</p>
+            <p className="text-[10px] text-gray-500">{p.label}</p>
+            <p className="text-xs text-gray-600 font-medium">{formatSalary(p.value)}</p>
           </div>
         ))}
       </div>

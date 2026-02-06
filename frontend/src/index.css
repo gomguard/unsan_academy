@@ -10,15 +10,15 @@
   }
 
   body {
-    background-color: #0f0f23;
-    color: #f1f5f9;
+    background-color: #f9fafb;
+    color: #111827;
     min-height: 100vh;
   }
 
   /* Selection color */
   ::selection {
-    background-color: rgba(254, 240, 138, 0.3);
-    color: white;
+    background-color: rgba(168, 85, 247, 0.2);
+    color: #111827;
   }
 }
 
@@ -218,23 +218,23 @@
   }
 }
 
-/* ============ CUSTOM SCROLLBAR (DARK) ============ */
+/* ============ CUSTOM SCROLLBAR (LIGHT) ============ */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #181825;
+  background-color: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #2e2e42;
+  background-color: #cbd5e1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #475569;
+  background-color: #94a3b8;
 }
 
 /* ============ ANIMATIONS ============ */

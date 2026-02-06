@@ -1,6 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { BentoCard } from '@/components/ui/BentoCard';
+import { Heading, Subheading } from '@/components/ui/Typography';
+import { Button } from '@/components/ui/Button';
 import {
   GraduationCap,
   Search,
@@ -11,6 +14,8 @@ import {
   BadgeCheck,
   MapPin,
   Building,
+  ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 import {
   courses,
@@ -31,96 +36,100 @@ function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       to={`/education/course/${course.id}`}
-      className="block bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden hover:border-slate-600 transition-all group"
+      className="block group"
     >
-      {/* Header with category color */}
-      <div
-        className="h-2"
-        style={{ backgroundColor: categoryInfo.color }}
-      />
+      <div className="relative overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5 hover:ring-purple-400/50 hover:shadow-md transition-all">
+        {/* Header with category color */}
+        <div
+          className="h-1.5"
+          style={{ backgroundColor: categoryInfo.color }}
+        />
 
-      <div className="p-5">
-        {/* Academy Info */}
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-2xl">{academy?.logo}</span>
-          <div className="flex-1">
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-medium text-slate-300">{academy?.name}</span>
-              {academy?.isPartner && (
-                <BadgeCheck className="w-4 h-4 text-cyan-400" />
-              )}
+        <div className="p-5">
+          {/* Academy Info */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-2xl">
+              {academy?.logo}
             </div>
-          </div>
-          {/* Type Badge */}
-          <span
-            className="text-xs px-2 py-1 rounded-full font-medium"
-            style={{
-              backgroundColor: `${typeInfo.color}20`,
-              color: typeInfo.color,
-            }}
-          >
-            {typeInfo.icon} {typeInfo.name}
-          </span>
-        </div>
-
-        {/* Course Title */}
-        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors">
-          {course.title}
-        </h3>
-
-        {/* Description */}
-        <p className="text-sm text-slate-400 mb-4 line-clamp-2">
-          {course.description}
-        </p>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {isFree && (
-            <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full font-bold">
-              무료
-            </span>
-          )}
-          {course.tags.slice(0, 3).map(tag => (
+            <div className="flex-1">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-semibold text-gray-900">{academy?.name}</span>
+                {academy?.isPartner && (
+                  <BadgeCheck className="w-4 h-4 text-cyan-500" />
+                )}
+              </div>
+            </div>
+            {/* Type Badge */}
             <span
-              key={tag}
-              className="text-xs px-2 py-1 bg-slate-700 text-slate-300 rounded-full"
+              className="text-xs px-3 py-1.5 rounded-xl font-semibold"
+              style={{
+                backgroundColor: `${typeInfo.color}15`,
+                color: typeInfo.color,
+              }}
             >
-              {tag}
+              {typeInfo.icon} {typeInfo.name}
             </span>
-          ))}
-        </div>
-
-        {/* Meta Info */}
-        <div className="flex items-center gap-4 text-sm text-slate-500 mb-4">
-          <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
-            <span>{course.duration}</span>
           </div>
-          {course.rating && (
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-yellow-400">{course.rating}</span>
-            </div>
-          )}
-          {course.enrollCount && (
-            <div className="flex items-center gap-1">
-              <Users className="w-4 h-4" />
-              <span>{course.enrollCount.toLocaleString()}명</span>
-            </div>
-          )}
-        </div>
 
-        {/* Price & CTA */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-700">
-          <div>
-            <p className={`font-bold text-lg ${isFree ? 'text-green-400' : 'text-white'}`}>
-              {formatCoursePrice(course)}
-            </p>
+          {/* Course Title */}
+          <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+            {course.title}
+          </h3>
+
+          {/* Description */}
+          <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed">
+            {course.description}
+          </p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {isFree && (
+              <span className="text-xs px-2.5 py-1 bg-green-100 text-green-700 rounded-lg font-bold">
+                무료
+              </span>
+            )}
+            {course.tags.slice(0, 3).map(tag => (
+              <span
+                key={tag}
+                className="text-xs px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
-          <span className="flex items-center gap-1.5 px-4 py-2 bg-yellow-400 text-gray-900 rounded-lg font-bold text-sm group-hover:bg-yellow-300 transition-colors">
-            상세 보기
-            <ChevronRight className="w-4 h-4" />
-          </span>
+
+          {/* Meta Info */}
+          <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4" />
+              <span>{course.duration}</span>
+            </div>
+            {course.rating && (
+              <div className="flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <span className="text-amber-600 font-medium">{course.rating}</span>
+              </div>
+            )}
+            {course.enrollCount && (
+              <div className="flex items-center gap-1.5">
+                <Users className="w-4 h-4" />
+                <span>{course.enrollCount.toLocaleString()}명</span>
+              </div>
+            )}
+          </div>
+
+          {/* Price & CTA */}
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+            <div>
+              <p className={`font-bold text-lg ${isFree ? 'text-green-600' : 'text-gray-900'}`}>
+                {formatCoursePrice(course.price)}
+              </p>
+            </div>
+            <span className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-sm group-hover:from-purple-400 hover:to-pink-400 transition-all shadow-lg shadow-purple-500/20">
+              상세 보기
+              <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
         </div>
       </div>
     </Link>
@@ -136,33 +145,33 @@ function AcademyCard({ academy }: { academy: typeof academies[0] }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center gap-4 hover:border-slate-600 hover:bg-slate-800 transition-all group"
+        className="relative overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 p-5 flex items-center gap-4 hover:ring-cyan-400/50 hover:shadow-md transition-all group"
       >
-        <div className="w-14 h-14 bg-slate-700 rounded-xl flex items-center justify-center text-3xl">
+        <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center text-3xl">
           {academy.logo}
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-bold text-white group-hover:text-yellow-400 transition-colors">{academy.name}</h3>
+            <h3 className="font-bold text-gray-900 group-hover:text-purple-600 transition-colors">{academy.name}</h3>
             {academy.isPartner && (
-              <span className="text-xs px-2 py-0.5 bg-cyan-500/20 text-cyan-400 rounded-full font-medium flex items-center gap-1">
+              <span className="text-xs px-2 py-1 bg-cyan-100 text-cyan-700 rounded-lg font-medium flex items-center gap-1">
                 <BadgeCheck className="w-3 h-3" />
                 파트너
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3 text-sm text-slate-400 mt-1">
+          <div className="flex items-center gap-3 text-sm text-gray-500 mt-1.5">
             <div className="flex items-center gap-1">
-              <MapPin className="w-3 h-3" />
+              <MapPin className="w-3.5 h-3.5" />
               {academy.location}
             </div>
             <div className="flex items-center gap-1">
-              <GraduationCap className="w-3 h-3" />
+              <GraduationCap className="w-3.5 h-3.5" />
               {courseCount}개 과정
             </div>
           </div>
         </div>
-        <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-yellow-400" />
+        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
       </motion.div>
     </Link>
   );
@@ -174,6 +183,11 @@ export function Education() {
   const [selectedCategory, setSelectedCategory] = useState<CourseCategory | 'all'>('all');
   const [selectedType, setSelectedType] = useState<CourseType | 'all'>('all');
   const [showFreeOnly, setShowFreeOnly] = useState(false);
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const categories: (CourseCategory | 'all')[] = ['all', 'Maintenance', 'Body', 'Tuning', 'EV_Future', 'Management'];
   const types: (CourseType | 'all')[] = ['all', 'Online', 'Offline', 'Hybrid'];
@@ -214,34 +228,34 @@ export function Education() {
   const partnerAcademies = academies.filter(a => a.isPartner);
 
   return (
-    <div className="min-h-screen bg-slate-900 pb-24 md:pb-8">
+    <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-              <GraduationCap className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg">
+              <GraduationCap className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-xl text-white">Education Hub</h1>
-              <p className="text-sm text-slate-400">교육으로 커리어 업그레이드</p>
+              <Heading as="h1" size="xl">Education Hub</Heading>
+              <p className="text-sm text-gray-500 mt-0.5">교육으로 커리어 업그레이드</p>
             </div>
           </div>
 
           {/* Search Bar */}
           <div className="relative mb-4">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="과정명, 키워드로 검색..."
-              className="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-purple-500 focus:outline-none transition-colors"
+              className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-full text-gray-950 placeholder-gray-400 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 focus:outline-none transition-all shadow-sm"
             />
           </div>
 
           {/* Category Filters */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {categories.map(cat => {
               const isAll = cat === 'all';
               const info = isAll ? null : courseCategoryInfo[cat];
@@ -253,10 +267,10 @@ export function Education() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                  className={`px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
                     selectedCategory === cat
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-gray-900 text-white shadow-md'
+                      : 'bg-white text-gray-500 ring-1 ring-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   {isAll ? '전체' : `${info?.icon} ${info?.name}`} ({count})
@@ -279,10 +293,10 @@ export function Education() {
                 <button
                   key={type}
                   onClick={() => setSelectedType(type)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                     selectedType === type
-                      ? 'bg-slate-700 text-white'
-                      : 'bg-slate-800/50 text-slate-500 hover:text-white'
+                      ? 'bg-gray-200 text-gray-900'
+                      : 'bg-gray-100 text-gray-500 hover:text-gray-900 hover:bg-gray-150'
                   }`}
                 >
                   {isAll ? '전체' : `${info?.icon} ${info?.name}`}
@@ -293,23 +307,23 @@ export function Education() {
 
           <button
             onClick={() => setShowFreeOnly(!showFreeOnly)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
               showFreeOnly
-                ? 'bg-green-500/20 text-green-400 border border-green-500/50'
-                : 'bg-slate-800 text-slate-400'
+                ? 'bg-green-100 text-green-700'
+                : 'bg-gray-100 text-gray-500 hover:text-gray-900'
             }`}
           >
-            💰 무료/국비만
+            무료/국비만
           </button>
         </div>
 
         {/* Partner Academies */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">
-            <BadgeCheck className="w-5 h-5 text-cyan-400" />
-            <h2 className="font-bold text-white">공인 파트너 교육기관</h2>
+            <BadgeCheck className="w-5 h-5 text-cyan-500" />
+            <Subheading>공인 파트너 교육기관</Subheading>
           </div>
-          <div className="grid md:grid-cols-3 gap-3">
+          <div className="grid md:grid-cols-3 gap-4">
             {partnerAcademies.map(academy => (
               <AcademyCard key={academy.id} academy={academy} />
             ))}
@@ -319,9 +333,12 @@ export function Education() {
         {/* Courses Grid */}
         <div className="mb-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-bold text-white">
-              추천 과정 <span className="text-slate-500 font-normal">({filteredCourses.length}개)</span>
-            </h2>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-500" />
+              <Subheading>
+                추천 과정 <span className="text-gray-400 font-normal">({filteredCourses.length}개)</span>
+              </Subheading>
+            </div>
           </div>
         </div>
 
@@ -339,25 +356,31 @@ export function Education() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <GraduationCap className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-            <p className="text-slate-400 font-medium">검색 결과가 없습니다</p>
-            <p className="text-sm text-slate-500 mt-1">다른 키워드로 검색해보세요</p>
+          <div className="text-center py-20">
+            <div className="w-20 h-20 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
+              <GraduationCap className="w-10 h-10 text-gray-400" />
+            </div>
+            <p className="text-gray-600 font-medium text-lg">검색 결과가 없습니다</p>
+            <p className="text-sm text-gray-500 mt-2">다른 키워드로 검색해보세요</p>
           </div>
         )}
 
         {/* CTA Section */}
-        <div className="mt-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-2xl p-8 text-center">
-          <h3 className="text-2xl font-bold text-white mb-2">
-            원하는 과정이 없으신가요?
-          </h3>
-          <p className="text-slate-400 mb-6">
-            운산 아카데미와 파트너 교육기관에 문의하세요.
-          </p>
-          <button className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-400 transition-colors">
-            <Building className="w-5 h-5" />
-            교육기관 문의하기
-          </button>
+        <div className="mt-12 relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 ring-1 ring-purple-200">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(168,85,247,0.1),transparent_50%)]" />
+          <div className="relative p-8 text-center">
+            <Heading as="h3" size="2xl" className="mb-3">
+              원하는 과정이 없으신가요?
+            </Heading>
+            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+              운산 아카데미와 파트너 교육기관에 문의하세요.
+            </p>
+            <Button variant="brand">
+              <Building className="w-5 h-5 mr-2" />
+              교육기관 문의하기
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

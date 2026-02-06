@@ -54,10 +54,10 @@ export function UpgradeRecommend({ currentJobId, currentSalary }: UpgradeRecomme
 
   return (
     <div className="px-4 pb-4">
-      <div className="p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20">
+      <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-5 h-5 text-purple-400" />
-          <h4 className="font-bold text-white">연봉 상승 추천 경로</h4>
+          <Sparkles className="w-5 h-5 text-purple-500" />
+          <h4 className="font-bold text-gray-900">연봉 상승 추천 경로</h4>
         </div>
 
         <div className="space-y-3">
@@ -75,49 +75,49 @@ export function UpgradeRecommend({ currentJobId, currentSalary }: UpgradeRecomme
               >
                 <Link
                   to={`/career/${job.id}`}
-                  className="block p-3 bg-slate-800/50 hover:bg-slate-800 rounded-xl border border-slate-700 transition-colors group"
+                  className="block p-3 bg-white hover:bg-gray-50 rounded-xl border border-gray-200 shadow-sm transition-colors group"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       {job.type === 'blueocean' ? (
-                        <Zap className="w-4 h-4 text-cyan-400" />
+                        <Zap className="w-4 h-4 text-blue-500" />
                       ) : (
-                        <TrendingUp className="w-4 h-4 text-purple-400" />
+                        <TrendingUp className="w-4 h-4 text-purple-500" />
                       )}
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-gray-500">
                         {job.type === 'blueocean' ? '블루오션' : '다음 단계'}
                       </span>
                     </div>
-                    <span className="text-xs text-emerald-400 font-bold">
+                    <span className="text-xs text-emerald-600 font-bold">
                       +{formatSalary(salaryIncrease)} 가능
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-white group-hover:text-yellow-400 transition-colors">
+                      <p className="font-medium text-gray-900 group-hover:text-purple-600 transition-colors">
                         {job.title}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-gray-500">
                         연봉 {formatSalary(job.salaryRange.min)} ~ {formatSalary(job.salaryRange.max)}
                       </p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-yellow-400 transition-colors" />
+                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-purple-500 transition-colors" />
                   </div>
 
                   {/* Quick info */}
-                  <div className="flex items-center gap-3 mt-2 pt-2 border-t border-slate-700/50">
+                  <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-100">
                     <span className={`text-xs px-2 py-0.5 rounded ${
                       job.marketDemand === 'Explosive'
-                        ? 'bg-red-500/20 text-red-400'
+                        ? 'bg-red-100 text-red-600'
                         : job.marketDemand === 'High'
-                        ? 'bg-orange-500/20 text-orange-400'
-                        : 'bg-green-500/20 text-green-400'
+                        ? 'bg-orange-100 text-orange-600'
+                        : 'bg-green-100 text-green-600'
                     }`}>
                       수요 {job.marketDemand === 'Explosive' ? '급상승' : job.marketDemand === 'High' ? '높음' : '안정'}
                     </span>
                     {hasCourse && (
-                      <span className="text-xs text-purple-400 flex items-center gap-1">
+                      <span className="text-xs text-purple-600 flex items-center gap-1">
                         <Award className="w-3 h-3" />
                         교육과정 {courses.length}개
                       </span>
@@ -132,7 +132,7 @@ export function UpgradeRecommend({ currentJobId, currentSalary }: UpgradeRecomme
         {/* View all paths */}
         <Link
           to="/skill-tree"
-          className="mt-3 flex items-center justify-center gap-2 py-2 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+          className="mt-3 flex items-center justify-center gap-2 py-2 text-sm text-purple-600 hover:text-purple-700 transition-colors"
         >
           전체 커리어 경로 보기
           <ArrowRight className="w-4 h-4" />

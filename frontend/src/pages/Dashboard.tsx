@@ -1,352 +1,265 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { MarketValueCard } from '@/components/MarketValueCard';
-import { getReviewsWithSalaryGrowth } from '@/lib/careerData';
-import { getPopularCourses, getFreeCourses, getAcademyById } from '@/lib/educationData';
-import { getJobById } from '@/lib/jobDatabase';
 import {
-  Settings,
+  Bell,
+  Calendar,
   ChevronRight,
   TrendingUp,
-  BadgeCheck,
+  AlertTriangle,
   Briefcase,
-  Star,
-  MessageSquare,
-  GraduationCap,
-  Flame,
-  Users,
-  DollarSign,
-  BookOpen,
-  Map,
-  Sparkles,
-  Clock,
-  Bell,
+  Wrench,
+  FileText,
+  MapPin,
+  ExternalLink,
+  Zap,
+  Award
 } from 'lucide-react';
+
+// ============ MOCK DATA: INDUSTRY INFO ============
+// 나중에 API로 연동될 '업계 소식' 데이터입니다.
+const technicalBulletins = [
+  { id: 1, brand: 'Hyundai', title: 'ICCU 소프트웨어 업데이트 (무상수리)', date: '2026.02.01', important: true },
+  { id: 2, brand: 'BMW', title: 'EGR 쿨러 관련 리콜 통지문 (G30)', date: '2026.01.28', important: true },
+  { id: 3, brand: 'Tesla', title: 'Model 3 Highland 히트펌프 로직 변경', date: '2026.01.25', important: false },
+  { id: 4, brand: 'Benz', title: '48V 배터리 시스템 진단 가이드라인', date: '2026.01.20', important: false },
+];
+
+const industryEvents = [
+  { id: 1, title: '2026 오토살롱위크', date: 'D-12', loc: 'KINTEX', type: 'EXPO' },
+  { id: 2, title: '현대 N 페스티벌 R1', date: 'D-25', loc: 'Inje Speedium', type: 'RACING' },
+  { id: 3, title: 'xEV 고전압 안전교육 (3차)', date: '접수중', loc: 'Unsan Academy', type: 'EDU' },
+];
+
+const hotJobs = [
+  { id: 1, company: 'Samsung Electronics', title: 'xEV Battery Tech', salary: '8,000+', loc: 'Suwon' },
+  { id: 2, company: 'Tesla Korea', title: 'Mobile Service Tech', salary: '6,500+', loc: 'Seoul' },
+  { id: 3, company: 'Blue Hands', title: 'Master Technician', salary: '5,500+', loc: 'Busan' },
+];
 
 export function Dashboard() {
   const { profile, targetJobId } = useStore();
-  const [activeSection, setActiveSection] = useState<'feed' | 'reviews' | 'courses'>('feed');
+  const currentSalary = profile?.currentSalary || 3500;
 
-  // Get data for the lounge
-  const salaryGrowthReviews = getReviewsWithSalaryGrowth().slice(0, 3);
-  const popularCourses = getPopularCourses(4);
-  const freeCourses = getFreeCourses().slice(0, 3);
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-  if (!profile) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-slate-400">Loading...</div>
-      </div>
-    );
-  }
-
-  const totalStats = Object.values(profile.stats).reduce((a, b) => a + b, 0);
-  const currentSalary = profile.currentSalary || 3500;
-
-  // Mock feed data
-  const feedItems = [
-    { type: 'review', icon: '💬', text: 'Kim_EV_Tech님이 EV 배터리 진단사 리뷰를 작성했습니다', time: '10분 전', color: 'cyan' },
-    { type: 'course', icon: '📚', text: 'EV 고전압 안전교육 과정이 인기를 끌고 있습니다', time: '30분 전', color: 'purple' },
-    { type: 'salary', icon: '💰', text: 'PPF 인스톨러 평균 연봉이 8,000만원을 돌파했습니다', time: '1시간 전', color: 'green' },
-    { type: 'story', icon: '🌟', text: 'Park_PPF님의 성공 스토리: 세차장 → 1억 연봉', time: '2시간 전', color: 'yellow' },
-    { type: 'job', icon: '🔥', text: 'ADAS 캘리브레이션 전문가 수요가 급증하고 있습니다', time: '3시간 전', color: 'red' },
-  ];
+  if (!profile) return <div className="min-h-screen bg-gray-50" />;
 
   return (
-    <div className="min-h-screen bg-slate-900 pb-24 md:pb-8">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🔧</span>
-            <span className="font-bold text-white">Unsan Academy</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="p-2 text-slate-400 hover:text-white transition-colors relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-            </button>
-            <Link to="/profile" className="p-2 text-slate-400 hover:text-white transition-colors">
-              <Settings className="w-5 h-5" />
-            </Link>
+    <div className="min-h-screen bg-gray-50 text-gray-700 pb-24 md:pb-12">
+      {/* 1. Global Ticker (News Bar) */}
+      <div className="bg-blue-50 border-b border-blue-100 h-10 flex items-center overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 w-full flex items-center gap-4 text-xs font-mono">
+          <span className="text-blue-600 font-bold flex items-center gap-1 shrink-0">
+            <Zap className="w-3 h-3" /> MARKET WATCH
+          </span>
+          <div className="flex gap-8 animate-marquee whitespace-nowrap text-gray-500">
+            <span>[Job] EV 정비직 수요 전월 대비 +15% ▲</span>
+            <span>[Avg] 서울 지역 판금 기술자 평균 시급 32,000원 ▲</span>
+            <span>[News] 제네시스 인증 중고차 센터 신규 채용 시작</span>
+            <span>[Tech] 테슬라 진단 소프트웨어 2026.1 업데이트 배포</span>
           </div>
         </div>
-      </header>
+      </div>
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-5">
-        {/* Compact Profile Card */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-slate-800 to-slate-800/50 border border-slate-700 rounded-2xl p-4"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl flex items-center justify-center border border-yellow-500/30">
-              <Briefcase className="w-7 h-7 text-yellow-400" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-white">{profile.name}</h2>
-                {profile.isVerified && (
-                  <BadgeCheck className="w-4 h-4 text-emerald-500" />
-                )}
+      {/* 2. Main Layout */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* ============ LEFT COLUMN: INDUSTRY HUB (Content) ============ */}
+          <div className="lg:col-span-8 space-y-6">
+            
+            {/* A. Hero Banner (주요 행사/이슈) */}
+            <section className="relative overflow-hidden rounded-xl bg-gradient-to-r from-gray-900 to-gray-800 shadow-lg h-48 sm:h-64 flex items-center">
+              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
+              <div className="relative z-10 px-8">
+                <span className="inline-block px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-bold border border-yellow-500/30 rounded-sm mb-2">
+                  FEATURED EVENT
+                </span>
+                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 leading-tight">
+                  2026 Automotive<br />Tech Summit
+                </h1>
+                <p className="text-gray-300 max-w-lg mb-6 text-sm">
+                  미래 모빌리티 정비 트렌드를 확인하세요. SDV, EV, 그리고 AI 진단 기술의 모든 것.
+                </p>
+                <button className="px-5 py-2 bg-white text-gray-900 font-bold text-sm rounded-full hover:bg-gray-100 transition-colors shadow-md">
+                  사전 등록하기
+                </button>
               </div>
-              <p className="text-sm text-slate-400">
-                {profile.currentJobTitle || '정비 전문가'}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-slate-500">스킬 자산</p>
-              <p className="text-lg font-bold text-cyan-400">{totalStats}</p>
-            </div>
-          </div>
-        </motion.div>
+            </section>
 
-        {/* Market Value Analysis Card */}
-        <MarketValueCard
-          currentJobId={targetJobId || 'maint_01'}
-          currentSalary={currentSalary}
-          yearsExperience={3}
-          isVerified={profile.isVerified}
-        />
-
-        {/* Quick Links Grid */}
-        <div className="grid grid-cols-4 gap-3">
-          {[
-            { to: '/jobs', icon: Map, label: '직업탐색', color: 'yellow' },
-            { to: '/education', icon: GraduationCap, label: '교육허브', color: 'purple' },
-            { to: '/skill-tree', icon: Sparkles, label: '스킬트리', color: 'cyan' },
-            { to: '/community', icon: Users, label: '커뮤니티', color: 'pink' },
-          ].map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="flex flex-col items-center gap-2 p-3 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-xl transition-colors"
-            >
-              <link.icon className={`w-6 h-6 ${
-                link.color === 'yellow' ? 'text-yellow-400' :
-                link.color === 'purple' ? 'text-purple-400' :
-                link.color === 'cyan' ? 'text-cyan-400' :
-                'text-pink-400'
-              }`} />
-              <span className="text-xs text-slate-400">{link.label}</span>
-            </Link>
-          ))}
-        </div>
-
-        {/* Section Tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {[
-            { id: 'feed', label: '실시간 피드', icon: Flame },
-            { id: 'reviews', label: '인기 리뷰', icon: MessageSquare },
-            { id: 'courses', label: '추천 교육', icon: BookOpen },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveSection(tab.id as typeof activeSection)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
-                activeSection === tab.id
-                  ? 'bg-yellow-500 text-slate-900'
-                  : 'bg-slate-800 text-slate-400 hover:text-white'
-              }`}
-            >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Feed Section */}
-        {activeSection === 'feed' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-slate-400">업계 소식</h3>
-              <span className="text-xs text-slate-500">실시간 업데이트</span>
-            </div>
-            {feedItems.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="flex items-start gap-3 p-3 bg-slate-800/50 border border-slate-700 rounded-xl"
-              >
-                <span className="text-xl">{item.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-300">{item.text}</p>
-                  <p className="text-xs text-slate-500 mt-1">{item.time}</p>
+            {/* B. Two Column Widgets */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Widget 1: Technical Bulletins (TSB) */}
+              <section className="bg-white shadow-sm ring-1 ring-black/5 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-gray-950 flex items-center gap-2">
+                    <Wrench className="w-4 h-4 text-gray-400" />
+                    기술 통신문 (TSB)
+                  </h3>
+                  <Link to="/community" className="text-xs text-blue-600 hover:text-blue-500">더보기</Link>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-
-        {/* Reviews Section */}
-        {activeSection === 'reviews' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-slate-400">연봉 상승 후기</h3>
-              <Link to="/community" className="text-xs text-yellow-400 flex items-center gap-1">
-                더보기 <ChevronRight className="w-3 h-3" />
-              </Link>
-            </div>
-            {salaryGrowthReviews.map((review, i) => {
-              const job = getJobById(review.jobId);
-              return (
-                <motion.div
-                  key={review.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="p-4 bg-slate-800/50 border border-slate-700 rounded-xl"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">{review.authorName}</span>
-                        {review.verified && (
-                          <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-500">{job?.title}</p>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: review.rating }).map((_, j) => (
-                        <Star key={j} className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-sm text-slate-300 line-clamp-2">{review.title}</p>
-                  {review.salaryGrowth && (
-                    <div className="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/20 rounded text-sm font-bold text-emerald-400">
-                      <TrendingUp className="w-3.5 h-3.5" />
-                      연봉 {review.salaryGrowth}
-                    </div>
-                  )}
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
-
-        {/* Courses Section */}
-        {activeSection === 'courses' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-4"
-          >
-            {/* Free Courses */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-green-400" />
-                  무료 교육 과정
-                </h3>
-                <Link to="/education" className="text-xs text-yellow-400 flex items-center gap-1">
-                  더보기 <ChevronRight className="w-3 h-3" />
-                </Link>
-              </div>
-              <div className="space-y-2">
-                {freeCourses.map((course, i) => {
-                  const academy = getAcademyById(course.academyId);
-                  return (
-                    <motion.div
-                      key={course.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/20 rounded-xl"
-                    >
-                      <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-lg">
-                        {academy?.logo || '📚'}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">{course.title}</p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs text-slate-400">{academy?.name}</span>
-                          <span className="text-xs text-green-400 font-bold">무료</span>
+                <div className="space-y-3">
+                  {technicalBulletins.map((item) => (
+                    <div key={item.id} className="group flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                      <AlertTriangle className={`w-4 h-4 mt-0.5 ${item.important ? 'text-red-500' : 'text-gray-400'}`} />
+                      <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200">
+                            {item.brand}
+                          </span>
+                          <span className="text-xs text-gray-400">{item.date}</span>
                         </div>
+                        <p className={`text-sm ${item.important ? 'text-gray-950 font-medium' : 'text-gray-600'} group-hover:text-blue-600 transition-colors line-clamp-1`}>
+                          {item.title}
+                        </p>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-slate-500" />
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
 
-            {/* Popular Courses */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                  <Flame className="w-4 h-4 text-orange-400" />
-                  인기 교육 과정
-                </h3>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {popularCourses.map((course, i) => {
-                  const academy = getAcademyById(course.academyId);
-                  return (
-                    <motion.div
-                      key={course.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="p-3 bg-slate-800/50 border border-slate-700 rounded-xl"
-                    >
-                      <div className="text-lg mb-2">{academy?.logo || '📚'}</div>
-                      <p className="text-sm font-medium text-white line-clamp-2 mb-1">{course.title}</p>
-                      <div className="flex items-center gap-1 text-xs text-slate-500">
-                        <Clock className="w-3 h-3" />
-                        {course.duration}
-                      </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                          <span className="text-xs text-slate-400">{course.rating}</span>
-                        </div>
-                        <span className={`text-xs font-bold ${course.price === 0 ? 'text-green-400' : 'text-white'}`}>
-                          {course.price === 0 ? '무료' : `${course.price}만원`}
+              {/* Widget 2: Industry Calendar */}
+              <section className="bg-white shadow-sm ring-1 ring-black/5 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-gray-950 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gray-400" />
+                    주요 일정
+                  </h3>
+                  <Link to="/education" className="text-xs text-blue-600 hover:text-blue-500">전체보기</Link>
+                </div>
+                <div className="space-y-3">
+                  {industryEvents.map((evt) => (
+                    <div key={evt.id} className="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                      <div className="w-12 text-center shrink-0">
+                        <span className={`block text-xs font-bold ${evt.date.startsWith('D-') ? 'text-red-500' : 'text-green-500'}`}>
+                          {evt.date}
                         </span>
                       </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-900 font-medium truncate">{evt.title}</p>
+                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                          <MapPin className="w-3 h-3" /> {evt.loc}
+                        </p>
+                      </div>
+                      <span className="text-[10px] text-gray-500 border border-gray-200 px-1.5 py-0.5 rounded">
+                        {evt.type}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </section>
             </div>
-          </motion.div>
-        )}
 
-        {/* Hot Jobs Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-500/30 rounded-xl p-4"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center">
-              <Flame className="w-6 h-6 text-red-400" />
-            </div>
-            <div className="flex-1">
-              <h4 className="font-bold text-white">지금 뜨는 직업</h4>
-              <p className="text-sm text-slate-400">EV 배터리 진단사, ADAS 전문가, PPF 인스톨러</p>
-            </div>
-            <Link to="/jobs" className="p-2 bg-white/10 rounded-lg">
-              <ChevronRight className="w-5 h-5 text-white" />
-            </Link>
+            {/* C. Hot Jobs Ticker */}
+            <section className="bg-white shadow-sm ring-1 ring-black/5 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-gray-950 flex items-center gap-2">
+                  <Briefcase className="w-4 h-4 text-gray-400" />
+                  Premium Recruiting
+                  <span className="text-xs font-normal text-gray-500 ml-2">검증된 고연봉 포지션</span>
+                </h3>
+                <Link to="/jobs" className="text-xs text-blue-600 hover:text-blue-500">채용관 이동</Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {hotJobs.map((job) => (
+                  <div key={job.id} className="bg-gray-50 border border-gray-100 p-4 rounded-lg hover:border-blue-200 hover:bg-blue-50/50 transition-all cursor-pointer group">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-xs text-gray-500 font-semibold">{job.company}</span>
+                      <ExternalLink className="w-3 h-3 text-gray-400 group-hover:text-blue-500" />
+                    </div>
+                    <p className="text-sm font-bold text-gray-900 mb-1 group-hover:text-blue-600">{job.title}</p>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span className="text-green-600 font-mono font-medium">{job.salary}</span>
+                      <span>|</span>
+                      <span>{job.loc}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
           </div>
-        </motion.div>
+
+          {/* ============ RIGHT COLUMN: MY COCKPIT (Sidebar) ============ */}
+          <div className="lg:col-span-4 space-y-6">
+
+            {/* 1. Mini Profile (Compact) */}
+            <section className="bg-white rounded-xl p-5 shadow-sm ring-1 ring-black/5">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-lg font-bold text-gray-600">
+                  {profile.name.charAt(0)}
+                </div>
+                <div>
+                  <h3 className="text-gray-950 font-bold text-lg flex items-center gap-2">
+                    {profile.name}
+                    <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded">
+                      PRO
+                    </span>
+                  </h3>
+                  <p className="text-xs text-gray-500">{profile.currentJobTitle || 'Automotive Technician'}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-center py-3 border-y border-gray-100 mb-4">
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">SKILL SCORE</p>
+                  <p className="text-lg font-mono font-bold text-blue-600">842</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">RANK</p>
+                  <p className="text-lg font-mono font-bold text-gray-950">Top 12%</p>
+                </div>
+              </div>
+              <Link to="/profile" className="block w-full py-2 text-center text-sm font-bold bg-gray-900 hover:bg-gray-800 text-white rounded-full transition-colors">
+                프로필 관리 / 이력서 출력
+              </Link>
+            </section>
+
+            {/* 2. Market Value (Personal Data) */}
+            <div className="relative group">
+              <MarketValueCard
+                currentJobId={targetJobId || 'maint_01'}
+                currentSalary={currentSalary}
+                yearsExperience={profile.xp ? Math.floor(profile.xp / 100) : 3} // Mock logic
+                isVerified={profile.isVerified}
+              />
+            </div>
+
+            {/* 3. Quick Actions */}
+            <section className="bg-white shadow-sm ring-1 ring-black/5 rounded-xl p-5">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Workspace</h3>
+              <div className="space-y-2">
+                <Link to="/missions" className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-lg transition-colors group">
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-blue-600 transition-colors">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-gray-700 group-hover:text-gray-950">작업 일지 작성</p>
+                    <p className="text-xs text-gray-500">오늘의 작업을 기록하세요</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </Link>
+                <Link to="/skill-tree" className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-lg transition-colors group">
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-green-600 transition-colors">
+                    <Award className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-gray-700 group-hover:text-gray-950">스킬 인증 요청</p>
+                    <p className="text-xs text-gray-500">새로운 기술을 증명하세요</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </Link>
+              </div>
+            </section>
+
+          </div>
+        </div>
       </div>
     </div>
   );
