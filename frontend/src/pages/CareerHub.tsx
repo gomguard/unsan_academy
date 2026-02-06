@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -8,7 +8,6 @@ import {
   Users,
   Award,
   Building2,
-  Clock,
   DollarSign,
   ChevronRight,
   Star,
@@ -18,8 +17,9 @@ import {
   Flame,
   GraduationCap,
   ExternalLink,
+  Clock,
 } from 'lucide-react';
-import { getJobById } from '@/lib/jobDatabase';
+import { getJobById, groupInfo, demandInfo } from '@/lib/jobDatabase';
 import { getCoursesForJob, getAcademyById, formatCoursePrice } from '@/lib/educationData';
 import { getReviewsForJob, getSuccessStoriesForJob, type SuccessStory } from '@/lib/careerData';
 import { SalaryChart } from '@/components/SalaryChart';
@@ -44,6 +44,11 @@ export function CareerHub() {
   const reviews = useMemo(() => (jobId ? getReviewsForJob(jobId) : []), [jobId]);
   const successStories = useMemo(() => (jobId ? getSuccessStoriesForJob(jobId) : []), [jobId]);
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [jobId]);
+
   if (!job) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
@@ -63,11 +68,13 @@ export function CareerHub() {
   const demandColors: Record<string, string> = {
     Explosive: 'text-red-400 bg-red-500/20',
     High: 'text-orange-400 bg-orange-500/20',
-    Moderate: 'text-yellow-400 bg-yellow-500/20',
-    Low: 'text-slate-400 bg-slate-500/20',
+    Stable: 'text-green-400 bg-green-500/20',
+    Declining: 'text-slate-400 bg-slate-500/20',
   };
 
   const avgSalary = Math.round((job.salaryRange.min + job.salaryRange.max) / 2);
+  const jobGroupInfo = groupInfo[job.group];
+  const jobDemandInfo = demandInfo[job.marketDemand];
 
   return (
     <div className="min-h-screen bg-slate-900 pb-24 md:pb-8">
@@ -85,10 +92,10 @@ export function CareerHub() {
           {/* Category Badge */}
           <div className="flex items-center gap-2 mb-3">
             <span className="px-2 py-1 bg-slate-700 rounded text-xs text-slate-300">
-              {job.category}
+              {jobGroupInfo.icon} {jobGroupInfo.name}
             </span>
             <span className={`px-2 py-1 rounded text-xs ${demandColors[job.marketDemand]}`}>
-              {job.marketDemand === 'Explosive' && '🔥'} 수요 {job.marketDemand}
+              {jobDemandInfo.icon} 수요 {jobDemandInfo.label}
             </span>
           </div>
 
@@ -104,14 +111,14 @@ export function CareerHub() {
               <p className="text-xs text-slate-500">평균 연봉</p>
             </div>
             <div className="bg-slate-800/60 rounded-xl p-3 text-center">
-              <Clock className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
-              <p className="text-lg font-bold text-yellow-400">{job.requiredExperience || '신입'}</p>
-              <p className="text-xs text-slate-500">필요 경력</p>
+              <Route className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
+              <p className="text-lg font-bold text-yellow-400">{job.prerequisiteJobs?.length || 0}개</p>
+              <p className="text-xs text-slate-500">선행 직업</p>
             </div>
             <div className="bg-slate-800/60 rounded-xl p-3 text-center">
               <Award className="w-5 h-5 text-purple-400 mx-auto mb-1" />
-              <p className="text-lg font-bold text-purple-400">{job.certifications?.length || 0}개</p>
-              <p className="text-xs text-slate-500">관련 자격증</p>
+              <p className="text-lg font-bold text-purple-400">{courses.length}개</p>
+              <p className="text-xs text-slate-500">관련 교육</p>
             </div>
           </div>
         </div>
@@ -158,44 +165,55 @@ export function CareerHub() {
               exit={{ opacity: 0, y: -10 }}
               className="space-y-6"
             >
-              {/* Required Skills */}
+              {/* Tags & Skills */}
               <section>
                 <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-emerald-400" />
-                  필요 역량
+                  특징 및 키워드
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {job.skills?.map((skill, i) => (
+                  {job.tags.map((tag, i) => (
                     <span
                       key={i}
                       className="px-3 py-1.5 bg-slate-800 rounded-lg text-sm text-slate-300"
                     >
-                      {skill}
+                      {tag}
                     </span>
                   ))}
                 </div>
               </section>
 
-              {/* Certifications */}
-              {job.certifications && job.certifications.length > 0 && (
-                <section>
-                  <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                    <Award className="w-5 h-5 text-purple-400" />
-                    관련 자격증
-                  </h3>
-                  <div className="space-y-2">
-                    {job.certifications.map((cert, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-3 bg-slate-800/60 rounded-lg"
-                      >
-                        <span className="text-slate-300">{cert}</span>
-                        <ChevronRight className="w-4 h-4 text-slate-500" />
+              {/* Required Stats */}
+              <section>
+                <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-purple-400" />
+                  필요 스탯
+                </h3>
+                <div className="grid grid-cols-5 gap-2">
+                  {Object.entries(job.requiredStats).map(([key, value]) => {
+                    const statLabels: Record<string, string> = {
+                      T: '기술',
+                      H: '손기술',
+                      S: '운영',
+                      A: '미학',
+                      B: '비즈',
+                    };
+                    const statColors: Record<string, string> = {
+                      T: 'text-cyan-400',
+                      H: 'text-pink-400',
+                      S: 'text-lime-400',
+                      A: 'text-purple-400',
+                      B: 'text-yellow-400',
+                    };
+                    return (
+                      <div key={key} className="bg-slate-800/60 rounded-lg p-2 text-center">
+                        <p className={`text-lg font-bold ${statColors[key]}`}>{value}</p>
+                        <p className="text-xs text-slate-500">{statLabels[key]}</p>
                       </div>
-                    ))}
-                  </div>
-                </section>
-              )}
+                    );
+                  })}
+                </div>
+              </section>
 
               {/* Hiring Companies */}
               {job.hiringCompanies && job.hiringCompanies.length > 0 && (
@@ -452,11 +470,9 @@ export function CareerHub() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
 
-      {/* Bottom CTA */}
-      <div className="fixed bottom-20 left-0 right-0 px-4">
-        <div className="max-w-lg mx-auto">
+        {/* Bottom CTA */}
+        <div className="mt-8">
           <Link
             to="/skill-tree"
             className="block w-full py-4 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold rounded-xl text-center transition-colors shadow-lg shadow-yellow-500/20"
