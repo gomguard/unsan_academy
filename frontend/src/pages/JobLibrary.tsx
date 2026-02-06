@@ -132,13 +132,13 @@ export function JobLibrary() {
   const groups = Object.entries(groupInfo) as [JobGroup, typeof groupInfo[JobGroup]][];
 
   return (
-    <div className="min-h-screen bg-slate-900 pb-24">
+    <div className="min-h-screen bg-slate-900 pb-24 md:pb-8">
       {/* Live Toast */}
       <LiveToast />
 
       {/* Header */}
       <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
-        <div className="max-w-6xl mx-auto px-4 py-3">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3">
           {/* Title Row */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -212,8 +212,8 @@ export function JobLibrary() {
 
       {/* Hot Jobs Section */}
       {selectedGroup === 'all' && !searchQuery && (
-        <section className="py-12 px-4">
-          <div className="max-w-6xl mx-auto">
+        <section className="py-12 px-4 sm:px-6">
+          <div className="max-w-5xl mx-auto">
             <div className="flex items-center gap-2 mb-6">
               <Flame className="w-5 h-5 text-red-500" />
               <h2 className="text-2xl font-bold text-white">🔥 급성장 직업 TOP 6</h2>
@@ -236,8 +236,8 @@ export function JobLibrary() {
 
       {/* Starter Jobs Section */}
       {selectedGroup === 'all' && !searchQuery && (
-        <section className="py-12 px-4 bg-slate-800/50">
-          <div className="max-w-6xl mx-auto">
+        <section className="py-12 px-4 sm:px-6 bg-slate-800/50">
+          <div className="max-w-5xl mx-auto">
             <div className="flex items-center gap-2 mb-6">
               <Star className="w-5 h-5 text-yellow-400" />
               <h2 className="text-2xl font-bold text-white">⭐ 입문 추천 직업</h2>
@@ -300,8 +300,8 @@ export function JobLibrary() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-slate-800">
-        <div className="max-w-6xl mx-auto text-center">
+      <footer className="py-8 px-4 sm:px-6 border-t border-slate-800">
+        <div className="max-w-5xl mx-auto text-center">
           <p className="text-slate-500 text-sm">
             데이터는 2024년 자동차 애프터마켓 산업 시장 조사를 기반으로 합니다.
           </p>

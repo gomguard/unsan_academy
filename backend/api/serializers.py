@@ -1,112 +1,180 @@
 """Serializers for the API."""
 
 from rest_framework import serializers
-from .models import MechanicProfile, JobCard, Task, TaskCompletion, UnlockedCard, Post, Comment, PostLike
+from .models import (
+    JobGroup, Job, JobTag, JobTagRelation,
+    Academy, Course, CourseTag, CourseTagRelation, Certification,
+    MechanicProfile, CareerReview, SuccessStory, StoryJourneyStep,
+    Post, Comment, PostLike,
+    Quest, QuestCompletion,
+    SalaryReport, VerificationStatus
+)
 
+
+# ============ JOB SERIALIZERS ============
+
+class JobTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobTag
+        fields = ['id', 'name', 'color']
+
+
+class JobGroupSerializer(serializers.ModelSerializer):
+    job_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = JobGroup
+        fields = ['id', 'code', 'name', 'color', 'icon', 'description', 'order', 'job_count']
+
+    def get_job_count(self, obj):
+        return obj.jobs.count()
+
+
+class JobSerializer(serializers.ModelSerializer):
+    group_name = serializers.CharField(source='group.name', read_only=True)
+    group_code = serializers.CharField(source='group.code', read_only=True)
+    group_icon = serializers.CharField(source='group.icon', read_only=True)
+    tags = serializers.SerializerMethodField()
+    salary_range_display = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Job
+        fields = [
+            'id', 'code', 'title', 'group', 'group_name', 'group_code', 'group_icon',
+            'description', 'salary_min', 'salary_max', 'salary_range_display',
+            'market_demand', 'req_tech', 'req_hand', 'req_speed', 'req_art', 'req_biz',
+            'hiring_companies', 'source', 'is_starter', 'is_blue_ocean', 'is_ev_transition',
+            'tags', 'order'
+        ]
+
+    def get_tags(self, obj):
+        return list(obj.tag_relations.values_list('tag__name', flat=True))
+
+
+class JobDetailSerializer(JobSerializer):
+    """Job with prerequisites."""
+    prerequisites = JobSerializer(many=True, read_only=True)
+    unlocks = JobSerializer(many=True, read_only=True)
+
+    class Meta(JobSerializer.Meta):
+        fields = JobSerializer.Meta.fields + ['prerequisites', 'unlocks']
+
+
+# ============ EDUCATION SERIALIZERS ============
+
+class AcademySerializer(serializers.ModelSerializer):
+    course_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Academy
+        fields = [
+            'id', 'code', 'name', 'logo', 'description', 'location',
+            'is_partner', 'website', 'order', 'course_count'
+        ]
+
+    def get_course_count(self, obj):
+        return obj.courses.filter(is_active=True).count()
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    academy_name = serializers.CharField(source='academy.name', read_only=True)
+    academy_logo = serializers.CharField(source='academy.logo', read_only=True)
+    tags = serializers.SerializerMethodField()
+    target_job_ids = serializers.PrimaryKeyRelatedField(
+        source='target_jobs', many=True, read_only=True
+    )
+
+    class Meta:
+        model = Course
+        fields = [
+            'id', 'code', 'academy', 'academy_name', 'academy_logo',
+            'title', 'description', 'category', 'course_type',
+            'duration', 'price', 'price_note', 'url',
+            'rating', 'enroll_count', 'is_active', 'tags', 'target_job_ids'
+        ]
+
+    def get_tags(self, obj):
+        return list(obj.tag_relations.values_list('tag__name', flat=True))
+
+
+# ============ USER PROFILE SERIALIZERS ============
 
 class MechanicProfileSerializer(serializers.ModelSerializer):
     stats = serializers.ReadOnlyField()
-    next_tier_xp = serializers.SerializerMethodField()
-    current_tier_xp = serializers.SerializerMethodField()
+    current_job_title = serializers.CharField(source='current_job.title', read_only=True, allow_null=True)
+    target_job_title = serializers.CharField(source='target_job.title', read_only=True, allow_null=True)
 
     class Meta:
         model = MechanicProfile
         fields = [
             'id', 'name', 'tier', 'xp', 'avatar_url',
-            'stat_tech', 'stat_hand', 'stat_speed', 'stat_art', 'stat_biz',
-            'stats', 'next_tier_xp', 'current_tier_xp', 'created_at', 'updated_at'
+            'current_job', 'current_job_title', 'target_job', 'target_job_title',
+            'years_experience',
+            'stat_tech', 'stat_hand', 'stat_speed', 'stat_art', 'stat_biz', 'stats',
+            'current_salary', 'salary_verification_status', 'salary_verified_at',
+            'created_at', 'updated_at'
         ]
+        read_only_fields = ['created_at', 'updated_at', 'salary_verified_at']
 
-    def get_next_tier_xp(self, obj):
-        thresholds = obj.get_tier_xp_thresholds()
-        tier_list = list(thresholds.keys())
-        current_index = tier_list.index(obj.tier)
-        if current_index < len(tier_list) - 1:
-            return thresholds[tier_list[current_index + 1]]
-        return thresholds[obj.tier]
-
-    def get_current_tier_xp(self, obj):
-        thresholds = obj.get_tier_xp_thresholds()
-        return thresholds.get(obj.tier, 0)
-
-
-class JobCardSerializer(serializers.ModelSerializer):
-    requirements = serializers.ReadOnlyField()
-    is_unlocked = serializers.SerializerMethodField()
-
-    class Meta:
-        model = JobCard
-        fields = [
-            'id', 'title', 'subtitle', 'description', 'image_url',
-            'requirements', 'rarity', 'color_primary', 'color_secondary',
-            'is_unlocked'
-        ]
-
-    def get_is_unlocked(self, obj):
-        request = self.context.get('request')
-        profile_id = self.context.get('profile_id')
-
-        if profile_id:
-            return UnlockedCard.objects.filter(profile_id=profile_id, card=obj).exists()
-        return False
-
-
-class TaskSerializer(serializers.ModelSerializer):
-    is_completed_today = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Task
-        fields = [
-            'id', 'title', 'description', 'stat_type', 'stat_reward',
-            'xp_reward', 'requires_photo', 'is_daily', 'is_completed_today'
-        ]
-
-    def get_is_completed_today(self, obj):
-        from django.utils import timezone
-        from datetime import timedelta
-
-        profile_id = self.context.get('profile_id')
-        if not profile_id:
-            return False
-
-        today = timezone.now().date()
-        return TaskCompletion.objects.filter(
-            profile_id=profile_id,
-            task=obj,
-            completed_at__date=today
-        ).exists()
-
-
-class TaskCompletionSerializer(serializers.ModelSerializer):
-    task_title = serializers.CharField(source='task.title', read_only=True)
-    stat_type = serializers.CharField(source='task.stat_type', read_only=True)
-    stat_reward = serializers.IntegerField(source='task.stat_reward', read_only=True)
-
-    class Meta:
-        model = TaskCompletion
-        fields = ['id', 'task', 'task_title', 'stat_type', 'stat_reward', 'photo_url', 'completed_at']
-        read_only_fields = ['completed_at']
-
-
-class CompleteTaskSerializer(serializers.Serializer):
-    """Serializer for completing a task."""
-    task_id = serializers.IntegerField()
-    photo_url = serializers.URLField(required=False, allow_blank=True)
-
-
-# ============ COMMUNITY SERIALIZERS ============
 
 class AuthorSerializer(serializers.ModelSerializer):
-    """Compact author info with tier and stats."""
+    """Compact author info for posts/comments."""
     stats = serializers.ReadOnlyField()
 
     class Meta:
         model = MechanicProfile
-        fields = ['id', 'name', 'tier', 'avatar_url', 'stats', 'stat_tech', 'stat_hand', 'stat_speed', 'stat_art', 'stat_biz']
+        fields = [
+            'id', 'name', 'tier', 'avatar_url', 'stats',
+            'stat_tech', 'stat_hand', 'stat_speed', 'stat_art', 'stat_biz',
+            'current_salary', 'salary_verification_status'
+        ]
 
+
+# ============ REVIEW SERIALIZERS ============
+
+class CareerReviewSerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source='author.name', read_only=True)
+    job_title = serializers.CharField(source='job.title', read_only=True)
+
+    class Meta:
+        model = CareerReview
+        fields = [
+            'id', 'author', 'author_name', 'job', 'job_title',
+            'title', 'content', 'rating', 'years_in_role',
+            'previous_job', 'salary_growth', 'pros', 'cons', 'advice',
+            'helpful_count', 'is_verified', 'created_at'
+        ]
+        read_only_fields = ['helpful_count', 'is_verified', 'created_at']
+
+
+# ============ SUCCESS STORY SERIALIZERS ============
+
+class StoryJourneyStepSerializer(serializers.ModelSerializer):
+    job_title = serializers.CharField(source='job.title', read_only=True)
+
+    class Meta:
+        model = StoryJourneyStep
+        fields = ['id', 'job', 'job_title', 'order', 'duration', 'salary']
+
+
+class SuccessStorySerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source='author.name', read_only=True)
+    target_job_title = serializers.CharField(source='target_job.title', read_only=True)
+    journey_steps = StoryJourneyStepSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = SuccessStory
+        fields = [
+            'id', 'author', 'author_name', 'target_job', 'target_job_title',
+            'title', 'summary', 'total_duration', 'salary_change',
+            'key_lessons', 'journey_steps', 'is_verified', 'created_at'
+        ]
+        read_only_fields = ['is_verified', 'created_at']
+
+
+# ============ COMMUNITY SERIALIZERS ============
 
 class CommentSerializer(serializers.ModelSerializer):
-    """Comment serializer with author info."""
     author = AuthorSerializer(read_only=True)
     is_mine = serializers.SerializerMethodField()
 
@@ -121,32 +189,27 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    """Post serializer with author info and stats."""
     author = AuthorSerializer(read_only=True)
-    comment_count = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
     is_mine = serializers.SerializerMethodField()
     category_display = serializers.CharField(source='get_category_display', read_only=True)
-    verified_card_title = serializers.CharField(source='verified_card.title', read_only=True, allow_null=True)
+    related_job_title = serializers.CharField(source='related_job.title', read_only=True, allow_null=True)
 
     class Meta:
         model = Post
         fields = [
             'id', 'author', 'category', 'category_display', 'title', 'content',
+            'related_job', 'related_job_title',
             'likes', 'views', 'comment_count', 'is_liked', 'is_mine',
-            'verified_card', 'verified_card_title', 'attached_salary_data',
-            'is_pinned', 'created_at', 'updated_at'
+            'show_verified_salary', 'is_pinned', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['likes', 'views', 'created_at', 'updated_at', 'is_pinned']
-
-    def get_comment_count(self, obj):
-        return obj.comments.count()
+        read_only_fields = ['likes', 'views', 'comment_count', 'created_at', 'updated_at', 'is_pinned']
 
     def get_is_liked(self, obj):
         profile_id = self.context.get('profile_id')
         if not profile_id:
             return False
-        return PostLike.objects.filter(post=obj, profile_id=profile_id).exists()
+        return PostLike.objects.filter(post=obj, user_id=profile_id).exists()
 
     def get_is_mine(self, obj):
         profile_id = self.context.get('profile_id')
@@ -154,7 +217,6 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostDetailSerializer(PostSerializer):
-    """Post serializer with comments included."""
     comments = CommentSerializer(many=True, read_only=True)
 
     class Meta(PostSerializer.Meta):
@@ -162,16 +224,86 @@ class PostDetailSerializer(PostSerializer):
 
 
 class CreatePostSerializer(serializers.ModelSerializer):
-    """Serializer for creating a post."""
-
     class Meta:
         model = Post
-        fields = ['category', 'title', 'content', 'verified_card', 'attached_salary_data']
+        fields = ['category', 'title', 'content', 'related_job', 'show_verified_salary']
 
 
 class CreateCommentSerializer(serializers.ModelSerializer):
-    """Serializer for creating a comment."""
-
     class Meta:
         model = Comment
         fields = ['content']
+
+
+# ============ QUEST SERIALIZERS ============
+
+class QuestSerializer(serializers.ModelSerializer):
+    is_completed_today = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Quest
+        fields = [
+            'id', 'title', 'description', 'target_stat', 'stat_reward',
+            'xp_reward', 'icon', 'category', 'requires_photo',
+            'cooldown_hours', 'max_daily_completions', 'difficulty',
+            'is_active', 'is_completed_today'
+        ]
+
+    def get_is_completed_today(self, obj):
+        from django.utils import timezone
+        profile_id = self.context.get('profile_id')
+        if not profile_id:
+            return False
+        today = timezone.now().date()
+        return QuestCompletion.objects.filter(
+            profile_id=profile_id,
+            quest=obj,
+            completed_at__date=today
+        ).exists()
+
+
+class QuestCompletionSerializer(serializers.ModelSerializer):
+    quest_title = serializers.CharField(source='quest.title', read_only=True)
+    stat_type = serializers.CharField(source='quest.target_stat', read_only=True)
+    stat_reward = serializers.IntegerField(source='quest.stat_reward', read_only=True)
+
+    class Meta:
+        model = QuestCompletion
+        fields = [
+            'id', 'quest', 'quest_title', 'stat_type', 'stat_reward',
+            'proof_image', 'notes', 'is_verified', 'completed_at'
+        ]
+        read_only_fields = ['completed_at', 'is_verified']
+
+
+class CompleteQuestSerializer(serializers.Serializer):
+    quest_id = serializers.IntegerField()
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+
+# ============ SALARY REPORT SERIALIZERS ============
+
+class SalaryReportSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source='user.name', read_only=True)
+    target_job_title = serializers.CharField(source='target_job.title', read_only=True)
+    salary_gap = serializers.ReadOnlyField()
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model = SalaryReport
+        fields = [
+            'id', 'user', 'user_name', 'target_job', 'target_job_title',
+            'current_salary', 'estimated_salary', 'years_experience', 'percentile',
+            'user_stats', 'salary_gap', 'proof_image', 'status', 'status_display',
+            'verified_at', 'rejection_reason', 'created_at'
+        ]
+        read_only_fields = ['created_at', 'verified_at']
+
+
+class CreateSalaryReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalaryReport
+        fields = [
+            'target_job', 'current_salary', 'estimated_salary',
+            'years_experience', 'percentile', 'user_stats'
+        ]

@@ -1151,3 +1151,43 @@ export function getJobsThatRequire(jobId: string): Job[] {
     job.prerequisiteJobs?.includes(jobId)
   );
 }
+
+// ========== FILTER HELPERS ==========
+
+// Blue Ocean jobs: High salary + High/Explosive demand
+export function isBlueOceanJob(job: Job): boolean {
+  const highSalary = job.salaryRange.max >= 6000;
+  const highDemand = job.marketDemand === 'Explosive' || job.marketDemand === 'High';
+  return highSalary && highDemand;
+}
+
+export function getBlueOceanJobs(): Job[] {
+  return jobDatabase.filter(isBlueOceanJob);
+}
+
+// Starter jobs: No prerequisites (entry-level)
+export function isStarterJob(job: Job): boolean {
+  return !job.prerequisiteJobs || job.prerequisiteJobs.length === 0;
+}
+
+export function getStarterJobs(): Job[] {
+  return jobDatabase.filter(isStarterJob);
+}
+
+// EV Transition jobs: Jobs in EV_Future group or related to EV
+export function isEVTransitionJob(job: Job): boolean {
+  if (job.group === 'EV_Future') return true;
+  // Also include hybrid specialist and related jobs
+  const evRelatedIds = ['maint_17', 'ev_01', 'ev_02', 'ev_03', 'ev_04', 'ev_05', 'ev_06', 'ev_07', 'ev_08', 'ev_09', 'ev_10'];
+  return evRelatedIds.includes(job.id);
+}
+
+export function getEVTransitionJobs(): Job[] {
+  return jobDatabase.filter(isEVTransitionJob);
+}
+
+// Get IC Engine to EV transition path
+export function getEVTransitionPath(): string[] {
+  // Key path: maint_01 -> maint_14 -> maint_17 -> ev_01 -> ev_02 (Engine mechanic to EV specialist)
+  return ['maint_01', 'maint_06', 'maint_09', 'maint_14', 'maint_17', 'ev_01', 'ev_02', 'ev_03', 'ev_09'];
+}

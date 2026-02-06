@@ -1,14 +1,14 @@
 import { motion } from 'framer-motion';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, Briefcase, Target, User, MessageSquare } from 'lucide-react';
+import { Home, Briefcase, GraduationCap, ClipboardList, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/dashboard', icon: Home, label: '홈' },
   { path: '/jobs', icon: Briefcase, label: '직업' },
-  { path: '/missions', icon: Target, label: '미션' },
-  { path: '/community', icon: MessageSquare, label: '라운지' },
-  { path: '/profile', icon: User, label: '프로필' },
+  { path: '/education', icon: GraduationCap, label: '교육' },
+  { path: '/missions', icon: ClipboardList, label: '작업일지' },
+  { path: '/community', icon: Users, label: '커뮤니티' },
 ];
 
 export function BottomNav() {

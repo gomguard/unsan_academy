@@ -1,5 +1,53 @@
 export type StatType = 'Tech' | 'Hand' | 'Speed' | 'Art' | 'Biz';
 
+// ============ EDUCATION TYPES ============
+
+export type CourseType = 'Online' | 'Offline' | 'Hybrid';
+export type CourseCategory = 'Maintenance' | 'Tuning' | 'EV_Future' | 'Body' | 'Management';
+
+export interface Academy {
+  id: string;
+  name: string;           // e.g. "한국폴리텍대학", "J's Detailing Academy"
+  logo: string;           // Emoji or URL
+  description: string;
+  location?: string;      // "서울 강남" or "전국" for online
+  isPartner: boolean;     // True = Verified Partner Badge (Premium)
+  website?: string;
+}
+
+export interface Course {
+  id: string;
+  academyId: string;
+  title: string;          // e.g. "전기차 고전압 배터리 진단 실무"
+  description: string;
+  targetJobIds: string[]; // Links to JobCards (e.g. ['ev_01', 'ev_02'])
+  category: CourseCategory;
+  type: CourseType;
+  duration: string;       // "3일" or "4주"
+  price: number;          // In 만원, 0 = Free
+  priceNote?: string;     // "국비지원", "내일배움카드 적용"
+  tags: string[];         // ["국비지원", "내일배움카드", "주말반", "실습위주"]
+  certifications?: string[]; // Certifications you can get
+  url: string;            // External registration link
+  thumbnail?: string;     // Course image
+  rating?: number;        // 1-5 stars
+  enrollCount?: number;   // Number of enrollees
+}
+
+export const courseCategoryInfo: Record<CourseCategory, { name: string; icon: string; color: string }> = {
+  Maintenance: { name: '정비', icon: '🔧', color: '#3b82f6' },
+  Body: { name: '외장/복원', icon: '🎨', color: '#ec4899' },
+  Tuning: { name: '튜닝/필름', icon: '🎬', color: '#f59e0b' },
+  EV_Future: { name: 'EV/미래차', icon: '⚡', color: '#8b5cf6' },
+  Management: { name: '경영/서비스', icon: '📊', color: '#6366f1' },
+};
+
+export const courseTypeInfo: Record<CourseType, { name: string; icon: string; color: string }> = {
+  Online: { name: '온라인', icon: '💻', color: '#3b82f6' },
+  Offline: { name: '오프라인', icon: '🏫', color: '#10b981' },
+  Hybrid: { name: '블렌디드', icon: '🔄', color: '#8b5cf6' },
+};
+
 // Salary Simulator Types
 export type JobStatType = 'T' | 'H' | 'S' | 'A' | 'B';
 
@@ -39,6 +87,10 @@ export interface UserProfile {
   next_tier_xp: number;
   current_tier_xp: number;
   unlockedCardIds: string[];
+  // New professional profile fields
+  currentSalary?: number;         // User's current salary in 만원
+  currentJobTitle?: string;       // Current job title
+  isVerified?: boolean;           // Salary verification status
 }
 
 export interface JobCard {
@@ -172,6 +224,9 @@ export interface PostAuthor {
   stat_speed: number;
   stat_art: number;
   stat_biz: number;
+  // Salary verification
+  current_salary?: number;
+  salary_verification_status?: VerificationStatus;
 }
 
 export interface Comment {
@@ -193,6 +248,70 @@ export interface SalaryGapData {
   years: number;
 }
 
+// ============ SALARY REPORT TYPES ============
+
+export type VerificationStatus = 'None' | 'Pending' | 'Verified' | 'Rejected';
+
+export interface SalaryReport {
+  id: number;
+  user: number;
+  user_name?: string;
+  user_tier?: TierType;
+  target_job_id: string;
+  target_job_title: string;
+  current_salary: number;
+  estimated_salary: number;
+  market_min: number;
+  market_max: number;
+  percentile: number;
+  years_experience: number;
+  user_stats: {
+    T: number;
+    H: number;
+    S: number;
+    A: number;
+    B: number;
+  };
+  salary_gap: number;
+  gap_percent: number;
+  proof_image: string | null;
+  status: VerificationStatus;
+  status_display: string;
+  verified_at: string | null;
+  rejection_reason: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateSalaryReportData {
+  target_job_id: string;
+  target_job_title: string;
+  current_salary: number;
+  estimated_salary: number;
+  market_min: number;
+  market_max: number;
+  percentile: number;
+  years_experience: number;
+  user_stats: {
+    T: number;
+    H: number;
+    S: number;
+    A: number;
+    B: number;
+  };
+}
+
+export const verificationStatusInfo: Record<VerificationStatus, {
+  label: string;
+  color: string;
+  bgColor: string;
+}> = {
+  None: { label: '미인증', color: '#6b7280', bgColor: 'bg-slate-500/20' },
+  Pending: { label: '심사 중', color: '#f59e0b', bgColor: 'bg-yellow-500/20' },
+  Verified: { label: '인증 완료', color: '#22c55e', bgColor: 'bg-green-500/20' },
+  Rejected: { label: '반려됨', color: '#ef4444', bgColor: 'bg-red-500/20' },
+};
+
 export interface Post {
   id: number;
   author: PostAuthor;
@@ -208,6 +327,7 @@ export interface Post {
   verified_card?: number;
   verified_card_title?: string;
   attached_salary_data?: SalaryGapData;
+  show_verified_salary?: boolean;
   is_pinned: boolean;
   created_at: string;
   updated_at: string;

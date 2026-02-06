@@ -4,16 +4,96 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.utils import timezone
-from django.db.models import F
+from django.db.models import F, Count
 
-from .models import MechanicProfile, JobCard, Task, TaskCompletion, UnlockedCard, Post, Comment, PostLike
+from .models import (
+    JobGroup, Job, Academy, Course,
+    MechanicProfile, CareerReview, SuccessStory,
+    Post, Comment, PostLike,
+    Quest, QuestCompletion,
+    SalaryReport, VerificationStatus
+)
 from .serializers import (
-    MechanicProfileSerializer, JobCardSerializer, TaskSerializer,
-    TaskCompletionSerializer, CompleteTaskSerializer,
+    JobGroupSerializer, JobSerializer, JobDetailSerializer,
+    AcademySerializer, CourseSerializer,
+    MechanicProfileSerializer, AuthorSerializer,
+    CareerReviewSerializer, SuccessStorySerializer,
     PostSerializer, PostDetailSerializer, CreatePostSerializer,
-    CommentSerializer, CreateCommentSerializer
+    CommentSerializer, CreateCommentSerializer,
+    QuestSerializer, QuestCompletionSerializer, CompleteQuestSerializer,
+    SalaryReportSerializer, CreateSalaryReportSerializer
 )
 
+
+# ============ JOB VIEWSETS ============
+
+class JobGroupViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet for job groups (7 categories)."""
+    queryset = JobGroup.objects.all()
+    serializer_class = JobGroupSerializer
+
+
+class JobViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet for jobs (88 careers)."""
+    queryset = Job.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return JobDetailSerializer
+        return JobSerializer
+
+    def get_queryset(self):
+        queryset = Job.objects.all()
+        group = self.request.query_params.get('group')
+        if group:
+            queryset = queryset.filter(group__code=group)
+
+        is_starter = self.request.query_params.get('is_starter')
+        if is_starter == 'true':
+            queryset = queryset.filter(is_starter=True)
+
+        is_blue_ocean = self.request.query_params.get('is_blue_ocean')
+        if is_blue_ocean == 'true':
+            queryset = queryset.filter(is_blue_ocean=True)
+
+        is_ev = self.request.query_params.get('is_ev_transition')
+        if is_ev == 'true':
+            queryset = queryset.filter(is_ev_transition=True)
+
+        return queryset
+
+
+# ============ EDUCATION VIEWSETS ============
+
+class AcademyViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet for academies."""
+    queryset = Academy.objects.all()
+    serializer_class = AcademySerializer
+
+
+class CourseViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet for courses."""
+    queryset = Course.objects.filter(is_active=True)
+    serializer_class = CourseSerializer
+
+    def get_queryset(self):
+        queryset = Course.objects.filter(is_active=True)
+        academy = self.request.query_params.get('academy')
+        if academy:
+            queryset = queryset.filter(academy_id=academy)
+
+        category = self.request.query_params.get('category')
+        if category:
+            queryset = queryset.filter(category=category)
+
+        job = self.request.query_params.get('job')
+        if job:
+            queryset = queryset.filter(target_jobs__id=job)
+
+        return queryset
+
+
+# ============ PROFILE VIEWSET ============
 
 class MechanicProfileViewSet(viewsets.ModelViewSet):
     """ViewSet for MechanicProfile."""
@@ -21,108 +101,97 @@ class MechanicProfileViewSet(viewsets.ModelViewSet):
     serializer_class = MechanicProfileSerializer
 
     @action(detail=True, methods=['post'])
-    def complete_task(self, request, pk=None):
-        """Complete a task and update stats."""
+    def complete_quest(self, request, pk=None):
+        """Complete a quest and update stats."""
         profile = self.get_object()
-        serializer = CompleteTaskSerializer(data=request.data)
+        serializer = CompleteQuestSerializer(data=request.data)
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        task_id = serializer.validated_data['task_id']
-        photo_url = serializer.validated_data.get('photo_url', '')
+        quest_id = serializer.validated_data['quest_id']
+        notes = serializer.validated_data.get('notes', '')
 
         try:
-            task = Task.objects.get(id=task_id)
-        except Task.DoesNotExist:
-            return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
+            quest = Quest.objects.get(id=quest_id, is_active=True)
+        except Quest.DoesNotExist:
+            return Response({'error': 'Quest not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Check if already completed today (for daily tasks)
-        if task.is_daily:
-            today = timezone.now().date()
-            already_done = TaskCompletion.objects.filter(
-                profile=profile,
-                task=task,
-                completed_at__date=today
-            ).exists()
-            if already_done:
-                return Response({'error': 'Task already completed today'}, status=status.HTTP_400_BAD_REQUEST)
+        # Check cooldown
+        today = timezone.now().date()
+        today_completions = QuestCompletion.objects.filter(
+            profile=profile,
+            quest=quest,
+            completed_at__date=today
+        ).count()
+
+        if today_completions >= quest.max_daily_completions:
+            return Response({'error': 'Quest completion limit reached'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create completion record
-        completion = TaskCompletion.objects.create(
+        completion = QuestCompletion.objects.create(
             profile=profile,
-            task=task,
-            photo_url=photo_url
+            quest=quest,
+            notes=notes
         )
 
         # Update stats
-        stat_field = f'stat_{task.stat_type.lower()}'
-        current_value = getattr(profile, stat_field)
-        new_value = min(100, current_value + task.stat_reward)
-        setattr(profile, stat_field, new_value)
+        stat_field = f'stat_{quest.target_stat.lower()}'
+        if hasattr(profile, stat_field):
+            current_value = getattr(profile, stat_field)
+            new_value = min(100, current_value + quest.stat_reward)
+            setattr(profile, stat_field, new_value)
 
         # Update XP
-        profile.xp += task.xp_reward
+        profile.xp += quest.xp_reward
         profile.save()
-
-        # Update tier if needed
-        profile.update_tier()
-
-        # Check for newly unlockable cards
-        newly_unlocked = self._check_unlockable_cards(profile)
 
         return Response({
             'success': True,
-            'stat_updated': task.stat_type,
-            'stat_change': task.stat_reward,
-            'new_value': new_value,
-            'xp_gained': task.xp_reward,
+            'stat_updated': quest.target_stat,
+            'stat_change': quest.stat_reward,
+            'new_value': new_value if hasattr(profile, stat_field) else None,
+            'xp_gained': quest.xp_reward,
             'total_xp': profile.xp,
             'tier': profile.tier,
-            'newly_unlocked_cards': [card.title for card in newly_unlocked]
         })
 
-    def _check_unlockable_cards(self, profile):
-        """Check and unlock any cards that meet requirements."""
-        stats = profile.stats
-        unlocked = []
+    @action(detail=True, methods=['post'])
+    def update_salary(self, request, pk=None):
+        """Update current salary for the profile."""
+        profile = self.get_object()
+        salary = request.data.get('current_salary')
 
-        for card in JobCard.objects.all():
-            # Skip if already unlocked
-            if UnlockedCard.objects.filter(profile=profile, card=card).exists():
-                continue
+        if salary is None:
+            return Response({'error': 'current_salary required'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Check requirements
-            can_unlock = True
-            for stat_name, required_value in card.requirements.items():
-                if stats.get(stat_name, 0) < required_value:
-                    can_unlock = False
-                    break
+        profile.current_salary = int(salary)
+        profile.save(update_fields=['current_salary', 'updated_at'])
 
-            if can_unlock:
-                UnlockedCard.objects.create(profile=profile, card=card)
-                unlocked.append(card)
+        return Response(MechanicProfileSerializer(profile).data)
 
-        return unlocked
+    @action(detail=True, methods=['post'])
+    def upload_salary_proof(self, request, pk=None):
+        """Upload salary proof image for verification."""
+        profile = self.get_object()
 
+        proof_image = request.FILES.get('salary_proof_image')
+        if not proof_image:
+            return Response({'error': 'salary_proof_image required'}, status=status.HTTP_400_BAD_REQUEST)
 
-class JobCardViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet for JobCards."""
-    queryset = JobCard.objects.all()
-    serializer_class = JobCardSerializer
+        profile.salary_proof_image = proof_image
+        profile.salary_verification_status = VerificationStatus.PENDING
+        profile.save(update_fields=['salary_proof_image', 'salary_verification_status', 'updated_at'])
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        profile_id = self.request.query_params.get('profile_id')
-        if profile_id:
-            context['profile_id'] = int(profile_id)
-        return context
+        return Response(MechanicProfileSerializer(profile).data)
 
 
-class TaskViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet for Tasks."""
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
+# ============ QUEST VIEWSET ============
+
+class QuestViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet for Quests."""
+    queryset = Quest.objects.filter(is_active=True)
+    serializer_class = QuestSerializer
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -131,46 +200,40 @@ class TaskViewSet(viewsets.ReadOnlyModelViewSet):
             context['profile_id'] = int(profile_id)
         return context
 
+    def get_queryset(self):
+        queryset = Quest.objects.filter(is_active=True)
+        category = self.request.query_params.get('category')
+        if category:
+            queryset = queryset.filter(category=category)
+        return queryset
 
-@api_view(['GET'])
-def dashboard_data(request, profile_id):
-    """Get all dashboard data in one request."""
-    try:
-        profile = MechanicProfile.objects.get(id=profile_id)
-    except MechanicProfile.DoesNotExist:
-        return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Get profile data
-    profile_data = MechanicProfileSerializer(profile).data
+# ============ REVIEW VIEWSETS ============
 
-    # Get job cards with unlock status
-    cards = JobCard.objects.all()
-    cards_serializer = JobCardSerializer(
-        cards, many=True,
-        context={'profile_id': profile_id}
-    )
+class CareerReviewViewSet(viewsets.ModelViewSet):
+    """ViewSet for career reviews."""
+    queryset = CareerReview.objects.all()
+    serializer_class = CareerReviewSerializer
 
-    # Get tasks with completion status
-    tasks = Task.objects.filter(is_daily=True)
-    tasks_serializer = TaskSerializer(
-        tasks, many=True,
-        context={'profile_id': profile_id}
-    )
+    def get_queryset(self):
+        queryset = CareerReview.objects.all()
+        job = self.request.query_params.get('job')
+        if job:
+            queryset = queryset.filter(job_id=job)
+        return queryset
 
-    # Get today's completions
-    today = timezone.now().date()
-    today_completions = TaskCompletion.objects.filter(
-        profile=profile,
-        completed_at__date=today
-    )
-    completions_serializer = TaskCompletionSerializer(today_completions, many=True)
 
-    return Response({
-        'profile': profile_data,
-        'job_cards': cards_serializer.data,
-        'daily_tasks': tasks_serializer.data,
-        'today_completions': completions_serializer.data,
-    })
+class SuccessStoryViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet for success stories."""
+    queryset = SuccessStory.objects.all()
+    serializer_class = SuccessStorySerializer
+
+    def get_queryset(self):
+        queryset = SuccessStory.objects.all()
+        job = self.request.query_params.get('job')
+        if job:
+            queryset = queryset.filter(target_job_id=job)
+        return queryset
 
 
 # ============ COMMUNITY VIEWS ============
@@ -238,16 +301,14 @@ class PostViewSet(viewsets.ModelViewSet):
         except MechanicProfile.DoesNotExist:
             return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        like, created = PostLike.objects.get_or_create(post=post, profile=profile)
+        like, created = PostLike.objects.get_or_create(post=post, user=profile)
         if not created:
-            # Already liked - unlike
             like.delete()
             post.likes = F('likes') - 1
             post.save(update_fields=['likes'])
             post.refresh_from_db()
             return Response({'liked': False, 'likes': post.likes})
         else:
-            # New like
             post.likes = F('likes') + 1
             post.save(update_fields=['likes'])
             post.refresh_from_db()
@@ -284,3 +345,105 @@ class CommentViewSet(viewsets.ModelViewSet):
         if profile_id:
             context['profile_id'] = int(profile_id)
         return context
+
+
+# ============ SALARY REPORT VIEWS ============
+
+class SalaryReportViewSet(viewsets.ModelViewSet):
+    """ViewSet for salary reports."""
+    queryset = SalaryReport.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CreateSalaryReportSerializer
+        return SalaryReportSerializer
+
+    def get_queryset(self):
+        queryset = SalaryReport.objects.all()
+        profile_id = self.request.query_params.get('profile_id')
+        if profile_id:
+            queryset = queryset.filter(user_id=profile_id)
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        profile_id = request.data.get('profile_id') or request.query_params.get('profile_id')
+        if not profile_id:
+            return Response({'error': 'profile_id required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            profile = MechanicProfile.objects.get(id=profile_id)
+        except MechanicProfile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CreateSalaryReportSerializer(data=request.data)
+        if serializer.is_valid():
+            report = serializer.save(user=profile)
+            return Response(
+                SalaryReportSerializer(report).data,
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'])
+    def upload_proof(self, request, pk=None):
+        """Upload proof image for verification."""
+        report = self.get_object()
+
+        profile_id = request.data.get('profile_id') or request.query_params.get('profile_id')
+        if not profile_id or report.user_id != int(profile_id):
+            return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
+
+        proof_image = request.FILES.get('proof_image')
+        if not proof_image:
+            return Response({'error': 'proof_image required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        report.proof_image = proof_image
+        report.status = VerificationStatus.PENDING
+        report.save()
+        return Response(SalaryReportSerializer(report).data)
+
+    @action(detail=False, methods=['get'])
+    def my_reports(self, request):
+        """Get current user's reports."""
+        profile_id = request.query_params.get('profile_id')
+        if not profile_id:
+            return Response({'error': 'profile_id required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        reports = SalaryReport.objects.filter(user_id=profile_id).order_by('-created_at')
+        serializer = SalaryReportSerializer(reports, many=True)
+        return Response(serializer.data)
+
+
+# ============ DASHBOARD DATA ============
+
+@api_view(['GET'])
+def dashboard_data(request, profile_id):
+    """Get all dashboard data in one request."""
+    try:
+        profile = MechanicProfile.objects.get(id=profile_id)
+    except MechanicProfile.DoesNotExist:
+        return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Get profile data
+    profile_data = MechanicProfileSerializer(profile).data
+
+    # Get daily quests with completion status
+    quests = Quest.objects.filter(is_active=True, category='Daily')
+    quests_serializer = QuestSerializer(
+        quests, many=True,
+        context={'profile_id': profile_id}
+    )
+
+    # Get today's completions
+    today = timezone.now().date()
+    today_completions = QuestCompletion.objects.filter(
+        profile=profile,
+        completed_at__date=today
+    )
+    completions_serializer = QuestCompletionSerializer(today_completions, many=True)
+
+    return Response({
+        'profile': profile_data,
+        'daily_quests': quests_serializer.data,
+        'today_completions': completions_serializer.data,
+    })

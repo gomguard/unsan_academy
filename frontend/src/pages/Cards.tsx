@@ -15,7 +15,7 @@ export function Cards() {
   const unlockedLegends = jobCards.filter(c => c.track === 'Hybrid' && profile.unlockedCardIds.includes(c.id)).length;
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 pb-24 md:pb-8">
       {/* Header */}
       <PageHeader
         title="커리어 맵"
@@ -23,7 +23,7 @@ export function Cards() {
         icon={<Trophy className="w-5 h-5 text-yellow-400" />}
       />
 
-      <div className="max-w-lg mx-auto px-4 py-6 space-y-6 pb-24">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Progress Cards */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}

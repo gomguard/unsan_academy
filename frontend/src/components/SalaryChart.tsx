@@ -10,8 +10,9 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, User, Target, ChevronDown, ChevronUp, DollarSign, TrendingDown, Trophy, AlertTriangle } from 'lucide-react';
+import { TrendingUp, User, Target, ChevronDown, ChevronUp, DollarSign, TrendingDown, Trophy, AlertTriangle, Save, CheckCircle, Shield } from 'lucide-react';
 import type { Job, JobStats } from '@/lib/jobDatabase';
+import type { CreateSalaryReportData, SalaryReport } from '@/types';
 import {
   calculateSalary,
   generateDistribution,
@@ -21,6 +22,9 @@ import {
   projectSalaryGrowth,
 } from '@/lib/salaryCalculator';
 import { useStore } from '@/store/useStore';
+import { VerificationUploadModal } from './VerificationUploadModal';
+
+const API_BASE = 'http://localhost:8000/api';
 
 interface SalaryChartProps {
   job: Job;
@@ -81,7 +85,7 @@ function StatSlider({
 
 export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartProps) {
   // Global state
-  const { currentSalary, setCurrentSalary } = useStore();
+  const { currentSalary, setCurrentSalary, profile, addSalaryReport, updateSalaryReport, addToast } = useStore();
 
   // Local state
   const [years, setYears] = useState(defaultYears);
@@ -91,6 +95,11 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
   const [customStats, setCustomStats] = useState<JobStats>(
     userStats || { T: 50, H: 50, S: 50, A: 50, B: 50 }
   );
+
+  // Save report state
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedReport, setSavedReport] = useState<SalaryReport | null>(null);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   // Get salary info from job
   const salaryInfo = useMemo(() => createSalaryInfoFromJob(job), [job]);
@@ -121,6 +130,67 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
     () => projectSalaryGrowth(salaryInfo, customStats, 10),
     [salaryInfo, customStats]
   );
+
+  // Save Report Handler
+  const handleSaveReport = async () => {
+    if (!currentSalary || !profile) {
+      addToast({ message: '현재 연봉을 먼저 입력해주세요', type: 'error' });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const reportData: CreateSalaryReportData = {
+        target_job_id: job.id,
+        target_job_title: job.title,
+        current_salary: currentSalary,
+        estimated_salary: userSalary,
+        market_min: job.salaryRange.min,
+        market_max: job.salaryRange.max,
+        percentile: percentile,
+        years_experience: years,
+        user_stats: customStats,
+      };
+
+      const response = await fetch(`${API_BASE}/reports/?profile_id=${profile.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...reportData, profile_id: profile.id }),
+      });
+
+      if (!response.ok) throw new Error('Failed to save report');
+
+      const saved = await response.json();
+      setSavedReport(saved);
+      addSalaryReport(saved);
+      addToast({ message: '리포트가 저장되었습니다!', type: 'success' });
+    } catch {
+      addToast({ message: '저장에 실패했습니다', type: 'error' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Upload Proof Handler
+  const handleUploadProof = async (file: File) => {
+    if (!savedReport || !profile) return;
+
+    const formData = new FormData();
+    formData.append('proof_image', file);
+    formData.append('profile_id', profile.id.toString());
+
+    const response = await fetch(`${API_BASE}/reports/${savedReport.id}/upload_proof/`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) throw new Error('Failed to upload');
+
+    const updated = await response.json();
+    setSavedReport(updated);
+    updateSalaryReport(updated);
+    addToast({ message: '인증 요청이 제출되었습니다!', type: 'success' });
+  };
 
   const statColors: Record<string, string> = {
     T: '#22d3ee',
@@ -436,12 +506,76 @@ export function SalaryChart({ job, userStats, defaultYears = 3 }: SalaryChartPro
                       </div>
                     );
                   })()}
+
+                  {/* Save Report Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleSaveReport}
+                    disabled={isSaving || savedReport !== null}
+                    className={`w-full mt-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all ${
+                      savedReport
+                        ? 'bg-green-500/20 text-green-400 cursor-default'
+                        : 'bg-yellow-400 text-gray-900 hover:bg-yellow-300'
+                    }`}
+                  >
+                    {savedReport ? (
+                      <>
+                        <CheckCircle className="w-5 h-5" />
+                        리포트 저장됨
+                      </>
+                    ) : isSaving ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+                        저장 중...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-5 h-5" />
+                        연봉 리포트 저장하기
+                      </>
+                    )}
+                  </motion.button>
+
+                  {/* Verification Button */}
+                  {savedReport && savedReport.status === 'None' && (
+                    <button
+                      onClick={() => setShowVerificationModal(true)}
+                      className="w-full mt-2 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 bg-slate-700 text-slate-300 hover:bg-slate-600 transition-colors"
+                    >
+                      <Shield className="w-4 h-4" />
+                      인증하고 뱃지 받기
+                    </button>
+                  )}
+
+                  {savedReport && savedReport.status === 'Pending' && (
+                    <div className="w-full mt-2 py-2 px-3 rounded-lg text-xs text-center bg-yellow-500/10 text-yellow-400 border border-yellow-500/30">
+                      인증 심사 중입니다
+                    </div>
+                  )}
+
+                  {savedReport && savedReport.status === 'Verified' && (
+                    <div className="w-full mt-2 py-2 px-3 rounded-lg text-xs text-center bg-green-500/10 text-green-400 border border-green-500/30 flex items-center justify-center gap-1">
+                      <Shield className="w-3 h-3" />
+                      인증 완료됨
+                    </div>
+                  )}
                 </motion.div>
               )}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* Verification Upload Modal */}
+      {savedReport && (
+        <VerificationUploadModal
+          isOpen={showVerificationModal}
+          onClose={() => setShowVerificationModal(false)}
+          report={savedReport}
+          onUpload={handleUploadProof}
+        />
+      )}
 
       {/* Market Range Info */}
       <div className="mt-4 pt-3 border-t border-slate-700 flex justify-between text-xs text-slate-500">

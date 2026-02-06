@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { UserProfile, JobCard, Task, TaskCompletion, TierType, StatType, Post, PostCategory } from '@/types';
+import type { UserProfile, JobCard, Task, TaskCompletion, TierType, StatType, Post, PostCategory, SalaryReport } from '@/types';
 
 interface Toast {
   id: string;
@@ -24,6 +24,9 @@ interface AppState {
   // Community
   posts: Post[];
   selectedCategory: PostCategory | 'all';
+
+  // Salary Reports
+  salaryReports: SalaryReport[];
 
   // UI state
   isLoading: boolean;
@@ -77,6 +80,11 @@ interface AppState {
   addPost: (post: Post) => void;
   setSelectedCategory: (category: PostCategory | 'all') => void;
   togglePostLike: (postId: number, liked: boolean, newLikes: number) => void;
+
+  // Salary Reports
+  setSalaryReports: (reports: SalaryReport[]) => void;
+  addSalaryReport: (report: SalaryReport) => void;
+  updateSalaryReport: (report: SalaryReport) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -89,6 +97,7 @@ export const useStore = create<AppState>((set, get) => ({
   targetJobId: null,
   posts: [],
   selectedCategory: 'all',
+  salaryReports: [],
   isLoading: false,
   toasts: [],
   selectedCardId: null,
@@ -209,4 +218,15 @@ export const useStore = create<AppState>((set, get) => ({
       ),
     }));
   },
+
+  // Salary Reports
+  setSalaryReports: (reports) => set({ salaryReports: reports }),
+  addSalaryReport: (report) => set((state) => ({
+    salaryReports: [report, ...state.salaryReports],
+  })),
+  updateSalaryReport: (report) => set((state) => ({
+    salaryReports: state.salaryReports.map((r) =>
+      r.id === report.id ? report : r
+    ),
+  })),
 }));

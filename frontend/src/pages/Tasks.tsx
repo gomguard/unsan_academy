@@ -22,10 +22,10 @@ export function Tasks() {
   const streak = 3;
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 pb-24 md:pb-8">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
-        <div className="max-w-lg mx-auto px-4 py-4">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
@@ -45,7 +45,7 @@ export function Tasks() {
         </div>
       </header>
 
-      <div className="max-w-lg mx-auto px-4 py-6 space-y-5 pb-24">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-5">
         {/* Progress Card */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}

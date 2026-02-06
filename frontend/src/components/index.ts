@@ -7,3 +7,4 @@ export { BottomNav } from './BottomNav';
 export { ToastContainer } from './Toast';
 export { SkillTree } from './SkillTree';
 export { PageHeader } from './PageHeader';
+export { MarketValueCard } from './MarketValueCard';

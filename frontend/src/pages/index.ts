@@ -7,3 +7,7 @@ export { Profile } from './Profile';
 export { JobLibrary } from './JobLibrary';
 export { SkillTree } from './SkillTree';
 export { Community } from './Community';
+export { Education } from './Education';
+export { CourseDetail } from './CourseDetail';
+export { AcademyDetail } from './AcademyDetail';
+export { CareerHub } from './CareerHub';

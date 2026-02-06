@@ -12,10 +12,13 @@ import {
   TrendingUp,
   Verified,
   Clock,
+  Shield,
 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
-import type { Post, PostCategory, PostAuthor, TierType } from '@/types';
-import { postCategoryInfo } from '@/types';
+import type { Post, PostCategory, PostAuthor, TierType, SalaryReport } from '@/types';
+import { postCategoryInfo, verificationStatusInfo } from '@/types';
+import { ReportCard } from '@/components/ReportCard';
+import { ReportSelectDrawer } from '@/components/ReportSelectDrawer';
 
 // ============ MOCK DATA ============
 const mockPosts: Post[] = [
@@ -215,8 +218,12 @@ function PostCard({ post, onClick }: { post: Post; onClick: () => void }) {
       {/* Content Preview */}
       <p className="text-slate-400 text-sm line-clamp-2 mb-3">{post.content}</p>
 
-      {/* Salary Data Badge */}
-      {post.attached_salary_data && (
+      {/* Attached Salary Report */}
+      {post.attached_report ? (
+        <div className="mb-3">
+          <ReportCard report={post.attached_report} compact />
+        </div>
+      ) : post.attached_salary_data && (
         <div className="mb-3 p-2 bg-green-500/10 border border-green-500/30 rounded-lg">
           <div className="flex items-center gap-2 text-xs">
             <TrendingUp className="w-3 h-3 text-green-400" />
@@ -327,8 +334,12 @@ function PostDetailModal({
             {/* Content */}
             <div className="text-slate-300 mb-4 whitespace-pre-wrap">{post.content}</div>
 
-            {/* Salary Data */}
-            {post.attached_salary_data && (
+            {/* Attached Salary Report */}
+            {post.attached_report ? (
+              <div className="mb-4">
+                <ReportCard report={post.attached_report} />
+              </div>
+            ) : post.attached_salary_data && (
               <div className="mb-4 p-4 bg-slate-800 rounded-xl border border-slate-700">
                 <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-green-400" />
@@ -428,19 +439,28 @@ function WritePostModal({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { category: PostCategory; title: string; content: string }) => void;
+  onSubmit: (data: { category: PostCategory; title: string; content: string; attached_report?: number }) => void;
 }) {
+  const { salaryReports } = useStore();
   const [category, setCategory] = useState<PostCategory>('Free');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [selectedReport, setSelectedReport] = useState<SalaryReport | null>(null);
+  const [showReportDrawer, setShowReportDrawer] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = () => {
     if (!title.trim() || !content.trim()) return;
-    onSubmit({ category, title, content });
+    onSubmit({
+      category,
+      title,
+      content,
+      attached_report: selectedReport?.id,
+    });
     setTitle('');
     setContent('');
+    setSelectedReport(null);
     onClose();
   };
 
@@ -520,6 +540,32 @@ function WritePostModal({
               className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-yellow-400/50 resize-none"
             />
           </div>
+
+          {/* Report Attachment */}
+          <div>
+            <label className="text-sm text-slate-400 mb-2 block">연봉 리포트 첨부 (선택)</label>
+            {selectedReport ? (
+              <div className="flex items-start gap-2">
+                <div className="flex-1">
+                  <ReportCard report={selectedReport} compact />
+                </div>
+                <button
+                  onClick={() => setSelectedReport(null)}
+                  className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                >
+                  <X className="w-4 h-4 text-slate-400" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowReportDrawer(true)}
+                className="w-full p-3 border border-dashed border-slate-600 rounded-lg text-slate-400 hover:border-slate-500 hover:text-slate-300 transition-colors flex items-center justify-center gap-2"
+              >
+                <TrendingUp className="w-4 h-4" />
+                연봉 리포트 첨부하기
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Footer */}
@@ -533,6 +579,18 @@ function WritePostModal({
           </button>
         </div>
       </motion.div>
+
+      {/* Report Select Drawer */}
+      <ReportSelectDrawer
+        isOpen={showReportDrawer}
+        onClose={() => setShowReportDrawer(false)}
+        reports={salaryReports}
+        selectedReportId={selectedReport?.id || null}
+        onSelect={(report) => {
+          setSelectedReport(report);
+          setShowReportDrawer(false);
+        }}
+      />
     </motion.div>
   );
 }
@@ -555,7 +613,7 @@ function getTimeAgo(dateString: string): string {
 
 // ============ MAIN COMPONENT ============
 export function Community() {
-  const { profile, posts, setPosts, selectedCategory, setSelectedCategory, togglePostLike } = useStore();
+  const { profile, posts, setPosts, selectedCategory, setSelectedCategory, togglePostLike, salaryReports } = useStore();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
 
@@ -585,7 +643,12 @@ export function Community() {
   };
 
   // Handle new post
-  const handleNewPost = (data: { category: PostCategory; title: string; content: string }) => {
+  const handleNewPost = (data: { category: PostCategory; title: string; content: string; attached_report?: number }) => {
+    // Find attached report if provided
+    const attachedReport = data.attached_report
+      ? salaryReports.find(r => r.id === data.attached_report)
+      : undefined;
+
     const newPost: Post = {
       id: Date.now(),
       author: {
@@ -610,6 +673,7 @@ export function Community() {
       is_liked: false,
       is_mine: true,
       is_pinned: false,
+      attached_report: attachedReport,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -620,10 +684,10 @@ export function Community() {
   const categories = ['all', ...Object.keys(postCategoryInfo)] as const;
 
   return (
-    <div className="min-h-screen bg-slate-900 pb-24">
+    <div className="min-h-screen bg-slate-900 pb-24 md:pb-8">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
-        <div className="px-4 py-4">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center gap-2 mb-4">
             <MessageSquare className="w-6 h-6 text-yellow-400" />
             <h1 className="text-xl font-bold text-white">커뮤니티</h1>
@@ -633,7 +697,7 @@ export function Community() {
           </div>
 
           {/* Category Tabs */}
-          <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 sm:-mx-6 px-4 sm:px-6">
             {categories.map((cat) => {
               const isActive = selectedCategory === cat;
               const info = cat === 'all' ? null : postCategoryInfo[cat as PostCategory];
@@ -657,7 +721,7 @@ export function Community() {
       </header>
 
       {/* Posts List */}
-      <div className="p-4 space-y-4">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4 space-y-4">
         {filteredPosts.length > 0 ? (
           filteredPosts.map((post, index) => (
             <motion.div
