@@ -287,3 +287,46 @@
 .shadow-glow-pink { box-shadow: 0 0 20px rgba(244, 114, 182, 0.3); }
 .shadow-glow-cyan { box-shadow: 0 0 20px rgba(34, 211, 238, 0.3); }
 .shadow-pop { box-shadow: 4px 4px 0px 0px rgba(254, 240, 138, 0.3); }
+
+/* ============ REACT FLOW DARK THEME ============ */
+.react-flow__node {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.react-flow__controls {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+.react-flow__controls-button {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
+  fill: #94a3b8 !important;
+}
+
+.react-flow__controls-button:hover {
+  background-color: #334155 !important;
+  color: #f1f5f9 !important;
+  fill: #f1f5f9 !important;
+}
+
+.react-flow__minimap {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(15, 23, 42, 0.8);
+}
+
+.react-flow__attribution {
+  display: none !important;
+}
