@@ -456,6 +456,7 @@ export interface Post {
   verified_card?: number;
   verified_card_title?: string;
   attached_salary_data?: SalaryGapData;
+  attached_report?: SalaryReport;
   show_verified_salary?: boolean;
   is_pinned: boolean;
   created_at: string;

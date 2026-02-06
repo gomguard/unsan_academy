@@ -633,7 +633,7 @@ function AuthorInfo({ author, showStat }: { author: PostAuthor; showStat?: keyof
 // ============ POST CARD ============
 function PostCard({ post, onClick }: { post: Post; onClick: () => void }) {
   const categoryInfo = postCategoryInfo[post.category];
-  const showStat = post.category === 'Tech' ? 'Tech' : undefined;
+  const showStat = post.category === 'Tech' ? 'Diagnostic' : undefined;
 
   const timeAgo = getTimeAgo(post.created_at);
 
@@ -733,7 +733,7 @@ function PostDetailModal({
   if (!post) return null;
 
   const categoryInfo = postCategoryInfo[post.category];
-  const showStat = post.category === 'Tech' ? 'Tech' : undefined;
+  const showStat = post.category === 'Tech' ? 'Diagnostic' : undefined;
 
   return (
     <AnimatePresence>

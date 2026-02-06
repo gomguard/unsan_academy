@@ -15,19 +15,19 @@ import { simulateCompleteTask } from '@/lib/mockData';
 import { statColors, cn } from '@/lib/utils';
 
 const statEmojis: Record<StatType, string> = {
-  T: '🔧',
-  H: '🤲',
-  S: '📚',
-  A: '🎨',
-  B: '💼',
+  Diagnostic: '🧠',
+  Mechanical: '🔧',
+  Efficiency: '⏱️',
+  Quality: '✨',
+  Communication: '💬',
 };
 
 const statNames: Record<StatType, string> = {
-  T: '기술력',
-  H: '손기술',
-  S: '지식',
-  A: '미적감각',
-  B: '비즈니스',
+  Diagnostic: '진단력',
+  Mechanical: '정비력',
+  Efficiency: '효율성',
+  Quality: '품질력',
+  Communication: '소통력',
 };
 
 interface TaskItemProps {
