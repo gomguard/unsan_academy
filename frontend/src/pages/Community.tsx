@@ -15,7 +15,7 @@ import {
   Shield,
 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
-import type { Post, PostCategory, PostAuthor, TierType, SalaryReport } from '@/types';
+import type { Post, PostCategory, PostAuthor, TierType, SalaryReport, Comment } from '@/types';
 import { postCategoryInfo, verificationStatusInfo } from '@/types';
 import { ReportCard } from '@/components/ReportCard';
 import { ReportSelectDrawer } from '@/components/ReportSelectDrawer';
@@ -124,7 +124,460 @@ const mockPosts: Post[] = [
     created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     updated_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
   },
+  {
+    id: 5,
+    author: {
+      id: 5,
+      name: '정ADAS',
+      tier: 'Platinum',
+      avatar_url: undefined,
+      stats: { Tech: 88, Hand: 70, Speed: 75, Art: 50, Biz: 65 },
+      stat_tech: 88, stat_hand: 70, stat_speed: 75, stat_art: 50, stat_biz: 65,
+    },
+    category: 'Tech',
+    category_display: '🔧 기술 Q&A',
+    title: 'ADAS 캘리브레이션 장비 추천 부탁드립니다',
+    content: '현재 Autel IA900WA 사용 중인데, Hunter Hawkeye Elite로 업그레이드 고민 중입니다. 혹시 두 장비 모두 써보신 분 계신가요? 정확도랑 사용 편의성 차이가 궁금합니다.',
+    likes: 32,
+    views: 189,
+    comment_count: 18,
+    is_liked: false,
+    is_mine: false,
+    is_pinned: false,
+    created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 6,
+    author: {
+      id: 6,
+      name: '한덴트',
+      tier: 'Gold',
+      avatar_url: undefined,
+      stats: { Tech: 55, Hand: 92, Speed: 80, Art: 70, Biz: 55 },
+      stat_tech: 55, stat_hand: 92, stat_speed: 80, stat_art: 70, stat_biz: 55,
+    },
+    category: 'Salary',
+    category_display: '💸 연봉 대나무숲',
+    title: 'PDR 기술자 5년차 솔직 연봉',
+    content: '대구 지역에서 PDR 전문으로 5년째 일하고 있습니다. 보험사 협력이라 안정적인 물량 있고, 월 평균 450-500 정도 벌어요. 연으로 치면 5400-6000 사이입니다.',
+    likes: 67,
+    views: 423,
+    comment_count: 29,
+    is_liked: false,
+    is_mine: false,
+    attached_salary_data: {
+      currentSalary: 5700,
+      marketValue: 5500,
+      gap: 200,
+      percentile: 65,
+      jobTitle: 'PDR 기술자',
+      years: 5,
+    },
+    is_pinned: false,
+    created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 7,
+    author: {
+      id: 7,
+      name: '윤하이브리드',
+      tier: 'Diamond',
+      avatar_url: undefined,
+      stats: { Tech: 95, Hand: 78, Speed: 82, Art: 45, Biz: 60 },
+      stat_tech: 95, stat_hand: 78, stat_speed: 82, stat_art: 45, stat_biz: 60,
+    },
+    category: 'Tech',
+    category_display: '🔧 기술 Q&A',
+    title: '프리우스 4세대 인버터 냉각수 교환 주기',
+    content: '매뉴얼상 16만km인데, 실제로 10만km 넘어가면 냉각수 상태가 많이 안 좋아지더라고요. 혼합해서 쓰면 안 되고, 반드시 Toyota Super Long Life Coolant 사용하세요.',
+    likes: 38,
+    views: 267,
+    comment_count: 15,
+    is_liked: true,
+    is_mine: false,
+    verified_card: 2,
+    verified_card_title: '하이브리드 전문가',
+    is_pinned: false,
+    created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 8,
+    author: {
+      id: 8,
+      name: '송랩핑',
+      tier: 'Silver',
+      avatar_url: undefined,
+      stats: { Tech: 50, Hand: 85, Speed: 70, Art: 88, Biz: 45 },
+      stat_tech: 50, stat_hand: 85, stat_speed: 70, stat_art: 88, stat_biz: 45,
+    },
+    category: 'Free',
+    category_display: '🗣️ 자유게시판',
+    title: '요즘 컬러 랩핑 인기 색상이 뭔가요?',
+    content: '작년엔 새틴 그레이가 대세였는데, 요즘은 손님들 취향이 좀 바뀐 것 같아요. 혹시 요즘 많이 찾는 색상 있으면 공유해주세요!',
+    likes: 19,
+    views: 134,
+    comment_count: 22,
+    is_liked: false,
+    is_mine: false,
+    is_pinned: false,
+    created_at: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 9,
+    author: {
+      id: 9,
+      name: '오SA',
+      tier: 'Platinum',
+      avatar_url: undefined,
+      stats: { Tech: 72, Hand: 55, Speed: 68, Art: 50, Biz: 90 },
+      stat_tech: 72, stat_hand: 55, stat_speed: 68, stat_art: 50, stat_biz: 90,
+    },
+    category: 'Career',
+    category_display: '🚀 이직/커리어',
+    title: '정비사에서 서비스 어드바이저로 전직한 후기',
+    content: '정비 현장에서 6년 일하다가 BMW 공식 딜러 SA로 전직했습니다. 연봉은 비슷한데 체력적으로 훨씬 편해요. 대신 고객 응대 스트레스는 있습니다. 정비 경험 있으니까 고객 설명할 때 신뢰도가 높아요.',
+    likes: 78,
+    views: 512,
+    comment_count: 41,
+    is_liked: false,
+    is_mine: false,
+    is_pinned: false,
+    created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 10,
+    author: {
+      id: 10,
+      name: '임휠',
+      tier: 'Gold',
+      avatar_url: undefined,
+      stats: { Tech: 60, Hand: 88, Speed: 75, Art: 82, Biz: 50 },
+      stat_tech: 60, stat_hand: 88, stat_speed: 75, stat_art: 82, stat_biz: 50,
+    },
+    category: 'Tech',
+    category_display: '🔧 기술 Q&A',
+    title: '다이아컷팅 휠 복원 시 클리어코트 추천',
+    content: '2K 우레탄 클리어 쓰다가 파우더 클리어로 바꿨는데 내구성이 확실히 좋아졌어요. 비용은 좀 더 들지만 재작업 줄어서 결국 이득입니다. 어떤 제품 쓰시나요?',
+    likes: 27,
+    views: 156,
+    comment_count: 13,
+    is_liked: false,
+    is_mine: false,
+    is_pinned: false,
+    created_at: new Date(Date.now() - 28 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 28 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 11,
+    author: {
+      id: 11,
+      name: '강충전',
+      tier: 'Silver',
+      avatar_url: undefined,
+      stats: { Tech: 75, Hand: 60, Speed: 70, Art: 40, Biz: 55 },
+      stat_tech: 75, stat_hand: 60, stat_speed: 70, stat_art: 40, stat_biz: 55,
+    },
+    category: 'Salary',
+    category_display: '💸 연봉 대나무숲',
+    title: 'EV 충전 인프라 유지보수 1년차 연봉',
+    content: '전기기사 자격증으로 충전기 유지보수 시작했습니다. 신입인데 연봉 3800 받고 있고, 출장비 별도라 실수령은 더 됩니다. 블루오션이라 그런지 야근도 거의 없어요.',
+    likes: 45,
+    views: 289,
+    comment_count: 19,
+    is_liked: false,
+    is_mine: false,
+    attached_salary_data: {
+      currentSalary: 3800,
+      marketValue: 4000,
+      gap: -200,
+      percentile: 45,
+      jobTitle: '충전 인프라 유지보수',
+      years: 1,
+    },
+    is_pinned: false,
+    created_at: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 12,
+    author: {
+      id: 12,
+      name: '배캠퍼',
+      tier: 'Gold',
+      avatar_url: undefined,
+      stats: { Tech: 68, Hand: 80, Speed: 65, Art: 75, Biz: 72 },
+      stat_tech: 68, stat_hand: 80, stat_speed: 65, stat_art: 75, stat_biz: 72,
+    },
+    category: 'Free',
+    category_display: '🗣️ 자유게시판',
+    title: '캠핑카 빌드 첫 프로젝트 완성!',
+    content: '스타렉스 기반으로 3개월 걸려서 완성했습니다. 전기 배선이 제일 어려웠는데 유튜브 보면서 독학했어요. 사진 공유합니다! 다음엔 카니발로 도전해볼 예정입니다.',
+    likes: 112,
+    views: 678,
+    comment_count: 47,
+    is_liked: true,
+    is_mine: false,
+    is_pinned: false,
+    created_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 13,
+    author: {
+      id: 13,
+      name: '조ECU',
+      tier: 'Diamond',
+      avatar_url: undefined,
+      stats: { Tech: 98, Hand: 65, Speed: 72, Art: 55, Biz: 68 },
+      stat_tech: 98, stat_hand: 65, stat_speed: 72, stat_art: 55, stat_biz: 68,
+    },
+    category: 'Tech',
+    category_display: '🔧 기술 Q&A',
+    title: 'WinOLS 맵 분석 기초 강좌 공유',
+    content: '제가 ECU 튜닝 배우면서 정리한 WinOLS 기초 자료입니다. 맵 찾는 방법부터 기본적인 수정 방법까지 담았어요. 입문자분들께 도움이 됐으면 좋겠습니다.',
+    likes: 156,
+    views: 892,
+    comment_count: 63,
+    is_liked: false,
+    is_mine: false,
+    verified_card: 3,
+    verified_card_title: 'ECU 튜너',
+    is_pinned: false,
+    created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 14,
+    author: {
+      id: 14,
+      name: '신틴팅',
+      tier: 'Bronze',
+      avatar_url: undefined,
+      stats: { Tech: 40, Hand: 72, Speed: 65, Art: 68, Biz: 35 },
+      stat_tech: 40, stat_hand: 72, stat_speed: 65, stat_art: 68, stat_biz: 35,
+    },
+    category: 'Career',
+    category_display: '🚀 이직/커리어',
+    title: '틴팅에서 PPF로 전환 고민 중입니다',
+    content: '틴팅 2년차인데, 선배들 말로는 PPF가 수익성이 더 좋다고 하더라고요. 근데 진입장벽이 높다고도 하고... 혹시 틴팅에서 PPF로 전환하신 분 조언 부탁드려요.',
+    likes: 34,
+    views: 201,
+    comment_count: 28,
+    is_liked: false,
+    is_mine: false,
+    is_pinned: false,
+    created_at: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 15,
+    author: {
+      id: 15,
+      name: '문판금',
+      tier: 'Platinum',
+      avatar_url: undefined,
+      stats: { Tech: 70, Hand: 95, Speed: 78, Art: 72, Biz: 55 },
+      stat_tech: 70, stat_hand: 95, stat_speed: 78, stat_art: 72, stat_biz: 55,
+    },
+    category: 'Salary',
+    category_display: '💸 연봉 대나무숲',
+    title: '알루미늄 바디 수리 전문 8년차',
+    content: '테슬라/아우디 알루미늄 바디 전문으로 하고 있습니다. 일반 판금보다 단가가 높아서 연봉 7200까지 올렸어요. 인증 받는 게 어렵긴 한데 투자할 가치가 있습니다.',
+    likes: 98,
+    views: 634,
+    comment_count: 38,
+    is_liked: false,
+    is_mine: false,
+    attached_salary_data: {
+      currentSalary: 7200,
+      marketValue: 6800,
+      gap: 400,
+      percentile: 82,
+      jobTitle: '알루미늄 바디 전문',
+      years: 8,
+    },
+    is_pinned: false,
+    created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 16,
+    author: {
+      id: 16,
+      name: '양세라믹',
+      tier: 'Gold',
+      avatar_url: undefined,
+      stats: { Tech: 58, Hand: 88, Speed: 72, Art: 85, Biz: 60 },
+      stat_tech: 58, stat_hand: 88, stat_speed: 72, stat_art: 85, stat_biz: 60,
+    },
+    category: 'Free',
+    category_display: '🗣️ 자유게시판',
+    title: '세라믹 코팅 vs 유리막 코팅 차이점 정리',
+    content: '손님들이 자주 물어보셔서 정리해봤습니다. 세라믹은 SiO2 비율이 높고 유리막은 폴리실라잔 기반이에요. 지속력은 세라믹이 좋고, 광택은 유리막이 더 좋은 것 같아요.',
+    likes: 87,
+    views: 456,
+    comment_count: 31,
+    is_liked: false,
+    is_mine: false,
+    is_pinned: false,
+    created_at: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 17,
+    author: {
+      id: 17,
+      name: '권진단',
+      tier: 'Platinum',
+      avatar_url: undefined,
+      stats: { Tech: 90, Hand: 72, Speed: 80, Art: 48, Biz: 65 },
+      stat_tech: 90, stat_hand: 72, stat_speed: 80, stat_art: 48, stat_biz: 65,
+    },
+    category: 'Tech',
+    category_display: '🔧 기술 Q&A',
+    title: '벤츠 W213 에어매틱 고장 진단 팁',
+    content: 'E클래스 에어매틱 문제 많이들 겪으시죠. XENTRY로 레벨링 센서 값이랑 컴프레셔 작동 시간 먼저 체크하세요. 한쪽만 처지면 대부분 에어스프링 누유입니다.',
+    likes: 54,
+    views: 312,
+    comment_count: 19,
+    is_liked: true,
+    is_mine: false,
+    verified_card: 4,
+    verified_card_title: '수입차 진단 전문가',
+    is_pinned: false,
+    created_at: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 18,
+    author: {
+      id: 18,
+      name: '홍브레이크',
+      tier: 'Silver',
+      avatar_url: undefined,
+      stats: { Tech: 55, Hand: 78, Speed: 70, Art: 45, Biz: 50 },
+      stat_tech: 55, stat_hand: 78, stat_speed: 70, stat_art: 45, stat_biz: 50,
+    },
+    category: 'Career',
+    category_display: '🚀 이직/커리어',
+    title: '경정비에서 브레이크 전문으로 특화하려고 합니다',
+    content: '경정비 3년 했는데 전문성을 키우고 싶어요. 브레이크 튜닝 쪽으로 가려는데, 어떤 교육이나 자격증이 도움이 될까요? 경험자분들 조언 부탁드립니다.',
+    likes: 21,
+    views: 145,
+    comment_count: 16,
+    is_liked: false,
+    is_mine: false,
+    is_pinned: false,
+    created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 19,
+    author: {
+      id: 19,
+      name: '유광택',
+      tier: 'Gold',
+      avatar_url: undefined,
+      stats: { Tech: 52, Hand: 90, Speed: 75, Art: 92, Biz: 58 },
+      stat_tech: 52, stat_hand: 90, stat_speed: 75, stat_art: 92, stat_biz: 58,
+    },
+    category: 'Salary',
+    category_display: '💸 연봉 대나무숲',
+    title: '디테일링샵 창업 1년 수익 공개',
+    content: '작년에 독립해서 1인 샵 운영 중입니다. 월 평균 매출 800, 순수익 500 정도예요. 광택/코팅 위주로 하고 있고, 인스타 마케팅이 효과가 좋았어요.',
+    likes: 134,
+    views: 789,
+    comment_count: 52,
+    is_liked: false,
+    is_mine: false,
+    attached_salary_data: {
+      currentSalary: 6000,
+      marketValue: 5000,
+      gap: 1000,
+      percentile: 78,
+      jobTitle: '디테일링 샵 대표',
+      years: 6,
+    },
+    is_pinned: false,
+    created_at: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(),
+  },
 ];
+
+// ============ MOCK COMMENTS ============
+const mockCommentAuthors: PostAuthor[] = [
+  { id: 101, name: '김정비', tier: 'Diamond', stats: { Tech: 92, Hand: 85, Speed: 78, Art: 65, Biz: 70 }, stat_tech: 92, stat_hand: 85, stat_speed: 78, stat_art: 65, stat_biz: 70 },
+  { id: 102, name: '이PPF', tier: 'Platinum', stats: { Tech: 65, Hand: 95, Speed: 82, Art: 90, Biz: 60 }, stat_tech: 65, stat_hand: 95, stat_speed: 82, stat_art: 90, stat_biz: 60 },
+  { id: 103, name: '박튜닝', tier: 'Gold', stats: { Tech: 78, Hand: 72, Speed: 70, Art: 55, Biz: 82 }, stat_tech: 78, stat_hand: 72, stat_speed: 70, stat_art: 55, stat_biz: 82 },
+  { id: 104, name: '최디테일', tier: 'Silver', stats: { Tech: 45, Hand: 68, Speed: 55, Art: 75, Biz: 40 }, stat_tech: 45, stat_hand: 68, stat_speed: 55, stat_art: 75, stat_biz: 40 },
+  { id: 105, name: '정ADAS', tier: 'Platinum', stats: { Tech: 88, Hand: 70, Speed: 75, Art: 50, Biz: 65 }, stat_tech: 88, stat_hand: 70, stat_speed: 75, stat_art: 50, stat_biz: 65 },
+  { id: 106, name: '한덴트', tier: 'Gold', stats: { Tech: 55, Hand: 92, Speed: 80, Art: 70, Biz: 55 }, stat_tech: 55, stat_hand: 92, stat_speed: 80, stat_art: 70, stat_biz: 55 },
+  { id: 107, name: '윤하이브리드', tier: 'Diamond', stats: { Tech: 95, Hand: 78, Speed: 82, Art: 45, Biz: 60 }, stat_tech: 95, stat_hand: 78, stat_speed: 82, stat_art: 45, stat_biz: 60 },
+  { id: 108, name: '송랩핑', tier: 'Silver', stats: { Tech: 50, Hand: 85, Speed: 70, Art: 88, Biz: 45 }, stat_tech: 50, stat_hand: 85, stat_speed: 70, stat_art: 88, stat_biz: 45 },
+  { id: 109, name: '오SA', tier: 'Platinum', stats: { Tech: 72, Hand: 55, Speed: 68, Art: 50, Biz: 90 }, stat_tech: 72, stat_hand: 55, stat_speed: 68, stat_art: 50, stat_biz: 90 },
+  { id: 110, name: '임휠', tier: 'Gold', stats: { Tech: 60, Hand: 88, Speed: 75, Art: 82, Biz: 50 }, stat_tech: 60, stat_hand: 88, stat_speed: 75, stat_art: 82, stat_biz: 50 },
+];
+
+const commentTemplates = [
+  '좋은 정보 감사합니다! 많이 배웠어요.',
+  '저도 비슷한 경험 있는데, 정말 공감됩니다.',
+  '혹시 구체적으로 어떤 장비 쓰셨나요?',
+  '이 방법 써봤는데 효과 좋았어요!',
+  '와 이건 몰랐네요. 메모해둡니다.',
+  '저도 다음에 시도해봐야겠어요.',
+  '현직자 의견 들으니 도움이 많이 됩니다.',
+  '혹시 관련 교육 과정 추천해주실 수 있나요?',
+  '정말 유용한 팁이네요. 감사합니다!',
+  '저희 샵에서도 이렇게 하고 있어요.',
+  '비용 대비 효과가 좋은가요?',
+  '초보자도 할 수 있을까요?',
+  '어느 정도 경력이면 가능할까요?',
+  '자격증 없이도 가능한가요?',
+  '인증 받으시는 데 얼마나 걸리셨어요?',
+  '수도권 외 지역도 수요가 있나요?',
+  '창업 비용은 대략 어느 정도 드나요?',
+  '후속 글도 기대하겠습니다!',
+  '이거 북마크 해둬야겠네요.',
+  '실무에 바로 적용할 수 있겠어요.',
+];
+
+function generateMockComments(postId: number, count: number): Comment[] {
+  const comments: Comment[] = [];
+  const usedTemplates = new Set<number>();
+
+  for (let i = 0; i < Math.min(count, 8); i++) {
+    let templateIdx: number;
+    do {
+      templateIdx = Math.floor(Math.random() * commentTemplates.length);
+    } while (usedTemplates.has(templateIdx) && usedTemplates.size < commentTemplates.length);
+    usedTemplates.add(templateIdx);
+
+    const authorIdx = Math.floor(Math.random() * mockCommentAuthors.length);
+    const hoursAgo = Math.floor(Math.random() * 72) + 1;
+
+    comments.push({
+      id: postId * 100 + i,
+      post: postId,
+      author: mockCommentAuthors[authorIdx],
+      content: commentTemplates[templateIdx],
+      likes: Math.floor(Math.random() * 20),
+      is_mine: false,
+      created_at: new Date(Date.now() - hoursAgo * 60 * 60 * 1000).toISOString(),
+    });
+  }
+
+  return comments.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+}
+
+// Add comments to posts
+mockPosts.forEach(post => {
+  post.comments = generateMockComments(post.id, post.comment_count);
+});
 
 // ============ TIER BADGE ============
 const tierColors: Record<TierType, { bg: string; text: string; glow: string }> = {
@@ -393,20 +846,36 @@ function PostDetailModal({
                 댓글 {post.comment_count}개
               </h4>
 
-              {/* Comment placeholder */}
-              <div className="space-y-3">
-                <div className="p-3 bg-slate-800 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full bg-slate-600 flex items-center justify-center text-xs text-white font-bold">
-                      김
+              {post.comments && post.comments.length > 0 ? (
+                <div className="space-y-3">
+                  {post.comments.map((comment) => (
+                    <div key={comment.id} className="p-3 bg-slate-800 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 rounded-full bg-slate-600 flex items-center justify-center text-xs text-white font-bold">
+                          {comment.author.name[0]}
+                        </div>
+                        <span className="text-sm text-white font-medium">{comment.author.name}</span>
+                        <TierBadge tier={comment.author.tier} />
+                        <span className="text-xs text-slate-500">{getTimeAgo(comment.created_at)}</span>
+                      </div>
+                      <p className="text-sm text-slate-300">{comment.content}</p>
+                      {comment.likes > 0 && (
+                        <div className="flex items-center gap-1 mt-2 text-xs text-slate-500">
+                          <Heart className="w-3 h-3" />
+                          <span>{comment.likes}</span>
+                        </div>
+                      )}
                     </div>
-                    <span className="text-sm text-white font-medium">김정비</span>
-                    <TierBadge tier="Diamond" />
-                    <span className="text-xs text-slate-500">2시간 전</span>
-                  </div>
-                  <p className="text-sm text-slate-300">좋은 정보 감사합니다! 저도 다음에 작업할 때 참고하겠습니다.</p>
+                  ))}
+                  {post.comment_count > (post.comments?.length || 0) && (
+                    <p className="text-center text-xs text-slate-500 py-2">
+                      +{post.comment_count - (post.comments?.length || 0)}개의 댓글 더보기
+                    </p>
+                  )}
                 </div>
-              </div>
+              ) : (
+                <p className="text-center text-sm text-slate-500 py-4">아직 댓글이 없습니다.</p>
+              )}
             </div>
           </div>
 
