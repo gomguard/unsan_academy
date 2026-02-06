@@ -1,26 +1,40 @@
-import type { UserProfile, JobCard, Task, DashboardData, Quest } from '@/types';
+import type { UserProfile, JobCard, Task, DashboardData, Quest, ClassType } from '@/types';
 
 export const mockProfile: UserProfile = {
   id: 1,
   name: '김정비',
-  tier: 'Silver',
-  xp: 350,
+  tier: 'C-Class' as ClassType,
+  mastery: 350,
+  xp: 350, // Legacy alias
   stats: {
-    Tech: 45,
-    Hand: 60,
-    Speed: 35,
-    Art: 25,
-    Biz: 30,
+    Diagnostic: 45,
+    Mechanical: 60,
+    Efficiency: 35,
+    Quality: 25,
+    Communication: 30,
   },
+  // New professional stat naming
+  stat_diagnostic: 45,
+  stat_mechanical: 60,
+  stat_efficiency: 35,
+  stat_quality: 25,
+  stat_communication: 30,
+  // Legacy stat naming (for backward compatibility)
   stat_tech: 45,
   stat_hand: 60,
   stat_speed: 35,
   stat_art: 25,
   stat_biz: 30,
   avatar_url: undefined,
-  next_tier_xp: 600,
-  current_tier_xp: 300,
+  next_tier_mastery: 600,
+  next_tier_xp: 600, // Legacy alias
+  current_tier_mastery: 300,
+  current_tier_xp: 300, // Legacy alias
   unlockedCardIds: ['maint_1', 'body_1', 'tech_1'],
+  // Professional profile fields
+  currentSalary: 3500,
+  currentJobTitle: '경정비 테크니션',
+  isVerified: false,
 };
 
 export const mockJobCards: JobCard[] = [
@@ -32,7 +46,7 @@ export const mockJobCards: JobCard[] = [
     track: 'Maintenance',
     rank: 1,
     description: '기본적인 정비 업무를 신속하게 처리하는 입문 단계입니다. 오일 교환, 타이어 교체 등 기초 작업을 마스터합니다.',
-    requiredStats: { Hand: 20 },
+    requiredStats: { Mechanical: 20 },
     prerequisiteCardIds: [],
     icon: '🔧',
     color: '#3b82f6',
@@ -44,7 +58,7 @@ export const mockJobCards: JobCard[] = [
     track: 'Maintenance',
     rank: 2,
     description: '서스펜션, 브레이크, 스티어링 시스템의 전문가. 차량의 뼈대를 완벽하게 이해합니다.',
-    requiredStats: { Hand: 40, Tech: 30 },
+    requiredStats: { Mechanical: 40, Diagnostic: 30 },
     prerequisiteCardIds: ['maint_1'],
     icon: '🛠️',
     color: '#3b82f6',
@@ -56,7 +70,7 @@ export const mockJobCards: JobCard[] = [
     track: 'Maintenance',
     rank: 3,
     description: '엔진, 변속기, 구동계의 마스터. 차량의 심장을 다루는 최고의 전문가입니다.',
-    requiredStats: { Hand: 60, Tech: 50 },
+    requiredStats: { Mechanical: 60, Diagnostic: 50 },
     prerequisiteCardIds: ['maint_2'],
     icon: '⚙️',
     color: '#3b82f6',
@@ -70,7 +84,7 @@ export const mockJobCards: JobCard[] = [
     track: 'BodySkin',
     rank: 1,
     description: '세차, 실내 클리닝, 기본 디테일링을 담당합니다. 차량 관리의 첫걸음입니다.',
-    requiredStats: { Art: 20 },
+    requiredStats: { Quality: 20 },
     prerequisiteCardIds: [],
     icon: '🧽',
     color: '#ec4899',
@@ -82,7 +96,7 @@ export const mockJobCards: JobCard[] = [
     track: 'BodySkin',
     rank: 2,
     description: 'PPF, 썬팅, 랩핑 시공의 전문가. 차량 외장을 보호하고 꾸밉니다.',
-    requiredStats: { Art: 40, Hand: 30 },
+    requiredStats: { Quality: 40, Mechanical: 30 },
     prerequisiteCardIds: ['body_1'],
     icon: '🎨',
     color: '#ec4899',
@@ -94,7 +108,7 @@ export const mockJobCards: JobCard[] = [
     track: 'BodySkin',
     rank: 3,
     description: '판금, 도장, 덴트 복원의 마스터. 어떤 손상도 원상복구합니다.',
-    requiredStats: { Art: 60, Hand: 50 },
+    requiredStats: { Quality: 60, Mechanical: 50 },
     prerequisiteCardIds: ['body_2'],
     icon: '✨',
     color: '#ec4899',
@@ -108,7 +122,7 @@ export const mockJobCards: JobCard[] = [
     track: 'HighTech',
     rank: 1,
     description: 'OBD-II 스캐너를 활용한 기본 진단 능력을 갖춘 테크니션입니다.',
-    requiredStats: { Tech: 25 },
+    requiredStats: { Diagnostic: 25 },
     prerequisiteCardIds: [],
     icon: '🔍',
     color: '#10b981',
@@ -120,7 +134,7 @@ export const mockJobCards: JobCard[] = [
     track: 'HighTech',
     rank: 2,
     description: 'ECU, 센서, 배선 시스템의 전문가. 복잡한 전장 문제를 해결합니다.',
-    requiredStats: { Tech: 50 },
+    requiredStats: { Diagnostic: 50 },
     prerequisiteCardIds: ['tech_1'],
     icon: '💡',
     color: '#10b981',
@@ -132,7 +146,7 @@ export const mockJobCards: JobCard[] = [
     track: 'HighTech',
     rank: 3,
     description: '전기차, 하이브리드 차량의 고전압 시스템 마스터. 미래 모빌리티의 선구자입니다.',
-    requiredStats: { Tech: 70 },
+    requiredStats: { Diagnostic: 70 },
     prerequisiteCardIds: ['tech_2'],
     icon: '⚡',
     color: '#10b981',
@@ -146,7 +160,7 @@ export const mockJobCards: JobCard[] = [
     track: 'Management',
     rank: 1,
     description: '고객 응대와 상담의 기초를 다집니다. 정비소의 얼굴이 됩니다.',
-    requiredStats: { Biz: 20 },
+    requiredStats: { Communication: 20 },
     prerequisiteCardIds: [],
     icon: '🤝',
     color: '#8b5cf6',
@@ -158,7 +172,7 @@ export const mockJobCards: JobCard[] = [
     track: 'Management',
     rank: 2,
     description: '작업장 운영, 일정 관리, 팀 리딩을 담당합니다. 효율의 마스터입니다.',
-    requiredStats: { Biz: 45, Speed: 30 },
+    requiredStats: { Communication: 45, Efficiency: 30 },
     prerequisiteCardIds: ['mgmt_1'],
     icon: '📋',
     color: '#8b5cf6',
@@ -170,7 +184,7 @@ export const mockJobCards: JobCard[] = [
     track: 'Management',
     rank: 3,
     description: '정비소 경영의 최고 전문가. 비즈니스 전략과 성장을 이끕니다.',
-    requiredStats: { Biz: 65, Speed: 40 },
+    requiredStats: { Communication: 65, Efficiency: 40 },
     prerequisiteCardIds: ['mgmt_2'],
     icon: '👔',
     color: '#8b5cf6',
@@ -184,7 +198,7 @@ export const mockJobCards: JobCard[] = [
     track: 'Hybrid',
     rank: 4,
     description: '폐차 직전의 차량도 새 것처럼 되살려 가치를 극대화하는 전설적인 복원가. "Auction Sniper" 능력 해금.',
-    requiredStats: { Hand: 50, Art: 50 },
+    requiredStats: { Mechanical: 50, Quality: 50 },
     prerequisiteCardIds: ['maint_2', 'body_2'],
     isHidden: true,
     icon: '🔄',
@@ -197,7 +211,7 @@ export const mockJobCards: JobCard[] = [
     track: 'Hybrid',
     rank: 4,
     description: '전기차의 퍼포먼스와 외관을 동시에 완성하는 미래형 전문가. 최첨단 기술과 예술의 융합.',
-    requiredStats: { Tech: 70, Art: 50 },
+    requiredStats: { Diagnostic: 70, Quality: 50 },
     prerequisiteCardIds: ['tech_3', 'body_2'],
     isHidden: true,
     icon: '⚡',
@@ -210,7 +224,7 @@ export const mockJobCards: JobCard[] = [
     track: 'Hybrid',
     rank: 4,
     description: '대규모 차량 관리와 운영의 제왕. B2B 시장을 지배하는 전략가.',
-    requiredStats: { Biz: 50, Speed: 40 },
+    requiredStats: { Communication: 50, Efficiency: 40 },
     prerequisiteCardIds: ['mgmt_2', 'maint_1'],
     isHidden: true,
     icon: '🚛',
@@ -223,7 +237,7 @@ export const mockTasks: Task[] = [
     id: 1,
     title: '엔진오일 교환 SOP',
     description: '엔진오일 교환 표준 작업 절차를 완료하세요.',
-    stat_type: 'Hand',
+    stat_type: 'Mechanical',
     stat_reward: 2,
     xp_reward: 15,
     requires_photo: true,
@@ -234,7 +248,7 @@ export const mockTasks: Task[] = [
     id: 2,
     title: '타이어 공기압 점검',
     description: '4개 타이어의 공기압을 점검하고 기록하세요.',
-    stat_type: 'Speed',
+    stat_type: 'Efficiency',
     stat_reward: 1,
     xp_reward: 10,
     requires_photo: false,
@@ -245,7 +259,7 @@ export const mockTasks: Task[] = [
     id: 3,
     title: 'OBD-II 진단 스캔',
     description: '차량 진단 스캔을 실시하고 결과를 기록하세요.',
-    stat_type: 'Tech',
+    stat_type: 'Diagnostic',
     stat_reward: 3,
     xp_reward: 20,
     requires_photo: true,
@@ -256,7 +270,7 @@ export const mockTasks: Task[] = [
     id: 4,
     title: '실내 클리닝 서비스',
     description: '차량 실내 청소 및 탈취 작업을 완료하세요.',
-    stat_type: 'Art',
+    stat_type: 'Quality',
     stat_reward: 2,
     xp_reward: 15,
     requires_photo: true,
@@ -267,7 +281,7 @@ export const mockTasks: Task[] = [
     id: 5,
     title: '고객 상담 완료',
     description: '고객에게 정비 결과를 설명하고 추가 정비 제안을 하세요.',
-    stat_type: 'Biz',
+    stat_type: 'Communication',
     stat_reward: 2,
     xp_reward: 15,
     requires_photo: false,
@@ -277,17 +291,19 @@ export const mockTasks: Task[] = [
 ];
 
 export const mockQuests: Quest[] = [
-  // Hand stat quests
+  // Mechanical stat quests (정비력)
   {
     id: 1,
     title: '엔진오일 교환 인증',
     description: '엔진오일 교환 작업 완료 후 사진을 업로드하세요. 오일 필터와 새 오일이 보이게 촬영해주세요.',
-    target_stat: 'Hand',
+    target_stat: 'Mechanical',
     stat_reward: 2,
-    xp_reward: 20,
+    mastery_reward: 20,
+    xp_reward: 20, // Legacy alias
     icon: 'Droplets',
     category: 'Daily',
-    requires_photo: true,
+    requires_verification: true,
+    requires_photo: true, // Legacy alias
     difficulty: 1,
     cooldown_hours: 24,
     is_available: true,
@@ -297,27 +313,31 @@ export const mockQuests: Quest[] = [
     id: 2,
     title: '브레이크 패드 교환',
     description: '브레이크 패드 교환 작업 완료 후 Before/After 사진을 업로드하세요.',
-    target_stat: 'Hand',
+    target_stat: 'Mechanical',
     stat_reward: 3,
+    mastery_reward: 30,
     xp_reward: 30,
     icon: 'Disc',
     category: 'Daily',
+    requires_verification: true,
     requires_photo: true,
     difficulty: 2,
     cooldown_hours: 24,
     is_available: true,
     total_completions: 5,
   },
-  // Tech stat quests
+  // Diagnostic stat quests (진단력)
   {
     id: 3,
     title: 'OBD 스캐너 진단 완료',
     description: 'OBD-II 스캐너로 차량 진단 후 결과 화면을 캡처하세요. 에러 코드 또는 정상 상태가 보여야 합니다.',
-    target_stat: 'Tech',
+    target_stat: 'Diagnostic',
     stat_reward: 2,
+    mastery_reward: 25,
     xp_reward: 25,
     icon: 'Cpu',
     category: 'Daily',
+    requires_verification: true,
     requires_photo: true,
     difficulty: 2,
     cooldown_hours: 24,
@@ -328,27 +348,31 @@ export const mockQuests: Quest[] = [
     id: 4,
     title: '전기 회로 점검',
     description: '멀티미터로 전기 회로 점검 후 측정값이 보이는 사진을 업로드하세요.',
-    target_stat: 'Tech',
+    target_stat: 'Diagnostic',
     stat_reward: 3,
+    mastery_reward: 35,
     xp_reward: 35,
     icon: 'Zap',
     category: 'Daily',
+    requires_verification: true,
     requires_photo: true,
     difficulty: 3,
     cooldown_hours: 24,
     is_available: true,
     total_completions: 3,
   },
-  // Art stat quests
+  // Quality stat quests (품질력)
   {
     id: 5,
     title: '거울 마감 광택',
     description: '광택 작업 완료 후 차량 보닛에 비친 반사가 보이는 사진을 업로드하세요.',
-    target_stat: 'Art',
+    target_stat: 'Quality',
     stat_reward: 3,
+    mastery_reward: 30,
     xp_reward: 30,
     icon: 'Sparkles',
     category: 'Daily',
+    requires_verification: true,
     requires_photo: true,
     difficulty: 2,
     cooldown_hours: 24,
@@ -359,27 +383,31 @@ export const mockQuests: Quest[] = [
     id: 6,
     title: '실내 디테일링 완료',
     description: '실내 클리닝 작업 완료 후 깨끗해진 실내 사진을 업로드하세요.',
-    target_stat: 'Art',
+    target_stat: 'Quality',
     stat_reward: 2,
+    mastery_reward: 20,
     xp_reward: 20,
     icon: 'Brush',
     category: 'Daily',
+    requires_verification: true,
     requires_photo: true,
     difficulty: 1,
     cooldown_hours: 24,
     is_available: true,
     total_completions: 15,
   },
-  // Speed stat quests
+  // Efficiency stat quests (효율성)
   {
     id: 7,
-    title: '20분 이내 작업 완료',
-    description: '간단한 정비 작업을 20분 이내에 완료하고 작업 완료 사진을 업로드하세요.',
-    target_stat: 'Speed',
+    title: 'FRT 이내 작업 완료',
+    description: '표준 작업 시간(FRT) 이내에 정비 작업을 완료하고 사진을 업로드하세요.',
+    target_stat: 'Efficiency',
     stat_reward: 2,
+    mastery_reward: 25,
     xp_reward: 25,
     icon: 'Timer',
     category: 'Challenge',
+    requires_verification: true,
     requires_photo: true,
     difficulty: 2,
     cooldown_hours: 24,
@@ -390,11 +418,13 @@ export const mockQuests: Quest[] = [
     id: 8,
     title: '3대 연속 정비',
     description: '3대의 차량을 연속으로 정비 완료 후 마지막 차량 사진을 업로드하세요.',
-    target_stat: 'Speed',
+    target_stat: 'Efficiency',
     stat_reward: 3,
+    mastery_reward: 40,
     xp_reward: 40,
     icon: 'Rocket',
     category: 'Challenge',
+    requires_verification: true,
     requires_photo: true,
     difficulty: 3,
     cooldown_hours: 24,
@@ -402,16 +432,18 @@ export const mockQuests: Quest[] = [
     last_completed_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
     total_completions: 2,
   },
-  // Biz stat quests
+  // Communication stat quests (소통력)
   {
     id: 9,
     title: '50만원 이상 정비 완료',
     description: '50만원 이상의 정비 견적서 또는 영수증을 업로드하세요. (개인정보는 가려주세요)',
-    target_stat: 'Biz',
+    target_stat: 'Communication',
     stat_reward: 3,
+    mastery_reward: 35,
     xp_reward: 35,
     icon: 'Receipt',
     category: 'Daily',
+    requires_verification: true,
     requires_photo: true,
     difficulty: 2,
     cooldown_hours: 24,
@@ -422,27 +454,31 @@ export const mockQuests: Quest[] = [
     id: 10,
     title: '고객 리뷰 획득',
     description: '고객에게 긍정적인 리뷰를 받고 스크린샷을 업로드하세요.',
-    target_stat: 'Biz',
+    target_stat: 'Communication',
     stat_reward: 2,
+    mastery_reward: 25,
     xp_reward: 25,
     icon: 'Star',
     category: 'Daily',
+    requires_verification: true,
     requires_photo: true,
     difficulty: 2,
     cooldown_hours: 24,
     is_available: true,
     total_completions: 9,
   },
-  // Weekly challenges
+  // Weekly challenges (주간 과제)
   {
     id: 11,
-    title: '주간: 모든 스탯 올리기',
-    description: '이번 주 동안 5가지 스탯을 모두 1회 이상 올리세요.',
-    target_stat: 'Tech',
+    title: '주간: 모든 역량 올리기',
+    description: '이번 주 동안 5가지 역량을 모두 1회 이상 올리세요.',
+    target_stat: 'Diagnostic',
     stat_reward: 5,
+    mastery_reward: 100,
     xp_reward: 100,
     icon: 'Trophy',
     category: 'Weekly',
+    requires_verification: false,
     requires_photo: false,
     difficulty: 4,
     cooldown_hours: 168,
@@ -451,13 +487,15 @@ export const mockQuests: Quest[] = [
   },
   {
     id: 12,
-    title: '주간: 10개 미션 완료',
-    description: '이번 주 동안 10개의 미션을 완료하세요.',
-    target_stat: 'Speed',
+    title: '주간: 10개 작업 완료',
+    description: '이번 주 동안 10개의 작업 기록을 완료하세요.',
+    target_stat: 'Efficiency',
     stat_reward: 5,
+    mastery_reward: 100,
     xp_reward: 100,
     icon: 'Target',
     category: 'Weekly',
+    requires_verification: false,
     requires_photo: false,
     difficulty: 4,
     cooldown_hours: 168,
@@ -475,7 +513,7 @@ export const mockDashboardData: DashboardData = {
       id: 1,
       task: 3,
       task_title: 'OBD-II 진단 스캔',
-      stat_type: 'Tech',
+      stat_type: 'Diagnostic',
       stat_reward: 3,
       completed_at: new Date().toISOString(),
     },
@@ -518,9 +556,12 @@ export const simulateCompleteTask = (
   stat_updated: string;
   stat_change: number;
   new_value: number;
-  xp_gained: number;
-  total_xp: number;
-  tier: string;
+  mastery_gained: number;
+  xp_gained: number; // Legacy alias
+  total_mastery: number;
+  total_xp: number; // Legacy alias
+  class: ClassType;
+  tier: ClassType; // Legacy alias
   newly_unlocked_cards: string[];
 }> => {
   return new Promise((resolve) => {
@@ -532,14 +573,16 @@ export const simulateCompleteTask = (
     const statField = task.stat_type;
     const currentValue = profile.stats[statField];
     const newValue = Math.min(100, currentValue + task.stat_reward);
-    const newXp = profile.xp + task.xp_reward;
+    const newMastery = profile.mastery + task.xp_reward;
 
-    let newTier = profile.tier;
-    if (newXp >= 1500) newTier = 'Diamond';
-    else if (newXp >= 1000) newTier = 'Platinum';
-    else if (newXp >= 600) newTier = 'Gold';
-    else if (newXp >= 300) newTier = 'Silver';
-    else if (newXp >= 100) newTier = 'Bronze';
+    // Professional Class progression (based on mastery points)
+    let newClass: ClassType = profile.tier;
+    if (newMastery >= 10000) newClass = 'Master';
+    else if (newMastery >= 5000) newClass = 'S-Class';
+    else if (newMastery >= 2000) newClass = 'A-Class';
+    else if (newMastery >= 500) newClass = 'B-Class';
+    else if (newMastery >= 100) newClass = 'C-Class';
+    else newClass = 'Trainee';
 
     const newlyUnlocked: string[] = [];
 
@@ -549,9 +592,12 @@ export const simulateCompleteTask = (
         stat_updated: task.stat_type,
         stat_change: task.stat_reward,
         new_value: newValue,
-        xp_gained: task.xp_reward,
-        total_xp: newXp,
-        tier: newTier,
+        mastery_gained: task.xp_reward,
+        xp_gained: task.xp_reward, // Legacy alias
+        total_mastery: newMastery,
+        total_xp: newMastery, // Legacy alias
+        class: newClass,
+        tier: newClass, // Legacy alias
         newly_unlocked_cards: newlyUnlocked,
       });
     }, 500);

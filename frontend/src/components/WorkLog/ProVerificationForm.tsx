@@ -12,12 +12,12 @@ interface ProVerificationFormProps {
 }
 
 const verificationTypes = [
-  { id: 'brake_service', label: '브레이크 오버홀', statBoost: 'Tech +2' },
-  { id: 'suspension', label: '서스펜션 교체', statBoost: 'Hand +2' },
-  { id: 'engine_diag', label: '엔진 진단', statBoost: 'Tech +3' },
-  { id: 'ev_battery', label: 'EV 배터리 점검', statBoost: 'Tech +4' },
-  { id: 'ppf_install', label: 'PPF 시공', statBoost: 'Art +3' },
-  { id: 'detailing', label: '프리미엄 디테일링', statBoost: 'Art +2' },
+  { id: 'brake_service', label: '브레이크 오버홀', statBoost: '진단력 +2' },
+  { id: 'suspension', label: '서스펜션 교체', statBoost: '정비력 +2' },
+  { id: 'engine_diag', label: '엔진 진단', statBoost: '진단력 +3' },
+  { id: 'ev_battery', label: 'EV 배터리 점검', statBoost: '진단력 +4' },
+  { id: 'ppf_install', label: 'PPF 시공', statBoost: '품질력 +3' },
+  { id: 'detailing', label: '프리미엄 디테일링', statBoost: '품질력 +2' },
 ];
 
 export function ProVerificationForm({ onSubmit }: ProVerificationFormProps) {

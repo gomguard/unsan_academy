@@ -17,11 +17,11 @@ interface JobDetailModalProps {
 }
 
 const statLabels = {
-  T: { name: 'Tech', ko: '기술력', color: '#22d3ee' },
-  H: { name: 'Hand', ko: '손기술', color: '#f472b6' },
-  S: { name: 'Ops', ko: '운영', color: '#a3e635' },
-  A: { name: 'Art', ko: '미학', color: '#c084fc' },
-  B: { name: 'Biz', ko: '비즈', color: '#fef08a' },
+  T: { name: 'Diagnostic', ko: '진단력', color: '#22d3ee' },
+  H: { name: 'Mechanical', ko: '정비력', color: '#f472b6' },
+  S: { name: 'Efficiency', ko: '효율성', color: '#a3e635' },
+  A: { name: 'Quality', ko: '품질력', color: '#c084fc' },
+  B: { name: 'Communication', ko: '소통력', color: '#fef08a' },
 };
 
 // Company logo mapping (placeholder - in production would use actual logos)

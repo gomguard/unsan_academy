@@ -27,9 +27,9 @@ const mockPosts: Post[] = [
     author: {
       id: 1,
       name: '김정비',
-      tier: 'Diamond',
+      tier: 'S-Class',
       avatar_url: undefined,
-      stats: { Tech: 92, Hand: 85, Speed: 78, Art: 65, Biz: 70 },
+      stats: { Diagnostic: 92, Mechanical: 85, Efficiency: 78, Quality: 65, Communication: 70 },
       stat_tech: 92, stat_hand: 85, stat_speed: 78, stat_art: 65, stat_biz: 70,
     },
     category: 'Tech',
@@ -52,9 +52,9 @@ const mockPosts: Post[] = [
     author: {
       id: 2,
       name: '이PPF',
-      tier: 'Platinum',
+      tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Tech: 65, Hand: 95, Speed: 82, Art: 90, Biz: 60 },
+      stats: { Diagnostic: 65, Mechanical: 95, Efficiency: 82, Quality: 90, Communication: 60 },
       stat_tech: 65, stat_hand: 95, stat_speed: 82, stat_art: 90, stat_biz: 60,
     },
     category: 'Salary',
@@ -83,9 +83,9 @@ const mockPosts: Post[] = [
     author: {
       id: 3,
       name: '박튜닝',
-      tier: 'Gold',
+      tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Tech: 78, Hand: 72, Speed: 70, Art: 55, Biz: 82 },
+      stats: { Diagnostic: 78, Mechanical: 72, Efficiency: 70, Quality: 55, Communication: 82 },
       stat_tech: 78, stat_hand: 72, stat_speed: 70, stat_art: 55, stat_biz: 82,
     },
     category: 'Career',
@@ -106,9 +106,9 @@ const mockPosts: Post[] = [
     author: {
       id: 4,
       name: '최디테일',
-      tier: 'Silver',
+      tier: 'C-Class',
       avatar_url: undefined,
-      stats: { Tech: 45, Hand: 68, Speed: 55, Art: 75, Biz: 40 },
+      stats: { Diagnostic: 45, Mechanical: 68, Efficiency: 55, Quality: 75, Communication: 40 },
       stat_tech: 45, stat_hand: 68, stat_speed: 55, stat_art: 75, stat_biz: 40,
     },
     category: 'Free',
@@ -129,9 +129,9 @@ const mockPosts: Post[] = [
     author: {
       id: 5,
       name: '정ADAS',
-      tier: 'Platinum',
+      tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Tech: 88, Hand: 70, Speed: 75, Art: 50, Biz: 65 },
+      stats: { Diagnostic: 88, Mechanical: 70, Efficiency: 75, Quality: 50, Communication: 65 },
       stat_tech: 88, stat_hand: 70, stat_speed: 75, stat_art: 50, stat_biz: 65,
     },
     category: 'Tech',
@@ -152,9 +152,9 @@ const mockPosts: Post[] = [
     author: {
       id: 6,
       name: '한덴트',
-      tier: 'Gold',
+      tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Tech: 55, Hand: 92, Speed: 80, Art: 70, Biz: 55 },
+      stats: { Diagnostic: 55, Mechanical: 92, Efficiency: 80, Quality: 70, Communication: 55 },
       stat_tech: 55, stat_hand: 92, stat_speed: 80, stat_art: 70, stat_biz: 55,
     },
     category: 'Salary',
@@ -183,9 +183,9 @@ const mockPosts: Post[] = [
     author: {
       id: 7,
       name: '윤하이브리드',
-      tier: 'Diamond',
+      tier: 'S-Class',
       avatar_url: undefined,
-      stats: { Tech: 95, Hand: 78, Speed: 82, Art: 45, Biz: 60 },
+      stats: { Diagnostic: 95, Mechanical: 78, Efficiency: 82, Quality: 45, Communication: 60 },
       stat_tech: 95, stat_hand: 78, stat_speed: 82, stat_art: 45, stat_biz: 60,
     },
     category: 'Tech',
@@ -208,9 +208,9 @@ const mockPosts: Post[] = [
     author: {
       id: 8,
       name: '송랩핑',
-      tier: 'Silver',
+      tier: 'C-Class',
       avatar_url: undefined,
-      stats: { Tech: 50, Hand: 85, Speed: 70, Art: 88, Biz: 45 },
+      stats: { Diagnostic: 50, Mechanical: 85, Efficiency: 70, Quality: 88, Communication: 45 },
       stat_tech: 50, stat_hand: 85, stat_speed: 70, stat_art: 88, stat_biz: 45,
     },
     category: 'Free',
@@ -231,9 +231,9 @@ const mockPosts: Post[] = [
     author: {
       id: 9,
       name: '오SA',
-      tier: 'Platinum',
+      tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Tech: 72, Hand: 55, Speed: 68, Art: 50, Biz: 90 },
+      stats: { Diagnostic: 72, Mechanical: 55, Efficiency: 68, Quality: 50, Communication: 90 },
       stat_tech: 72, stat_hand: 55, stat_speed: 68, stat_art: 50, stat_biz: 90,
     },
     category: 'Career',
@@ -254,9 +254,9 @@ const mockPosts: Post[] = [
     author: {
       id: 10,
       name: '임휠',
-      tier: 'Gold',
+      tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Tech: 60, Hand: 88, Speed: 75, Art: 82, Biz: 50 },
+      stats: { Diagnostic: 60, Mechanical: 88, Efficiency: 75, Quality: 82, Communication: 50 },
       stat_tech: 60, stat_hand: 88, stat_speed: 75, stat_art: 82, stat_biz: 50,
     },
     category: 'Tech',
@@ -277,9 +277,9 @@ const mockPosts: Post[] = [
     author: {
       id: 11,
       name: '강충전',
-      tier: 'Silver',
+      tier: 'C-Class',
       avatar_url: undefined,
-      stats: { Tech: 75, Hand: 60, Speed: 70, Art: 40, Biz: 55 },
+      stats: { Diagnostic: 75, Mechanical: 60, Efficiency: 70, Quality: 40, Communication: 55 },
       stat_tech: 75, stat_hand: 60, stat_speed: 70, stat_art: 40, stat_biz: 55,
     },
     category: 'Salary',
@@ -308,9 +308,9 @@ const mockPosts: Post[] = [
     author: {
       id: 12,
       name: '배캠퍼',
-      tier: 'Gold',
+      tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Tech: 68, Hand: 80, Speed: 65, Art: 75, Biz: 72 },
+      stats: { Diagnostic: 68, Mechanical: 80, Efficiency: 65, Quality: 75, Communication: 72 },
       stat_tech: 68, stat_hand: 80, stat_speed: 65, stat_art: 75, stat_biz: 72,
     },
     category: 'Free',
@@ -331,9 +331,9 @@ const mockPosts: Post[] = [
     author: {
       id: 13,
       name: '조ECU',
-      tier: 'Diamond',
+      tier: 'S-Class',
       avatar_url: undefined,
-      stats: { Tech: 98, Hand: 65, Speed: 72, Art: 55, Biz: 68 },
+      stats: { Diagnostic: 98, Mechanical: 65, Efficiency: 72, Quality: 55, Communication: 68 },
       stat_tech: 98, stat_hand: 65, stat_speed: 72, stat_art: 55, stat_biz: 68,
     },
     category: 'Tech',
@@ -356,9 +356,9 @@ const mockPosts: Post[] = [
     author: {
       id: 14,
       name: '신틴팅',
-      tier: 'Bronze',
+      tier: 'Trainee',
       avatar_url: undefined,
-      stats: { Tech: 40, Hand: 72, Speed: 65, Art: 68, Biz: 35 },
+      stats: { Diagnostic: 40, Mechanical: 72, Efficiency: 65, Quality: 68, Communication: 35 },
       stat_tech: 40, stat_hand: 72, stat_speed: 65, stat_art: 68, stat_biz: 35,
     },
     category: 'Career',
@@ -379,9 +379,9 @@ const mockPosts: Post[] = [
     author: {
       id: 15,
       name: '문판금',
-      tier: 'Platinum',
+      tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Tech: 70, Hand: 95, Speed: 78, Art: 72, Biz: 55 },
+      stats: { Diagnostic: 70, Mechanical: 95, Efficiency: 78, Quality: 72, Communication: 55 },
       stat_tech: 70, stat_hand: 95, stat_speed: 78, stat_art: 72, stat_biz: 55,
     },
     category: 'Salary',
@@ -410,9 +410,9 @@ const mockPosts: Post[] = [
     author: {
       id: 16,
       name: '양세라믹',
-      tier: 'Gold',
+      tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Tech: 58, Hand: 88, Speed: 72, Art: 85, Biz: 60 },
+      stats: { Diagnostic: 58, Mechanical: 88, Efficiency: 72, Quality: 85, Communication: 60 },
       stat_tech: 58, stat_hand: 88, stat_speed: 72, stat_art: 85, stat_biz: 60,
     },
     category: 'Free',
@@ -433,9 +433,9 @@ const mockPosts: Post[] = [
     author: {
       id: 17,
       name: '권진단',
-      tier: 'Platinum',
+      tier: 'A-Class',
       avatar_url: undefined,
-      stats: { Tech: 90, Hand: 72, Speed: 80, Art: 48, Biz: 65 },
+      stats: { Diagnostic: 90, Mechanical: 72, Efficiency: 80, Quality: 48, Communication: 65 },
       stat_tech: 90, stat_hand: 72, stat_speed: 80, stat_art: 48, stat_biz: 65,
     },
     category: 'Tech',
@@ -458,9 +458,9 @@ const mockPosts: Post[] = [
     author: {
       id: 18,
       name: '홍브레이크',
-      tier: 'Silver',
+      tier: 'C-Class',
       avatar_url: undefined,
-      stats: { Tech: 55, Hand: 78, Speed: 70, Art: 45, Biz: 50 },
+      stats: { Diagnostic: 55, Mechanical: 78, Efficiency: 70, Quality: 45, Communication: 50 },
       stat_tech: 55, stat_hand: 78, stat_speed: 70, stat_art: 45, stat_biz: 50,
     },
     category: 'Career',
@@ -481,9 +481,9 @@ const mockPosts: Post[] = [
     author: {
       id: 19,
       name: '유광택',
-      tier: 'Gold',
+      tier: 'B-Class',
       avatar_url: undefined,
-      stats: { Tech: 52, Hand: 90, Speed: 75, Art: 92, Biz: 58 },
+      stats: { Diagnostic: 52, Mechanical: 90, Efficiency: 75, Quality: 92, Communication: 58 },
       stat_tech: 52, stat_hand: 90, stat_speed: 75, stat_art: 92, stat_biz: 58,
     },
     category: 'Salary',
@@ -511,16 +511,16 @@ const mockPosts: Post[] = [
 
 // ============ MOCK COMMENTS ============
 const mockCommentAuthors: PostAuthor[] = [
-  { id: 101, name: '김정비', tier: 'Diamond', stats: { Tech: 92, Hand: 85, Speed: 78, Art: 65, Biz: 70 }, stat_tech: 92, stat_hand: 85, stat_speed: 78, stat_art: 65, stat_biz: 70 },
-  { id: 102, name: '이PPF', tier: 'Platinum', stats: { Tech: 65, Hand: 95, Speed: 82, Art: 90, Biz: 60 }, stat_tech: 65, stat_hand: 95, stat_speed: 82, stat_art: 90, stat_biz: 60 },
-  { id: 103, name: '박튜닝', tier: 'Gold', stats: { Tech: 78, Hand: 72, Speed: 70, Art: 55, Biz: 82 }, stat_tech: 78, stat_hand: 72, stat_speed: 70, stat_art: 55, stat_biz: 82 },
-  { id: 104, name: '최디테일', tier: 'Silver', stats: { Tech: 45, Hand: 68, Speed: 55, Art: 75, Biz: 40 }, stat_tech: 45, stat_hand: 68, stat_speed: 55, stat_art: 75, stat_biz: 40 },
-  { id: 105, name: '정ADAS', tier: 'Platinum', stats: { Tech: 88, Hand: 70, Speed: 75, Art: 50, Biz: 65 }, stat_tech: 88, stat_hand: 70, stat_speed: 75, stat_art: 50, stat_biz: 65 },
-  { id: 106, name: '한덴트', tier: 'Gold', stats: { Tech: 55, Hand: 92, Speed: 80, Art: 70, Biz: 55 }, stat_tech: 55, stat_hand: 92, stat_speed: 80, stat_art: 70, stat_biz: 55 },
-  { id: 107, name: '윤하이브리드', tier: 'Diamond', stats: { Tech: 95, Hand: 78, Speed: 82, Art: 45, Biz: 60 }, stat_tech: 95, stat_hand: 78, stat_speed: 82, stat_art: 45, stat_biz: 60 },
-  { id: 108, name: '송랩핑', tier: 'Silver', stats: { Tech: 50, Hand: 85, Speed: 70, Art: 88, Biz: 45 }, stat_tech: 50, stat_hand: 85, stat_speed: 70, stat_art: 88, stat_biz: 45 },
-  { id: 109, name: '오SA', tier: 'Platinum', stats: { Tech: 72, Hand: 55, Speed: 68, Art: 50, Biz: 90 }, stat_tech: 72, stat_hand: 55, stat_speed: 68, stat_art: 50, stat_biz: 90 },
-  { id: 110, name: '임휠', tier: 'Gold', stats: { Tech: 60, Hand: 88, Speed: 75, Art: 82, Biz: 50 }, stat_tech: 60, stat_hand: 88, stat_speed: 75, stat_art: 82, stat_biz: 50 },
+  { id: 101, name: '김정비', tier: 'S-Class', stats: { Diagnostic: 92, Mechanical: 85, Efficiency: 78, Quality: 65, Communication: 70 }, stat_tech: 92, stat_hand: 85, stat_speed: 78, stat_art: 65, stat_biz: 70 },
+  { id: 102, name: '이PPF', tier: 'A-Class', stats: { Diagnostic: 65, Mechanical: 95, Efficiency: 82, Quality: 90, Communication: 60 }, stat_tech: 65, stat_hand: 95, stat_speed: 82, stat_art: 90, stat_biz: 60 },
+  { id: 103, name: '박튜닝', tier: 'B-Class', stats: { Diagnostic: 78, Mechanical: 72, Efficiency: 70, Quality: 55, Communication: 82 }, stat_tech: 78, stat_hand: 72, stat_speed: 70, stat_art: 55, stat_biz: 82 },
+  { id: 104, name: '최디테일', tier: 'C-Class', stats: { Diagnostic: 45, Mechanical: 68, Efficiency: 55, Quality: 75, Communication: 40 }, stat_tech: 45, stat_hand: 68, stat_speed: 55, stat_art: 75, stat_biz: 40 },
+  { id: 105, name: '정ADAS', tier: 'A-Class', stats: { Diagnostic: 88, Mechanical: 70, Efficiency: 75, Quality: 50, Communication: 65 }, stat_tech: 88, stat_hand: 70, stat_speed: 75, stat_art: 50, stat_biz: 65 },
+  { id: 106, name: '한덴트', tier: 'B-Class', stats: { Diagnostic: 55, Mechanical: 92, Efficiency: 80, Quality: 70, Communication: 55 }, stat_tech: 55, stat_hand: 92, stat_speed: 80, stat_art: 70, stat_biz: 55 },
+  { id: 107, name: '윤하이브리드', tier: 'S-Class', stats: { Diagnostic: 95, Mechanical: 78, Efficiency: 82, Quality: 45, Communication: 60 }, stat_tech: 95, stat_hand: 78, stat_speed: 82, stat_art: 45, stat_biz: 60 },
+  { id: 108, name: '송랩핑', tier: 'C-Class', stats: { Diagnostic: 50, Mechanical: 85, Efficiency: 70, Quality: 88, Communication: 45 }, stat_tech: 50, stat_hand: 85, stat_speed: 70, stat_art: 88, stat_biz: 45 },
+  { id: 109, name: '오SA', tier: 'A-Class', stats: { Diagnostic: 72, Mechanical: 55, Efficiency: 68, Quality: 50, Communication: 90 }, stat_tech: 72, stat_hand: 55, stat_speed: 68, stat_art: 50, stat_biz: 90 },
+  { id: 110, name: '임휠', tier: 'B-Class', stats: { Diagnostic: 60, Mechanical: 88, Efficiency: 75, Quality: 82, Communication: 50 }, stat_tech: 60, stat_hand: 88, stat_speed: 75, stat_art: 82, stat_biz: 50 },
 ];
 
 const commentTemplates = [
@@ -579,15 +579,17 @@ mockPosts.forEach(post => {
   post.comments = generateMockComments(post.id, post.comment_count);
 });
 
-// ============ TIER BADGE ============
-const tierColors: Record<TierType, { bg: string; text: string; glow: string }> = {
-  Unranked: { bg: 'bg-slate-600', text: 'text-slate-300', glow: '' },
-  Bronze: { bg: 'bg-amber-700', text: 'text-amber-200', glow: '' },
-  Silver: { bg: 'bg-slate-400', text: 'text-slate-900', glow: '' },
-  Gold: { bg: 'bg-yellow-500', text: 'text-yellow-900', glow: 'shadow-yellow-500/30' },
-  Platinum: { bg: 'bg-cyan-400', text: 'text-cyan-900', glow: 'shadow-cyan-400/30' },
-  Diamond: { bg: 'bg-purple-400', text: 'text-purple-900', glow: 'shadow-purple-400/50' },
+// ============ CLASS BADGE (Professional Grading) ============
+const classColors: Record<TierType, { bg: string; text: string; glow: string }> = {
+  Trainee: { bg: 'bg-slate-600', text: 'text-slate-300', glow: '' },
+  'C-Class': { bg: 'bg-violet-500', text: 'text-violet-100', glow: '' },
+  'B-Class': { bg: 'bg-cyan-400', text: 'text-cyan-900', glow: 'shadow-cyan-400/30' },
+  'A-Class': { bg: 'bg-amber-400', text: 'text-amber-900', glow: 'shadow-amber-400/30' },
+  'S-Class': { bg: 'bg-pink-400', text: 'text-pink-900', glow: 'shadow-pink-400/40' },
+  Master: { bg: 'bg-purple-400', text: 'text-purple-900', glow: 'shadow-purple-400/50' },
 };
+// Legacy tier alias
+const tierColors = classColors;
 
 function TierBadge({ tier }: { tier: TierType }) {
   const colors = tierColors[tier];
@@ -1123,9 +1125,9 @@ export function Community() {
       author: {
         id: profile?.id || 0,
         name: profile?.name || '익명',
-        tier: profile?.tier || 'Unranked',
+        tier: profile?.tier || 'Trainee',
         avatar_url: profile?.avatar_url,
-        stats: profile?.stats || { Tech: 10, Hand: 10, Speed: 10, Art: 10, Biz: 10 },
+        stats: profile?.stats || { Diagnostic: 10, Mechanical: 10, Efficiency: 10, Quality: 10, Communication: 10 },
         stat_tech: profile?.stat_tech || 10,
         stat_hand: profile?.stat_hand || 10,
         stat_speed: profile?.stat_speed || 10,

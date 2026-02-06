@@ -1,4 +1,24 @@
-export type StatType = 'Tech' | 'Hand' | 'Speed' | 'Art' | 'Biz';
+// ============ PROFESSIONAL STAT SYSTEM ============
+// Pentagon Chart: 5 Core Professional Competencies
+
+export type StatType = 'Diagnostic' | 'Mechanical' | 'Efficiency' | 'Quality' | 'Communication';
+
+// Legacy stat mapping for backward compatibility
+export const legacyStatMapping: Record<string, StatType> = {
+  Tech: 'Diagnostic',
+  Hand: 'Mechanical',
+  Speed: 'Efficiency',
+  Art: 'Quality',
+  Biz: 'Communication',
+};
+
+export const statInfo: Record<StatType, { name: string; shortName: string; description: string; icon: string }> = {
+  Diagnostic: { name: '진단력', shortName: 'D', description: '데이터 분석 및 문제 진단 능력', icon: '🧠' },
+  Mechanical: { name: '정비력', shortName: 'M', description: '물리적 수리 속도 및 정밀도', icon: '🔧' },
+  Efficiency: { name: '효율성', shortName: 'E', description: '표준 시간(FRT) 대비 작업 효율', icon: '⏱️' },
+  Quality: { name: '품질력', shortName: 'Q', description: '마감 품질 및 재작업률', icon: '✨' },
+  Communication: { name: '소통력', shortName: 'C', description: '고객 응대 및 업셀링 능력', icon: '💬' },
+};
 
 // ============ EDUCATION TYPES ============
 
@@ -58,13 +78,48 @@ export interface SalaryInfo {
   keyStat: JobStatType; // The stat that boosts salary
 }
 
-export type TierType = 'Unranked' | 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond';
+// ============ CLASS SYSTEM (Professional Grading) ============
+// Replaces game-like "Tier" with professional "Class" system
+
+export type ClassType = 'Trainee' | 'C-Class' | 'B-Class' | 'A-Class' | 'S-Class' | 'Master';
+
+// Legacy tier type for backward compatibility
+export type TierType = ClassType;
+
+export const classInfo: Record<ClassType, { name: string; description: string; color: string; minMastery: number }> = {
+  Trainee: { name: '수습', description: '교육 이수 중', color: '#6b7280', minMastery: 0 },
+  'C-Class': { name: 'C등급', description: '기본 업무 수행 가능', color: '#a78bfa', minMastery: 100 },
+  'B-Class': { name: 'B등급', description: '독립 작업 가능', color: '#22d3ee', minMastery: 500 },
+  'A-Class': { name: 'A등급', description: '전문가 수준', color: '#fbbf24', minMastery: 2000 },
+  'S-Class': { name: 'S등급', description: '마스터 수준', color: '#f472b6', minMastery: 5000 },
+  Master: { name: '명장', description: '업계 최고 전문가', color: '#c084fc', minMastery: 10000 },
+};
+
+// Legacy tier mapping for backward compatibility
+export const legacyTierMapping: Record<string, ClassType> = {
+  Unranked: 'Trainee',
+  Bronze: 'C-Class',
+  Silver: 'C-Class',
+  Gold: 'B-Class',
+  Platinum: 'A-Class',
+  Diamond: 'S-Class',
+};
 
 export type JobTrack = 'Maintenance' | 'BodySkin' | 'HighTech' | 'Management' | 'Hybrid';
 
 export type JobRank = 1 | 2 | 3 | 4;
 
+// Professional Competency Stats
 export interface Stats {
+  Diagnostic: number;    // 진단력 (was Tech)
+  Mechanical: number;    // 정비력 (was Hand)
+  Efficiency: number;    // 효율성 (was Speed)
+  Quality: number;       // 품질력 (was Art)
+  Communication: number; // 소통력 (was Biz)
+}
+
+// Legacy stats interface for backward compatibility
+export interface LegacyStats {
   Tech: number;
   Hand: number;
   Speed: number;
@@ -75,19 +130,29 @@ export interface Stats {
 export interface UserProfile {
   id: number;
   name: string;
-  tier: TierType;
-  xp: number;
+  tier: TierType;              // ClassType (for display: C-Class, B-Class, etc.)
+  mastery: number;             // Professional experience points (was xp)
+  xp: number;                  // Legacy alias for mastery
   stats: Stats;
+  // New professional stat naming
+  stat_diagnostic: number;     // was stat_tech
+  stat_mechanical: number;     // was stat_hand
+  stat_efficiency: number;     // was stat_speed
+  stat_quality: number;        // was stat_art
+  stat_communication: number;  // was stat_biz
+  // Legacy stat naming (for backward compatibility)
   stat_tech: number;
   stat_hand: number;
   stat_speed: number;
   stat_art: number;
   stat_biz: number;
   avatar_url?: string;
-  next_tier_xp: number;
-  current_tier_xp: number;
+  next_tier_mastery: number;   // was next_tier_xp
+  next_tier_xp: number;        // Legacy alias
+  current_tier_mastery: number; // was current_tier_xp
+  current_tier_xp: number;     // Legacy alias
   unlockedCardIds: string[];
-  // New professional profile fields
+  // Professional profile fields
   currentSalary?: number;         // User's current salary in 만원
   currentJobTitle?: string;       // Current job title
   isVerified?: boolean;           // Salary verification status
@@ -107,6 +172,54 @@ export interface JobCard {
   color: string;
 }
 
+// ============ SOP (Standard Operating Procedure) ============
+// Replaces game-like "Task/Quest" with professional "SOP"
+
+export interface SOP {
+  id: number;
+  code: string;                   // e.g., "US-M-001" (Unsan-Maintenance-001)
+  title: string;                  // e.g., "Engine Oil Replacement (Standard)"
+  description: string;            // Technical procedure description
+  target_stat: StatType;          // Primary competency developed
+  mastery_value: number;          // Mastery points earned (was stat_reward)
+  standard_time_minutes: number;  // FRT (Flat Rate Time) in minutes
+  certification_required: boolean; // Requires certification to perform
+  requires_verification: boolean; // Requires photo/supervisor verification
+  category: SOPCategory;
+  difficulty_level: 1 | 2 | 3 | 4 | 5; // Technical difficulty
+  is_available: boolean;
+}
+
+export type SOPCategory = 'Maintenance' | 'Diagnostic' | 'BodyRepair' | 'Electrical' | 'CustomerService';
+
+export const sopCategoryInfo: Record<SOPCategory, { name: string; color: string; icon: string }> = {
+  Maintenance: { name: '정비', color: '#3b82f6', icon: '🔧' },
+  Diagnostic: { name: '진단', color: '#8b5cf6', icon: '🔍' },
+  BodyRepair: { name: '바디', color: '#ec4899', icon: '🎨' },
+  Electrical: { name: '전장', color: '#f59e0b', icon: '⚡' },
+  CustomerService: { name: '서비스', color: '#10b981', icon: '💬' },
+};
+
+// ============ WORK LOG ============
+// Replaces game-like "Mission/TaskCompletion" with professional "WorkLog"
+
+export interface WorkLog {
+  id: number;
+  sop_id: number;
+  sop_code: string;
+  sop_title: string;
+  target_stat: StatType;
+  mastery_earned: number;         // was stat_reward
+  actual_time_minutes: number;    // Actual time taken
+  standard_time_minutes: number;  // Expected FRT
+  efficiency_rating: number;      // actual/standard ratio
+  verification_image_url?: string; // was photo_url
+  supervisor_verified: boolean;
+  completed_at: string;
+  notes?: string;                 // Work notes
+}
+
+// Legacy Task interface for backward compatibility
 export interface Task {
   id: number;
   title: string;
@@ -156,22 +269,34 @@ export const trackInfo: Record<JobTrack, { name: string; color: string; bgColor:
   Hybrid: { name: '레전드', color: '#f59e0b', bgColor: 'bg-amber-50', icon: '⭐' },
 };
 
-export const rankInfo: Record<JobRank, { name: string; koreanName: string }> = {
-  1: { name: 'Novice', koreanName: '입문' },
-  2: { name: 'Pro', koreanName: '전문가' },
-  3: { name: 'Master', koreanName: '마스터' },
-  4: { name: 'Legend', koreanName: '레전드' },
+// Professional Job Classification
+export const rankInfo: Record<JobRank, { name: string; koreanName: string; classRequired: ClassType }> = {
+  1: { name: 'Entry', koreanName: '입문', classRequired: 'Trainee' },
+  2: { name: 'Skilled', koreanName: '숙련', classRequired: 'C-Class' },
+  3: { name: 'Expert', koreanName: '전문', classRequired: 'B-Class' },
+  4: { name: 'Specialist', koreanName: '특급', classRequired: 'A-Class' },
 };
 
-// ============ QUEST/MISSION TYPES ============
+// ============ WORK LOG CATEGORIES ============
+// Professional work tracking (replaces Quest/Mission)
 
+export type WorkLogCategory = 'Routine' | 'Scheduled' | 'Certification' | 'Special';
+
+export const workLogCategoryInfo: Record<WorkLogCategory, { name: string; color: string; bgColor: string }> = {
+  Routine: { name: '정기 작업', color: '#3b82f6', bgColor: 'bg-blue-500/20' },
+  Scheduled: { name: '예정 작업', color: '#8b5cf6', bgColor: 'bg-purple-500/20' },
+  Certification: { name: '인증 작업', color: '#f59e0b', bgColor: 'bg-amber-500/20' },
+  Special: { name: '특수 작업', color: '#ec4899', bgColor: 'bg-pink-500/20' },
+};
+
+// Legacy Quest types for backward compatibility
 export type QuestCategory = 'Daily' | 'Weekly' | 'Challenge' | 'Special';
 
 export const questCategoryInfo: Record<QuestCategory, { name: string; color: string; bgColor: string }> = {
-  Daily: { name: '일일 미션', color: '#3b82f6', bgColor: 'bg-blue-500/20' },
-  Weekly: { name: '주간 미션', color: '#8b5cf6', bgColor: 'bg-purple-500/20' },
-  Challenge: { name: '도전 과제', color: '#f59e0b', bgColor: 'bg-amber-500/20' },
-  Special: { name: '특별 미션', color: '#ec4899', bgColor: 'bg-pink-500/20' },
+  Daily: { name: '정기 작업', color: '#3b82f6', bgColor: 'bg-blue-500/20' },
+  Weekly: { name: '주간 점검', color: '#8b5cf6', bgColor: 'bg-purple-500/20' },
+  Challenge: { name: '인증 과제', color: '#f59e0b', bgColor: 'bg-amber-500/20' },
+  Special: { name: '특수 작업', color: '#ec4899', bgColor: 'bg-pink-500/20' },
 };
 
 export interface Quest {
@@ -180,13 +305,15 @@ export interface Quest {
   description: string;
   target_stat: StatType;
   stat_reward: number;
-  xp_reward: number;
+  mastery_reward: number;        // was xp_reward
+  xp_reward: number;             // Legacy alias
   icon: string;
   category: QuestCategory;
-  requires_photo: boolean;
+  requires_verification: boolean; // was requires_photo
+  requires_photo: boolean;       // Legacy alias
   difficulty: number;
   cooldown_hours: number;
-  is_available: boolean; // Can be completed now
+  is_available: boolean;
   last_completed_at?: string;
   total_completions: number;
 }
@@ -197,8 +324,10 @@ export interface QuestCompletion {
   quest_title: string;
   target_stat: StatType;
   stat_reward: number;
-  xp_reward: number;
-  proof_image_url?: string;
+  mastery_reward: number;        // was xp_reward
+  xp_reward: number;             // Legacy alias
+  verification_image_url?: string; // was proof_image_url
+  proof_image_url?: string;      // Legacy alias
   completed_at: string;
 }
 
